@@ -1,16 +1,16 @@
-// 1. Define params as a Promise
+// 1. Define the props as a Promise
 interface PageProps {
   params: Promise<{ siteId: string }>;
 }
 
-// 2. Change the function to 'async' and 'await' the params
-export default async function Page({ params }: PageProps) {
-  const { siteId } = await params; // MUST await the params in Next.js 15
+// 2. Make the function 'async' and 'await' the params
+export default async function AdminDashboardPage({ params }: PageProps) {
+  const { siteId } = await params; // This line fixes the build error
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold">Rescued Site: {siteId}</h1>
-      <p className="mt-4 text-slate-400">This content is being served from /content/{siteId}</p>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold text-white">Managing: {siteId}</h1>
+      {/* ... the rest of your dashboard code ... */}
     </div>
   );
 }
