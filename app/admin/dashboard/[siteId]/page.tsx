@@ -1,76 +1,33 @@
-import { getSiteByDomain } from "@/lib/sites"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Globe, FileText, CheckCircle, AlertCircle, ExternalLink } from "lucide-react"
-import { notFound } from "next/navigation"
+import { Suspense } from "react";
 
-export default async function SiteDetailsPage({ params }: { params: { siteId: string } }) {
-  const site = getSiteByDomain(params.siteId)
-  if (!site) return notFound()
+// In Next.js 15, params MUST be a Promise
+type Params = Promise<{ siteId: string }>;
+
+interface PageProps {
+  params: Params;
+}
+
+export default async function AdminDashboardPage(props: { params: Params }) {
+  // You MUST await the params before destructuring
+  const { siteId } = await props.params;
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-end">
-        <div>
-          <h1 className="text-3xl font-bold text-white">{site.name}</h1>
-          <p className="text-slate-400">{site.domain}</p>
+    <div className="flex-1 space-y-4 p-8 pt-6">
+      <div className="flex items-center justify-between space-y-2">
+        <h2 className="text-3xl font-bold tracking-tight text-white">
+          Dashboard: <span className="text-cyan-400">{siteId}</span>
+        </h2>
+      </div>
+      
+      <Suspense fallback={<div className="text-white">Loading stats...</div>}>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {/* Dashboard content goes here */}
+          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+            <p className="text-sm font-medium text-slate-400">Status</p>
+            <p className="text-2xl font-bold text-green-400">Live & Rescued</p>
+          </div>
         </div>
-        <a 
-          href={`https://${site.domain}`} 
-          target="_blank"
-          className="flex items-center gap-2 px-4 py-2 rounded-md bg-slate-800 text-cyan-400 hover:bg-slate-700 transition-colors"
-        >
-          View Live Site <ExternalLink size={16} />
-        </a>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Metric 1: Rescue Status */}
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-400 uppercase">Status</CardTitle>
-            <CheckCircle className="text-green-500" size={20} />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">Live & Synced</div>
-            <p className="text-xs text-slate-500 mt-1">Last rescue: 2 hours ago</p>
-          </CardContent>
-        </Card>
-
-        {/* Metric 2: Content Count */}
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-400 uppercase">Pages</CardTitle>
-            <FileText className="text-cyan-400" size={20} />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">24 Pages</div>
-            <p className="text-xs text-slate-500 mt-1">Incl. English & Spanish versions</p>
-          </CardContent>
-        </Card>
-
-        {/* Metric 3: Media Storage */}
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-400 uppercase">Media Assets</CardTitle>
-            <Globe className="text-purple-400" size={20} />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">142 Files</div>
-            <p className="text-xs text-slate-500 mt-1">Connected to Google Drive</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Migration Alert Section */}
-      <div className="p-4 rounded-lg bg-cyan-950/30 border border-cyan-900 flex gap-4 items-start">
-        <AlertCircle className="text-cyan-400 mt-1" size={20} />
-        <div>
-          <h4 className="font-semibold text-cyan-400">Migration Insight</h4>
-          <p className="text-sm text-slate-300">
-            Detected 3 orphan pages not in the sitemap. Added to rescue queue automatically.
-          </p>
-        </div>
-      </div>
+      </Suspense>
     </div>
-  )
+  );
 }
