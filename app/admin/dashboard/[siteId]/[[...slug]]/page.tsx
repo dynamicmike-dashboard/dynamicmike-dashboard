@@ -1,11 +1,11 @@
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // <--- ADD THIS LINE
 
 import { notFound } from 'next/navigation';
 
 type Params = Promise<{ siteId: string; slug?: string[] }>;
 
 export default async function DynamicRescuedPage(props: { params: Params }) {
-  // We use await here because Next.js 15 params are asynchronous
+  // Next.js 15 requires awaiting params
   const { siteId } = await props.params;
 
   return (
@@ -14,7 +14,7 @@ export default async function DynamicRescuedPage(props: { params: Params }) {
         Engine Test: {siteId}
       </h1>
       <p className="mt-4 text-slate-400">
-        If you see this immediately, the dynamic route conflict is resolved.
+        If you see this immediately, the pre-rendering hang is resolved.
       </p>
     </div>
   );
