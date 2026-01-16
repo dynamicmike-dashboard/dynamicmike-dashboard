@@ -1,10 +1,4 @@
-import type { Metadata } from "next";
-import "./global.css";
-
-export const metadata: Metadata = {
-  title: "GHL Rescue Dashboard",
-  description: "Aura Multi-Site Manager",
-};
+import "./global.css"; // Check: Is your file named global.css or globals.css?
 
 export default function RootLayout({
   children,
@@ -12,8 +6,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="antialiased bg-slate-950 min-h-screen">
+    <html lang="en">
+      <body className="bg-slate-950 text-white">
         {children}
       </body>
     </html>

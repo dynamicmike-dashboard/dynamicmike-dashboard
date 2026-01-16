@@ -1,11 +1,10 @@
-export const dynamic = 'force-dynamic'; // <--- ADD THIS LINE
+export const dynamic = 'force-dynamic'; // <--- ADD THIS LINE AT THE TOP
 
 import { notFound } from 'next/navigation';
 
 type Params = Promise<{ siteId: string; slug?: string[] }>;
 
 export default async function DynamicRescuedPage(props: { params: Params }) {
-  // Next.js 15 requires awaiting params
   const { siteId } = await props.params;
 
   return (
