@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  /* Sidebar & Custom Theme Variables */
+  --color-sidebar-background: hsl(240 5.9% 10%);
+  --color-sidebar-foreground: hsl(240 4.8% 95.9%);
+  --color-sidebar-primary: hsl(224.3 76.3% 48%);
+  --color-sidebar-border: hsl(240 3.7% 15.9%);
+  
+  /* Brand colors for your dashboard */
+  --color-primary: #3b82f6;
+}
+
+@layer base {
+  * {
+    /* Use standard slate-800 for the rescue dashboard borders */
+    @apply border-slate-800;
+  }
+  body {
+    /* Enforce the dark theme for the rescue mission dashboard */
+    @apply bg-slate-950 text-slate-50 antialiased;
+  }
+}
