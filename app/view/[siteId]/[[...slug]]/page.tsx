@@ -7,13 +7,15 @@ export default async function PublicViewer(props: { params: Params }) {
   const iframeSrc = `/content/${siteId}/${fileName}`;
 
   return (
-    // 'fixed inset-0' ensures it covers the entire screen from corner to corner
-    <main className="fixed inset-0 w-full h-full bg-white overflow-hidden">
+    /* 'fixed inset-0' pins the container to all 4 corners of the screen.
+       'h-screen' ensures it is exactly 100% of the viewport height.
+    */
+    <main className="fixed inset-0 w-full h-screen bg-white">
       <iframe 
         src={iframeSrc} 
         className="w-full h-full border-none" 
-        style={{ height: '100vh' }}
         title="Rescued Site Viewer" 
+        style={{ display: 'block' }} // Prevents tiny gaps at the bottom
       />
     </main>
   );
