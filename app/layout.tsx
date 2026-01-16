@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css"; // We will create this next
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "GHL Rescue Dashboard",
@@ -12,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="antialiased bg-slate-950">
+    <html lang="en" className="dark">
+      <body className="antialiased bg-slate-950 min-h-screen text-slate-50">
         {children}
       </body>
     </html>
