@@ -15,24 +15,20 @@ export default async function AdminDashboardPage(props: { params: Params }) {
         </div>
         
         <div className="flex items-center gap-4">
-          {/* FIXED LINK: Now points to the public /view/ route */}
+          {/* CORRECTED LINK: Explicitly using ${siteId} */}
           <a 
             href={`/view/${siteId}`} 
             target="_blank" 
-            className="px-3 py-1 bg-cyan-900/30 text-cyan-400 border border-cyan-800 rounded text-xs hover:bg-cyan-800 hover:text-white transition-all"
+            className="px-4 py-2 bg-cyan-600/20 text-cyan-400 border border-cyan-600/50 rounded-lg text-xs font-bold hover:bg-cyan-600 hover:text-white transition-all"
           >
             View Live Public Site
           </a>
-          <a href="/" className="text-xs text-slate-500 hover:text-white">Exit</a>
+          <a href="/" className="text-xs text-slate-500 hover:text-white border border-slate-700 px-3 py-1 rounded">Exit</a>
         </div>
       </div>
       
       <div className="flex-1 bg-white">
-        <iframe 
-          src={iframeSrc} 
-          className="w-full h-full border-none" 
-          title="Admin Viewer"
-        />
+        <iframe src={iframeSrc} className="w-full h-full border-none" title="Admin Viewer" />
       </div>
     </div>
   );
