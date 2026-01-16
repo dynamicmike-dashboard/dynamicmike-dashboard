@@ -1,7 +1,11 @@
-export const dynamic = 'force-static'; // Force this to be a simple static shell
+export const dynamic = 'force-static';
 
-export default function AdminDashboardPage({ params }: { params: { siteId: string } }) {
-  const siteId = params.siteId;
+// Define the correct Next.js 15 types
+type Params = Promise<{ siteId: string }>;
+
+export default async function AdminDashboardPage(props: { params: Params }) {
+  // We MUST await the params in Next.js 15 to get the data
+  const { siteId } = await props.params;
   const iframeSrc = `/content/${siteId}/index.html`;
 
   return (
