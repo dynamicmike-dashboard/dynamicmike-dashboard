@@ -5,7 +5,7 @@ type Params = Promise<{ siteId: string }>;
 export default async function AdminDashboardPage(props: { params: Params }) {
   const { siteId } = await props.params;
 
-  // The URL now points to the static file in the public folder
+  // This points to the static file now sitting in /public
   const iframeSrc = `/content/${siteId}/index.html`;
 
   return (
@@ -17,7 +17,7 @@ export default async function AdminDashboardPage(props: { params: Params }) {
         <a href="/" className="text-xs text-slate-500 hover:text-white underline">Back to Home</a>
       </div>
       
-      {/* This Iframe pulls the content instantly without server-side hanging */}
+      {/* The iframe loads the static HTML instantly without server-side lag */}
       <div className="flex-1 border-4 border-slate-800 rounded-xl overflow-hidden bg-white">
         <iframe 
           src={iframeSrc} 
