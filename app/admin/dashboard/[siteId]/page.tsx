@@ -1,28 +1,26 @@
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-static'; // Force this to be a simple static shell
 
-type Params = Promise<{ siteId: string }>;
-
-export default async function AdminDashboardPage(props: { params: Params }) {
-  const { siteId } = await props.params;
-
-  // This points to the static file now sitting in /public
+export default function AdminDashboardPage({ params }: { params: { siteId: string } }) {
+  const siteId = params.siteId;
   const iframeSrc = `/content/${siteId}/index.html`;
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-950 text-white p-8">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold italic">
-          Viewing Site: <span className="text-cyan-400">{siteId}</span>
+        <h1 className="text-2xl font-bold italic text-cyan-400">
+          Aura Preview: {siteId}
         </h1>
-        <a href="/" className="text-xs text-slate-500 hover:text-white underline">Back to Home</a>
+        <a href="/" className="text-xs text-slate-500 hover:text-white underline">
+          Close Preview
+        </a>
       </div>
       
-      {/* The iframe loads the static HTML instantly without server-side lag */}
-      <div className="flex-1 border-4 border-slate-800 rounded-xl overflow-hidden bg-white">
+      <div className="flex-1 border-4 border-slate-800 rounded-xl overflow-hidden bg-white shadow-2xl">
         <iframe 
           src={iframeSrc} 
-          className="w-full h-[80vh]" 
+          className="w-full h-[80vh] border-none" 
           title="Rescued Content"
+          loading="lazy"
         />
       </div>
     </div>
