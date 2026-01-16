@@ -1,5 +1,4 @@
 export const dynamic = 'force-static';
-
 type Params = Promise<{ siteId: string; slug?: string[] }>;
 
 export default async function PublicViewer(props: { params: Params }) {
@@ -9,7 +8,7 @@ export default async function PublicViewer(props: { params: Params }) {
 
   return (
     <main className="fixed inset-0 w-full h-full">
-      <iframe src={iframeSrc} className="w-full h-full border-none" title="Public Site" />
+      <iframe src={iframeSrc} className="w-full h-full border-none" title="Public View" />
     </main>
   );
 }
