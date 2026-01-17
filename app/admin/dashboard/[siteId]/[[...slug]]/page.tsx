@@ -56,20 +56,20 @@ export default function AdminDashboardPage(props: { params: Params }) {
         <div className="flex items-center gap-3">
           <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
           <div>
-            <h1 className="text-sm font-bold text-slate-200 capitalize">{siteId.replace(/-/g, ' ')}</h1>
-            <p className="text-[10px] text-slate-500 font-mono">{currentFile}</p>
+            <h1 className="text-sm font-bold text-slate-200 capitalize leading-none mb-1">{siteId.replace(/-/g, ' ')}</h1>
+            <p className="text-[10px] text-slate-500 font-mono leading-none">{currentFile}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <button 
             onClick={isEditing ? () => setIsEditing(false) : loadFileContent}
-            className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-xs font-bold"
+            className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-xs font-bold hover:bg-slate-700 transition-colors"
           >
-            {isEditing ? "View Site" : "Edit HTML"}
+            {isEditing ? "View Site" : "Edit Code"}
           </button>
           {isEditing && (
-            <button onClick={handleSave} className="px-4 py-2 bg-cyan-600 rounded-lg text-xs font-bold">
+            <button onClick={handleSave} className="px-6 py-2 bg-cyan-600 text-slate-950 rounded-lg text-xs font-black hover:bg-cyan-500 transition-all">
               SAVE & PUSH
             </button>
           )}
@@ -84,10 +84,10 @@ export default function AdminDashboardPage(props: { params: Params }) {
             defaultLanguage="html"
             value={code}
             onChange={(val) => setCode(val || "")}
-            options={{ fontSize: 14, minimap: { enabled: false }, wordWrap: "on" }}
+            options={{ fontSize: 14, minimap: { enabled: false }, wordWrap: "on", padding: { top: 10 } }}
           />
         ) : (
-          <iframe src={fileSrc} className="w-full h-full border-none" key={currentFile} />
+          <iframe src={fileSrc} className="w-full h-full border-none shadow-inner" key={currentFile} />
         )}
       </div>
     </div>
