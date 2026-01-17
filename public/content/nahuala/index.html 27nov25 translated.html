@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nahuala Bio | Raíz Dorada Chilcuague Oral Spray</title>
+    <meta name="description" content="Nahuala Chilcuague Oral Spray - Remedio ancestral mexicano para boca, garganta y digestión. Descubre la Raíz Dorada.">
+    <link rel="canonical" href="https://nahuala.bio">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%236B8E23' d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z'/%3E%3Cpath fill='%23DAA520' d='M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6z'/%3E%3Cpath fill='%238B4513' d='M12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4z'/%3E%3C/svg%3E" type="image/svg+xml">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap');
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: #333;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Merriweather', serif;
+        }
+        .text-gradient-gold {
+            background: linear-gradient(90deg, #DAA520 0%, #FFD700 50%, #DAA520 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-primary {
+            @apply inline-block px-8 py-4 rounded-full font-bold text-lg transition duration-300 ease-in-out;
+            background: linear-gradient(90deg, #6B8E23 0%, #8BC34A 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(107, 142, 35, 0.4);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #8BC34A 0%, #6B8E23 100%);
+            box-shadow: 0 6px 20px rgba(107, 142, 35, 0.6);
+            transform: translateY(-2px);
+        }
+        .section-separator {
+            @apply w-24 h-1 bg-gradient-to-r from-yellow-600 to-green-700 mx-auto my-8 rounded-full;
+        }
+        /* Custom styles for the language toggle switch */
+        .toggle-switch {
+            width: 100px;
+            height: 40px;
+            background: #8BC34A;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch-handle {
+            width: 50px;
+            height: 40px;
+            background: #ffffff;
+            border-radius: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .toggle-switch.english .toggle-switch-handle {
+            transform: translateX(50px);
+        }
+        .toggle-switch .lang-label {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            transition: color 0.3s;
+        }
+        .toggle-switch.english .lang-label.es { color: #f2f2f280; }
+        .toggle-switch.spanish .lang-label.en { color: #f2f2f280; }
+        .toggle-switch .lang-label.es { left: 0; }
+        .toggle-switch .lang-label.en { right: 0; }
+        /* Classes to hide/show specific language content */
+        .lang-es { display: block; }
+        .lang-en { display: none; }
+        .english .lang-es { display: none; }
+        .english .lang-en { display: block; }
+    </style>
+</head>
+<body class="bg-gray-50 antialiased" data-lang="es">
+
+    <!-- Language Switch Container (Fixed/Sticky at the top for easy access) -->
+    <div class="sticky top-0 z-50 bg-white shadow-md py-2">
+        <div class="container mx-auto px-4 flex justify-end">
+            <div id="language-toggle" class="toggle-switch spanish" onclick="toggleLanguage()">
+                <div class="lang-label es">ES</div>
+                <div class="lang-label en">EN</div>
+                <div class="toggle-switch-handle" id="switch-handle">
+                    <span id="handle-text">ES</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header & Hero Section -->
+    <header class="relative bg-gradient-to-br from-green-800 to-green-900 text-white py-16 md:py-24 overflow-hidden">
+        <div class="absolute inset-0 bg-pattern opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.1\' fill-rule=\'evenodd\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'3\'/%3E%3Ccircle cx=\'13\' cy=\'13\' r=\'3\'/%3E%3C/g%3E%3C/svg%3E');"></div>
+        <div class="container mx-auto px-4 relative z-10 text-center">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
+                <span class="text-gradient-gold">Nahuala</span> <span class="block sm:inline-block md:block text-xl sm:text-2xl font-normal opacity-90">nahuala.bio</span>
+            </h1>
+            <p class="text-2xl sm:text-3xl md:text-4xl font-semibold mb-6">
+                <span class="lang-es">Raíz Dorada</span> <span class="lang-en">Golden Root</span> Chilcuague Oral Spray – 20ml
+            </p>
+            <p class="text-xl sm:text-2xl md:text-3xl mb-8 opacity-90">
+                <span class="lang-es">Remedio ancestral mexicano para boca, garganta y digestión</span>
+                <span class="lang-en">Ancestral Mexican oral, throat & digestion support</span>
+            </p>
+            <p class="text-5xl md:text-6xl font-extrabold mb-10 text-yellow-300">
+                $450 MXN
+            </p>
+            <a href="#buy" class="btn-primary">
+                <span class="lang-es">Comprar Ahora</span><span class="lang-en">Buy Now</span>
+            </a>
+            <div class="mt-12 space-y-2 text-sm opacity-80">
+                <p>
+                    <span class="lang-es">Medicina tradicional mexicana desde 1521</span>
+                    <span class="lang-en">Mexican traditional medicine since 1521</span>
+                </p>
+                <p>
+                    <span class="lang-es">100% raíz silvestre de Sierra Gorda</span>
+                    <span class="lang-en">100% wildcrafted Sierra Gorda root</span>
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Chilcuague Section -->
+    <section id="about" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-6 text-green-700">
+                <span class="lang-es">Sobre Chilcuague</span> <span class="lang-en">About Chilcuague</span>
+            </h2>
+            <div class="section-separator"></div>
+            <div class="text-lg md:text-xl text-gray-700 leading-relaxed space-y-6 mt-8">
+                <p class="lang-es">
+                    El Chilcuague, también conocido como "raíz de oro", es una planta medicinal y culinaria endémica de México con usos ancestrales. Ha sido una parte significativa de las tradiciones herbales mexicanas durante siglos, valorada por sus propiedades curativas.
+                </p>
+                <p class="lang-en">
+                    Chilcuague, also known as "golden root", is an endemic medicinal and culinary plant from Mexico with ancestral uses. It has been a significant part of Mexican herbal traditions for centuries, valued for its healing properties.
+                </p>
+                <p class="lang-es">
+                    Nuestras plantas se cultivan exclusivamente en una región específica de México, gracias a su clima único, y tardan aproximadamente 40 días en madurar. La medicina Nahuala se deriva de las raíces de esta planta, mezclada delicadamente con un 90% de alcohol para asegurar sus cualidades antisépticas y potenciar sus efectos líquidos.
+                </p>
+                <p class="lang-en">
+                    Our plants are grown exclusively in a specific region of Mexico, due to its unique climate, and take approximately 40 days to mature. Nahuala medicine is derived from the roots of this plant, delicately mixed with 90% alcohol to ensure its antiseptic qualities and enhance its liquid abilities.
+                </p>
+                <p class="font-semibold text-green-800">
+                    <span class="lang-es">El pequeño vial de 20ml viene en una botella de vidrio con un pulverizador, perfecto para llevar.</span>
+                    <span class="lang-en">The small 20ml vial comes in a glass bottle with a spray nozzle, perfect for on-the-go use.</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="py-16 md:py-24 bg-green-50">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-6 text-green-700">
+                <span class="lang-es">Beneficios Clave</span> <span class="lang-en">Key Benefits</span>
+            </h2>
+            <div class="section-separator"></div>
+            <div class="grid md:grid-cols-2 gap-8 mt-8 text-lg text-gray-700">
+                <!-- Benefit 1: Oral & Throat Relief -->
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="font-bold text-xl md:text-2xl mb-3 text-yellow-700">
+                        <span class="lang-es">Alivio Oral y Garganta</span> <span class="lang-en">Oral & Throat Relief</span>
+                    </h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li class="lang-es">Alivio rápido para molestias dentales y de encías.</li>
+                        <li class="lang-en">Fast relief for tooth and gum discomfort.</li>
+                        <li class="lang-es">Soporta la higiene oral y refresca el aliento.</li>
+                        <li class="lang-en">Supports oral hygiene and freshens breath.</li>
+                        <li class="lang-es">Calma dolores de garganta y fatiga vocal.</li>
+                        <li class="lang-en">Soothes sore throats and voice strain.</li>
+                        <li class="lang-es">Ayuda con úlceras bucales y sensibilidad post-dental.</li>
+                        <li class="lang-en">Helps with mouth ulcers and post-dental sensitivity.</li>
+                    </ul>
+                </div>
+                <!-- Benefit 2: Travel & Immunity Companion -->
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="font-bold text-xl md:text-2xl mb-3 text-yellow-700">
+                        <span class="lang-es">Compañero de Viaje e Inmunidad</span> <span class="lang-en">Travel & Immunity Companion</span>
+                    </h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li class="lang-es">Esencial para mantener la salud oral en movimiento.</li>
+                        <li class="lang-en">Essential for on-the-go oral health.</li>
+                        <li class="lang-es">Apoya la inmunidad de la garganta en espacios concurridos.</li>
+                        <li class="lang-en">Supports throat immunity in crowded spaces.</li>
+                        <li class="lang-es">Fomenta un aliento fresco en cualquier lugar.</li>
+                        <li class="lang-en">Promotes fresh breath anywhere.</li>
+                        <li class="lang-es">Tamaño de 20ml ideal para viajes.</li>
+                        <li class="lang-en">20ml size is travel-friendly.</li>
+                    </ul>
+                </div>
+                <!-- Benefit 3: Digestive Kick-Starter -->
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="font-bold text-xl md:text-2xl mb-3 text-yellow-700">
+                        <span class="lang-es">Estimulante Digestivo</span> <span class="lang-en">Digestive Kick-Starter</span>
+                    </h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li class="lang-es">Estimula la producción de saliva y secreciones digestivas.</li>
+                        <li class="lang-en">Stimulates saliva and digestive secretions.</li>
+                        <li class="lang-es">Ayuda con la digestión lenta y la hinchazón ocasional.</li>
+                        <li class="lang-en">Helps with sluggish digestion and occasional bloating.</li>
+                        <li class="lang-es">Un toque moderno a los amargos tradicionales.</li>
+                        <li class="lang-en">A modern take on traditional bitters.</li>
+                        <li class="lang-es">Úsalo antes o después de las comidas.</li>
+                        <li class="lang-en">Use before or after meals.</li>
+                    </ul>
+                </div>
+                <!-- Benefit 4: Unique Effect -->
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="font-bold text-xl md:text-2xl mb-3 text-yellow-700">
+                        <span class="lang-es">Efecto Único</span> <span class="lang-en">Unique Effect</span>
+                    </h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li class="lang-es">Experimenta una agradable sensación de hormigueo y zumbido.</li>
+                        <li class="lang-en">Experience a pleasant buzzing and tingling sensation.</li>
+                        <li class="lang-es">Muchos lo describen como un "reinicio" rápido para la boca y la mente.</li>
+                        <li class="lang-en">Many describe it as a quick "reset" for the mouth and mind.</li>
+                        <li class="lang-es">La sensación es una señal de que está funcionando.</li>
+                        <li class="lang-en">The sensation is a sign it's working.</li>
+                        <li class="lang-es">No adictivo y seguro.</li>
+                        <li class="lang-en">Non-addictive and safe.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section id="how-to-use" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4 max-w-3xl text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-green-700">
+                <span class="lang-es">Modo de Empleo</span> <span class="lang-en">How to Use</span>
+            </h2>
+            <div class="section-separator"></div>
+            <div class="text-lg md:text-xl text-gray-700 leading-relaxed mt-8 space-y-4">
+                <p class="font-semibold">
+                    <span class="lang-es">Aplicar 1 o 2 pulverizaciones directamente en la boca o zona afectada.</span>
+                    <span class="lang-en">Spray 1-2 pumps directly into the mouth or affected area.</span>
+                </p>
+                <p>
+                    <span class="lang-es">Puedes aplicarlo en la lengua, paladar o mejillas. Trague la saliva y respire por la nariz.</span>
+                    <span class="lang-en">You can apply it on the tongue, palate, or cheeks. Swallow saliva and breathe through the nose.</span>
+                </p>
+                <p>
+                    <span class="lang-es">Puede causar una agradable sensación de hormigueo y adormecimiento. Úselo según sea necesario.</span>
+                    <span class="lang-en">May cause a pleasant tingling/numbing sensation. Use as needed.</span>
+                </p>
+                <p class="italic text-gray-600">
+                    <span class="lang-es">Para puntos orales (úlceras, herpes labial, encías irritadas), puede rociar directamente o aplicar con un hisopo de algodón limpio.</span>
+                    <span class="lang-en">For oral spots (ulcers, cold sores, irritated gums), you can target-spray or apply with a clean cotton swab.</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety & Precautions Section -->
+    <section id="safety" class="py-16 md:py-24 bg-red-50">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-6 text-red-700">
+                <span class="lang-es">Advertencias Importantes</span> <span class="lang-en">Important Cautions</span>
+            </h2>
+            <div class="section-separator bg-red-600"></div>
+            <div class="text-lg md:text-xl text-gray-800 leading-relaxed mt-8 space-y-6">
+                <p class="font-bold text-red-800">
+                    <span class="lang-es">¡ATENCIÓN! No combine con medicamentos recetados sin consultar a un profesional de la salud. Los compuestos activos pueden inhibir las enzimas hepáticas que metabolizan muchos fármacos, aumentando su concentración en el sistema.</span>
+                    <span class="lang-en">IMPORTANT! Do not combine with prescription medications without consulting a healthcare provider. Active compounds can inhibit liver enzymes that metabolize many drugs, potentially increasing their concentration in the system.</span>
+                </p>
+
+                <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                    <li>
+                        <span class="lang-es">Embarazo y Lactancia: No recomendado durante el embarazo o la lactancia sin asesoramiento médico.</span>
+                        <span class="lang-en">Pregnancy & Breastfeeding: Not recommended during pregnancy or breastfeeding without medical advice.</span>
+                    </li>
+                    <li>
+                        <span class="lang-es">Alergias: Evitar si tiene alergia a plantas de la familia Asteraceae (margarita).</span>
+                        <span class="lang-en">Allergies: Avoid if allergic to plants in the Asteraceae family (daisy).</span>
+                    </li>
+                    <li>
+                        <span class="lang-es">Interacciones Específicas: Usar con precaución si toma diuréticos, medicamentos para la próstata o si consume alcohol (puede prolongar la intoxicación).</span>
+                        <span class="lang-en">Specific Interactions: Use with caution if taking diuretics, prostate medications, or if consuming alcohol (may prolong intoxication).</span>
+                    </li>
+                    <li>
+                        <span class="lang-es">Enfermedades Preexistentes: Consulte a un profesional de la salud si tiene condiciones médicas preexistentes.</span>
+                        <span class="lang-en">Pre-existing Conditions: Consult a healthcare professional if you have pre-existing medical conditions.</span>
+                    </li>
+                </ul>
+                <p class="italic text-gray-600">
+                    <span class="lang-es">Siempre realice una prueba de parche antes de usar tópicamente y suspenda su uso si ocurren reacciones adversas.</span>
+                    <span class="lang-en">Always perform a patch test before topical use and discontinue if adverse reactions occur.</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action / Buy Section -->
+    <section id="buy" class="py-16 md:py-24 bg-gradient-to-br from-green-700 to-green-800 text-white text-center">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-yellow-300">
+                <span class="lang-es">¡Experimenta el Poder de la Raíz Dorada!</span>
+                <span class="lang-en">Experience the Power of the Golden Root!</span>
+            </h2>
+            <p class="text-xl md:text-2xl mb-8 opacity-90">
+                <span class="lang-es">Tu aliado natural para el bienestar oral, de garganta y digestivo.</span>
+                <span class="lang-en">Your natural ally for oral, throat, and digestive wellness.</span>
+            </p>
+            <p class="text-5xl md:text-6xl font-extrabold mb-10 text-yellow-300">
+                $450 MXN
+            </p>
+            <a href="#" class="btn-primary">
+                <span class="lang-es">Comprar Nahuala Ahora</span>
+                <span class="lang-en">Buy Nahuala Now</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Social Media Section -->
+    <section id="social" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-green-700">
+                <span class="lang-es">Síguenos en Redes Sociales</span> <span class="lang-en">Follow Us on Social Media</span>
+            </h2>
+            <div class="section-separator"></div>
+            <p class="text-lg md:text-xl text-gray-700 mt-8 mb-8">
+                <span class="lang-es">Descubre más sobre Nahuala y la Raíz Dorada.</span>
+                <span class="lang-en">Discover more about Nahuala and the Golden Root.</span>
+            </p>
+            <div class="flex justify-center space-x-6 text-4xl md:text-5xl">
+                <!-- Social media links remain the same -->
+                <a href="https://facebook.com/nahualabio" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 transition-colors duration-300">
+                    <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.776-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33V22C17.361 21.233 22 17.128 22 12z" clip-rule="evenodd"></path></svg>
+                    <span class="sr-only">Facebook</span>
+                </a>
+                <a href="https://instagram.com/nahualabio" target="_blank" rel="noopener noreferrer" class="text-pink-600 hover:text-pink-800 transition-colors duration-300">
+                    <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 0C8.74 0 8.333.014 7.053.072 5.775.132 4.965.247 4.295.513c-.626.255-1.181.593-1.635 1.048-.454.453-.792 1.009-1.047 1.635-.266.67-.381 1.48-.442 2.753-.058 1.28-.071 1.67-.071 4.343s.014 3.064.072 4.343c.06 1.273.175 2.083.441 2.753.255.626.593 1.181 1.048 1.635.453.454 1.009.792 1.635 1.047.67.266 1.48.381 2.753.442 1.28.058 1.67.071 4.343.071s3.064-.014 4.343-.071c1.273-.06 2.083-.175 2.753-.441.626-.255 1.181-.593 1.635-1.048.454-.453.792-1.009 1.635-1.047C20.687.513 19.877.398 18.604.337 17.324.279 16.933.266 12 .266zm0 2.293c3.687 0 4.129.014 5.56.071 1.207.057 1.777.21 2.164.363.387.153.64.372.846.578.206.206.425.459.578.846.153.387.306.957.363 2.164.057 1.43.071 1.873.071 5.56s-.014 4.129-.071 5.56c-.057 1.207-.21 1.777-.363 2.164-.153.387-.372.64-.578.846-.206.206-.459.425-.846.578-.387.153-.957.306-2.164.363-1.43.057-1.873.071-5.56.071s-4.129-.014-5.56-.071c-1.207-.057-1.777-.21-2.164-.363-.387-.153-.64-.372-.846-.578-.206-.206-.459-.425-.578-.846-.153-.387-.306-.957-.363-2.164-.057-1.43-.071-1.873-.071-5.56s.014-4.129.071-5.56c.057-1.207.21-1.777.363-2.164.153-.387.372-.64.578-.846.206-.206.459-.425.846-.578.387-.153.957-.306 2.164-.363C7.871 2.307 8.313 2.293 12 2.293zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" clip-rule="evenodd"></path></svg>
+                    <span class="sr-only">Instagram</span>
+                </a>
+                <a href="https://tiktok.com/@nahualabio" target="_blank" rel="noopener noreferrer" class="text-black hover:text-gray-700 transition-colors duration-300">
+                    <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.5 0C11.134 0 10 1.134 10 2.5v12.215c0 1.378-1.134 2.5-2.5 2.5S5 16.093 5 14.715V8c0-1.378-1.134-2.5-2.5-2.5S0 6.622 0 8v6.715c0 4.142 3.358 7.5 7.5 7.5S22 18.857 22 14.715V2.5C22 1.134 20.866 0 19.5 0S17 1.134 17 2.5v6.215c0 1.378-1.134 2.5-2.5 2.5S12 10.093 12 8.715V2.5c0-1.378-1.134-2.5-2.5-2.5z" clip-rule="evenodd"></path></svg>
+                    <span class="sr-only">TikTok</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-10">
+        <div class="container mx-auto px-4 text-center text-sm">
+            <p class="lang-es">&copy; 2025 Nahuala Bio. Todos los derechos reservados.</p>
+            <p class="lang-en">&copy; 2025 Nahuala Bio. All rights reserved.</p>
+            <p class="mt-2">
+                <a href="#about" class="hover:text-white transition-colors duration-300"><span class="lang-es">Sobre Nosotros</span><span class="lang-en">About Us</span></a> /
+                <a href="#benefits" class="hover:text-white transition-colors duration-300"><span class="lang-es">Beneficios</span><span class="lang-en">Benefits</span></a> /
+                <a href="#safety" class="hover:text-white transition-colors duration-300"><span class="lang-es">Advertencias</span><span class="lang-en">Cautions</span></a>
+            </p>
+            <p class="mt-2">
+                <a href="mailto:info@nahuala.bio" class="hover:text-white transition-colors duration-300">info@nahuala.bio</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Check local storage for preferred language, default to Spanish ('es')
+        let currentLang = localStorage.getItem('nahualaLang') || 'es';
+        
+        const toggleSwitch = document.getElementById('language-toggle');
+        const handleText = document.getElementById('handle-text');
+        const body = document.body;
+
+        // Function to set the page content language
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('nahualaLang', lang);
+
+            if (lang === 'en') {
+                body.classList.add('english');
+                toggleSwitch.classList.add('english');
+                toggleSwitch.classList.remove('spanish');
+                handleText.textContent = 'EN';
+                document.documentElement.lang = 'en';
+            } else {
+                body.classList.remove('english');
+                toggleSwitch.classList.add('spanish');
+                toggleSwitch.classList.remove('english');
+                handleText.textContent = 'ES';
+                document.documentElement.lang = 'es';
+            }
+        }
+
+        // Toggle function called by the switch click
+        function toggleLanguage() {
+            const newLang = currentLang === 'es' ? 'en' : 'es';
+            setLanguage(newLang);
+        }
+
+        // Initialize the language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage(currentLang);
+        });
+    </script>
+</body>
+</html>

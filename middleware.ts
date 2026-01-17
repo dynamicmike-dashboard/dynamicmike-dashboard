@@ -8,7 +8,11 @@ export function middleware(request: NextRequest) {
   // Your verified domain mapping
   const domainMap: Record<string, string> = {
     "breathoflifepdc.org": "breath-of-life",
-    "fifeart.com": "fifeart",
+   "celestialsigndesign.com": "celestial-sign-design",
+"chatall.day": "chatallday", 
+"chillmasterscotland.com": "chillmasterscotland",
+"consciousshifts.co.uk": "consciousshifts",
+ "fifeart.com": "fifeart",
     "inspiringspeakerspdc.com": "inspiringspeakerspdc",
     "louisevandervelde.com": "louisevandervelde",
     "maistermind.com": "maistermind",
@@ -18,6 +22,9 @@ export function middleware(request: NextRequest) {
     "pranatowers.com": "pranatowers",
     "realaicasa.com": "realaicasa",
     "reallifeavengers.com": "reallifeavengers",
+"social-media-management-services.com": "smms",
+
+
   };
 
   // Handle both 'domain.com' and 'www.domain.com'

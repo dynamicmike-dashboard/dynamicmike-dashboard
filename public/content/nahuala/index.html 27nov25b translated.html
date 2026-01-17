@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nahuala Raíz Dorada | Aztec Golden Root Chilcuague Spray</title>
+    <meta name="description" content="Nahuala Chilcuague Oral Spray - Remedio ancestral mexicano para apoyo oral, de garganta y digestión. Experimenta el alivio natural de la Raíz Dorada.">
+    <link rel="canonical" href="https://nahuala.bio/">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            background-color: #fdfaf6; /* Light cream */
+        }
+        h1, h2, h3, .font-merriweather {
+            font-family: 'Merriweather', serif;
+        }
+        .btn-primary {
+            background-color: #8B4513; /* Saddle Brown */
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #A0522D; /* Sienne */
+        }
+        .section-bg-light {
+            background-color: #fdfaf6; /* Light cream */
+        }
+        .section-bg-dark {
+            background-color: #f0e6d6; /* Moccasin Light */
+        }
+        .text-golden {
+            color: #DAA520; /* Goldenrod */
+        }
+        .text-brown-dark {
+            color: #5A3F2C; /* Darker brown for text */
+        }
+
+        /* --- Custom Language Toggle Styles --- */
+        .toggle-switch {
+            width: 100px;
+            height: 40px;
+            background: #DAA520; /* Golden color */
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch-handle {
+            width: 50px;
+            height: 40px;
+            background: #ffffff;
+            border-radius: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .toggle-switch.english .toggle-switch-handle {
+            transform: translateX(50px);
+        }
+        .toggle-switch .lang-label {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #5A3F2C; /* Dark Brown */
+            transition: color 0.3s;
+        }
+        .toggle-switch.english .lang-label.es { color: #f2f2f280; }
+        .toggle-switch.spanish .lang-label.en { color: #f2f2f280; }
+        .toggle-switch .lang-label.es { left: 0; }
+        .toggle-switch .lang-label.en { right: 0; }
+
+        /* Classes to hide/show specific language content */
+        .lang-es { display: block; }
+        .lang-en { display: none; }
+        .english .lang-es { display: none; }
+        .english .lang-en { display: block; }
+        /* Fix for inline items that need to be hidden/shown */
+        .lang-inline-es { display: inline; }
+        .lang-inline-en { display: none; }
+        .english .lang-inline-es { display: none; }
+        .english .lang-inline-en { display: inline; }
+
+        /* Ensure the body tag starts the language switch in Spanish */
+        body[data-lang="es"] .lang-en { display: none; }
+        body[data-lang="en"] .lang-es { display: none; }
+        body[data-lang="es"] .lang-inline-en { display: none; }
+        body[data-lang="en"] .lang-inline-es { display: none; }
+    </style>
+</head>
+<body class="antialiased" data-lang="es">
+
+    <!-- Language Switch Container (Fixed/Sticky at the top for easy access) -->
+    <div class="sticky top-0 z-50 bg-white shadow-md py-2">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-merriweather text-brown-dark font-bold">Nahuala.bio</a>
+            <div id="language-toggle" class="toggle-switch spanish" onclick="toggleLanguage()">
+                <div class="lang-label es">ES</div>
+                <div class="lang-label en">EN</div>
+                <div class="toggle-switch-handle" id="switch-handle">
+                    <span id="handle-text">ES</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-sm py-4 w-full z-40 relative hidden md:block">
+        <nav class="container mx-auto flex justify-end items-center px-4 md:px-6">
+            <ul class="flex space-x-6">
+                <li><a href="#about" class="text-brown-dark hover:text-golden transition-colors"><span class="lang-es">Nosotros</span> <span class="lang-en">About</span></a></li>
+                <li><a href="#benefits" class="text-brown-dark hover:text-golden transition-colors"><span class="lang-es">Beneficios</span> <span class="lang-en">Benefits</span></a></li>
+                <li><a href="#product" class="text-brown-dark hover:text-golden transition-colors"><span class="lang-es">Producto</span> <span class="lang-en">Product</span></a></li>
+                <li><a href="#safety" class="text-brown-dark hover:text-golden transition-colors"><span class="lang-es">Seguridad</span> <span class="lang-en">Safety</span></a></li>
+                <li><a href="#buy" class="btn-primary text-sm"><span class="lang-es">Comprar</span> <span class="lang-en">Buy</span></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-[80vh] flex items-center justify-center text-center bg-cover bg-center pt-24" style="background-image: url('https://images.unsplash.com/photo-1601004944804-0c58e8093e0b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="relative z-10 text-white p-6 max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-7xl font-merriweather font-bold mb-4 leading-tight">
+                <span class="block text-golden"><span class="lang-es">Nahuala Raíz Dorada</span><span class="lang-en">Nahuala Golden Root</span></span>
+                <span class="block mt-2"><span class="lang-es">Spray Oral Chilcuague Azteca</span><span class="lang-en">Aztec Chilcuague Oral Spray</span></span>
+            </h1>
+            <p class="text-xl md:text-2xl font-light mb-8">
+                <span class="lang-es">Remedio ancestral mexicano para apoyo oral, de garganta y digestión.</span>
+                <span class="lang-en">Ancestral Mexican remedy for oral, throat, and digestion support.</span>
+            </p>
+            <p class="text-4xl font-merriweather font-bold mb-8 text-golden">$450 MXN</p>
+            <a href="#buy" class="btn-primary text-lg md:text-xl inline-block px-10 py-3"><span class="lang-es">Comprar Ahora</span> <span class="lang-en">Buy Now</span></a>
+        </div>
+    </section>
+
+    <!-- About Nahuala/Chilcuague Section -->
+    <section id="about" class="section-bg-light py-16 md:py-24 px-4 md:px-6">
+        <div class="container mx-auto flex flex-col md:flex-row items-center gap-12">
+            <div class="md:w-1/2">
+                <img src="https://images.unsplash.com/photo-1590740209489-083407982463?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Chilcuague plant roots" class="rounded-lg shadow-xl w-full h-80 object-cover">
+            </div>
+            <div class="md:w-1/2 text-brown-dark">
+                <h2 class="text-4xl font-merriweather font-bold mb-6 text-brown-dark">
+                    <span class="lang-es">Conoce Nahuala</span> <span class="lang-en">Discover Nahuala</span>
+                </h2>
+                <p class="mb-4 text-lg leading-relaxed lang-es">
+                    Nahuala es el nombre comercial de una medicina excepcional derivada de la planta Chilcuague, también conocida como <strong class="text-golden">"raíz de oro"</strong>. Esta planta es endémica de México y ha sido utilizada desde tiempos ancestrales por sus notables propiedades medicinales y culinarias.
+                </p>
+                <p class="mb-4 text-lg leading-relaxed lang-en">
+                    Nahuala is the brand name for an exceptional medicine derived from the Chilcuague plant, also known as <strong class="text-golden">"golden root"</strong>. This plant is endemic to Mexico and has been used since ancestral times for its remarkable medicinal and culinary properties.
+                </p>
+                <p class="text-lg leading-relaxed lang-es">
+                    Nuestras plantas se cultivan exclusivamente en una región específica de México, donde el clima único permite su crecimiento óptimo, tardando aproximadamente 40 días en madurar. La medicina se extrae de las raíces de la planta, cuidadosamente mezclada con un 90% de alcohol para asegurar sus cualidades antisépticas y potenciar su efectividad líquida.
+                </p>
+                <p class="text-lg leading-relaxed lang-en">
+                    Our plants are grown exclusively in a specific region of Mexico, where the unique climate allows for optimal growth, taking approximately 40 days to mature. The medicine is derived from the plant roots, carefully mixed with 90% alcohol to ensure its antiseptic qualities and enhance its liquid effectiveness.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits & Uses Section -->
+    <section id="benefits" class="section-bg-dark py-16 md:py-24 px-4 md:px-6">
+        <div class="container mx-auto text-center text-brown-dark">
+            <h2 class="text-4xl font-merriweather font-bold mb-12">
+                <span class="lang-es">Beneficios y Usos</span> <span class="lang-en">Benefits & Uses</span>
+            </h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-merriweather font-semibold mb-4 text-golden"><span class="lang-es">Alivio Oral y Garganta</span> <span class="lang-en">Oral & Throat Relief</span></h3>
+                    <p class="text-lg lang-es">Experimenta un cosquilleo placentero que combate bacterias, alivia el dolor de muelas, las molestias en las encías, úlceras bucales y el dolor de garganta. Ideal para la higiene bucal.</p>
+                    <p class="text-lg lang-en">Experience a pleasant buzzing sensation that kills bacteria, relieves toothache, gum discomfort, mouth ulcers, and sore throat. Excellent for oral hygiene.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-merriweather font-semibold mb-4 text-golden"><span class="lang-es">Apoyo Digestivo</span> <span class="lang-en">Digestive Support</span></h3>
+                    <p class="text-lg lang-es">Como un "Arrancador Digestivo" natural, estimula la producción de saliva y jugos digestivos, ayudando con la digestión lenta, la hinchazón y las molestias estomacales.</p>
+                    <p class="text-lg lang-en">As a natural "Digestive Kick-Starter," it stimulates saliva production and digestive secretions, aiding with sluggish digestion, bloating, and stomach discomfort.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-merriweather font-semibold mb-4 text-golden"><span class="lang-es">Piel y Antiséptico</span> <span class="lang-en">Skin & Antiseptic</span></h3>
+                    <p class="text-lg lang-es">Sus propiedades antisépticas lo hacen útil para lesiones cutáneas menores, incluyendo lunares, y ayuda a combatir hongos y bacterias en la piel.</p>
+                    <p class="text-lg lang-en">Its antiseptic properties make it useful for minor skin injuries, including moles, and helps combat skin fungi and bacteria.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-merriweather font-semibold mb-4 text-golden"><span class="lang-es">Efecto Único y Energizante</span> <span class="lang-en">Unique & Energizing Effect</span></h3>
+                    <p class="text-lg lang-es">La gente adora el efecto de cosquilleo distintivo. También puede proporcionar un impulso de energía y claridad mental, similar a la cafeína.</p>
+                    <p class="text-lg lang-en">People love the unique tingling effect. It can also provide a boost in energy and mental clarity, similar to caffeine.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-merriweather font-semibold mb-4 text-golden"><span class="lang-es">Compañero de Viaje e Inmunidad</span> <span class="lang-en">Travel & Immunity Companion</span></h3>
+                    <p class="text-lg lang-es">Un "boticario de bolsillo" perfecto para viajes. Mantiene la salud bucal, refresca el aliento y apoya la inmunidad de la garganta en entornos concurridos.</p>
+                    <p class="text-lg lang-en">A perfect "pocket apothecary" for travel. Maintains oral health, freshens breath, and supports throat immunity in crowded spaces.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-2xl font-merriweather font-semibold mb-4 text-golden"><span class="lang-es">Remedio Ancestral Multipropósito</span> <span class="lang-en">Multi-Purpose Ancestral Remedy</span></h3>
+                    <p class="text-lg lang-es">Posicionado como un remedio mexicano ancestral multiusos para el apoyo oral, intestinal, cutáneo y del dolor, respaldado por la tradición y la investigación emergente.</p>
+                    <p class="text-lg lang-en">Positioned as a multi-purpose Mexican ancestral remedy for oral, gut, skin, and pain support, backed by both tradition and emerging research.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Details Section -->
+    <section id="product" class="section-bg-light py-16 md:py-24 px-4 md:px-6">
+        <div class="container mx-auto flex flex-col md:flex-row items-center gap-12">
+            <div class="md:w-1/2 text-brown-dark">
+                <h2 class="text-4xl font-merriweather font-bold mb-6">
+                    <span class="lang-es">Nuestro Producto</span> <span class="lang-en">Our Product</span>
+                </h2>
+                <p class="mb-4 text-lg leading-relaxed lang-es">
+                    Nahuala Chilcuague Oral Spray se presenta en una pequeña botella de vidrio de 20ml, equipada con una boquilla pulverizadora para una aplicación fácil y precisa. Su formato compacto lo convierte en su "boticario de bolsillo" ideal, perfecto para llevarlo a todas partes.
+                </p>
+                <p class="mb-4 text-lg leading-relaxed lang-en">
+                    Nahuala Chilcuague Oral Spray comes in a small 20ml glass bottle, equipped with a spray nozzle for easy and precise application. Its compact format makes it your ideal "pocket apothecary," perfect for carrying everywhere.
+                </p>
+                <p class="mb-4 text-lg leading-relaxed lang-es">
+                    Cada botella contiene la esencia pura de la raíz de Chilcuague, cuidadosamente elaborada para maximizar sus propiedades. La delicada mezcla incluye un 90% de alcohol, esencial para asegurar sus cualidades antisépticas y mejorar la capacidad de dispersión del líquido.
+                </p>
+                <p class="text-lg leading-relaxed lang-en">
+                    Each bottle contains the pure essence of the Chilcuague root, carefully crafted to maximize its properties. The delicate mix includes 90% alcohol, essential to ensure its antiseptic qualities and enhance the liquid's dispersal abilities.
+                </p>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <img src="https://images.unsplash.com/photo-1594892415170-c50f8373b528?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Nahuala Chilcuague Spray bottle" class="w-full md:w-3/4 lg:w-2/3 rounded-lg shadow-xl">
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety & Precautions Section -->
+    <section id="safety" class="section-bg-dark py-16 md:py-24 px-4 md:px-6 text-brown-dark">
+        <div class="container mx-auto">
+            <h2 class="text-4xl font-merriweather font-bold mb-12 text-center">
+                <span class="lang-es">Advertencias Importantes</span> <span class="lang-en">Important Warnings</span>
+            </h2>
+            <div class="bg-red-50 p-8 rounded-lg shadow-md border-l-4 border-red-600">
+                <p class="text-xl font-semibold mb-4 text-red-700">
+                    <span class="lang-es">Es crucial leer la siguiente información antes de usar Nahuala Chilcuague Oral Spray.</span>
+                    <span class="lang-en">It is crucial to read the following information before using Nahuala Chilcuague Oral Spray.</span>
+                </p>
+                <ul class="list-disc list-inside space-y-3 text-lg">
+                    <li>
+                        <strong><span class="lang-inline-es">Interacciones Medicamentosas</span><span class="lang-inline-en">Drug Interactions</span>:</strong> 
+                        <span class="lang-es">No combine con medicamentos recetados sin consultar a un profesional de la salud. Los compuestos activos pueden inhibir las enzimas hepáticas que metabolizan muchos fármacos, aumentando sus concentraciones en el sistema.</span>
+                        <span class="lang-en">Do not combine with prescription medications without consulting a healthcare provider. Active compounds can inhibit liver enzymes that metabolize many drugs, potentially increasing their concentration in the system.</span>
+                    </li>
+                    <li>
+                        <strong><span class="lang-inline-es">Embarazo y Lactancia</span><span class="lang-inline-en">Pregnancy and Breastfeeding</span>:</strong> 
+                        <span class="lang-es">No recomendado durante el embarazo o la lactancia sin la aprobación de un médico.</span>
+                        <span class="lang-en">Not recommended during pregnancy or breastfeeding without medical approval.</span>
+                    </li>
+                    <li>
+                        <strong><span class="lang-inline-es">Alergias</span><span class="lang-inline-en">Allergies</span>:</strong> 
+                        <span class="lang-es">Evitar si tiene alergia a plantas de la familia Asteraceae (margaritas, ambrosía).</span>
+                        <span class="lang-en">Avoid if you have allergies to plants in the Asteraceae (daisy) family.</span>
+                    </li>
+                    <li>
+                        <strong><span class="lang-inline-es">Condiciones Médicas Específicas</span><span class="lang-inline-en">Specific Medical Conditions</span>:</strong> 
+                        <span class="lang-es">Use con precaución si toma diuréticos o medicamentos para la próstata. Consulte a un médico si tiene afecciones médicas graves.</span>
+                        <span class="lang-en">Use with caution if taking diuretic or prostate medications. Consult a doctor if you have serious medical conditions.</span>
+                    </li>
+                    <li>
+                        <strong><span class="lang-inline-es">Consumo de Alcohol</span><span class="lang-inline-en">Alcohol Consumption</span>:</strong> 
+                        <span class="lang-es">Chilcuague puede prolongar la intoxicación por alcohol; evite su uso simultáneo.</span>
+                        <span class="lang-en">Chilcuague may prolong alcohol intoxication; avoid concurrent use.</span>
+                    </li>
+                    <li>
+                        <strong><span class="lang-inline-es">Prueba de Parche</span><span class="lang-inline-en">Patch Test</span>:</strong> 
+                        <span class="lang-es">Siempre realice una prueba de parche antes de usar tópicamente y suspenda si ocurre alguna reacción adversa.</span>
+                        <span class="lang-en">Always perform a patch test before using topically and discontinue use if adverse reactions occur.</span>
+                    </li>
+                    <li>
+                        <strong><span class="lang-inline-es">Efectos Secundarios Menores</span><span class="lang-inline-en">Minor Side Effects</span>:</strong> 
+                        <span class="lang-es">Puede causar hormigueo o adormecimiento, y secreción excesiva de saliva, sudor u orina. Estos son efectos naturales y generalmente leves.</span>
+                        <span class="lang-en">May cause tingling or numbing, and oversecretion of saliva, sweat, or urine. These are natural and generally mild effects.</span>
+                    </li>
+                </ul>
+                <p class="mt-6 text-xl font-semibold text-center text-brown-dark">
+                    <span class="lang-es">Siempre consulte a un profesional de la salud antes de incorporar Chilcuague a su régimen, especialmente si tiene condiciones médicas preexistentes o toma medicamentos.</span>
+                    <span class="lang-en">Always consult a healthcare professional before incorporating Chilcuague into your regimen, especially if you have pre-existing medical conditions or take medications.</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Signals / Testimonials (Placeholder) -->
+    <section class="section-bg-light py-16 md:py-24 px-4 md:px-6">
+        <div class="container mx-auto text-center text-brown-dark">
+            <h2 class="text-4xl font-merriweather font-bold mb-12">
+                <span class="lang-es">Nuestra Tradición</span> <span class="lang-en">Our Tradition</span>
+            </h2>
+            <div class="max-w-3xl mx-auto">
+                <p class="text-xl leading-relaxed mb-6">
+                    <strong class="text-golden lang-es">Medicina tradicional mexicana desde 1521.</strong>
+                    <strong class="text-golden lang-en">Mexican traditional medicine since 1521.</strong>
+                </p>
+                <p class="text-xl leading-relaxed mb-6">
+                    <strong class="text-golden lang-es">100% raíz silvestre de Sierra Gorda.</strong>
+                    <strong class="text-golden lang-en">100% wildcrafted Sierra Gorda root.</strong>
+                </p>
+                <div class="bg-f0e6d6 p-8 rounded-lg shadow-md italic text-lg">
+                    <p class="mb-4 lang-es">"El cosquilleo es increíble, me ayudó con mi dolor de muelas al instante. ¡Lo recomiendo!" - María P.</p>
+                    <p class="mb-4 lang-en">"The tingling is incredible, it helped my toothache instantly. I highly recommend it!" - Maria P.</p>
+                    <p class="mb-4 lang-es">"Lo llevo a todos mis viajes, es mi salvavidas para la garganta y la digestión." - Carlos G.</p>
+                    <p class="lang-en">"I take it on all my travels, it's my lifesaver for my throat and digestion." - Carlos G.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action / Buy Section -->
+    <section id="buy" class="bg-gradient-to-r from-[#DAA520] to-[#8B4513] py-20 text-center text-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl md:text-5xl font-merriweather font-bold mb-6 leading-tight">
+                <span class="lang-es">¿Listo para experimentar Nahuala?</span>
+                <span class="lang-en">Ready to experience Nahuala?</span>
+            </h2>
+            <p class="text-xl md:text-2xl font-light mb-8">
+                <span class="lang-es">Obtén tu Nahuala Chilcuague Oral Spray hoy mismo y siente el poder de la Raíz Dorada.</span>
+                <span class="lang-en">Get your Nahuala Chilcuague Oral Spray today and feel the power of the Golden Root.</span>
+            </p>
+            <p class="text-5xl font-merriweather font-bold mb-8">$450 MXN</p>
+            <a href="#" class="btn-primary inline-block bg-white text-brown-dark hover:bg-gray-100 text-xl md:text-2xl px-12 py-4"><span class="lang-es">Comprar Ahora</span> <span class="lang-en">Buy Now</span></a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brown-dark text-white py-10 px-4 md:px-6">
+        <div class="container mx-auto text-center">
+            <p class="mb-4">&copy; <span id="current-year"></span> Nahuala.bio. <span class="lang-es">Todos los derechos reservados</span> <span class="lang-en">All rights reserved</span></p>
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="https://www.instagram.com/nahuala.bio" target="_blank" class="text-white hover:text-golden transition-colors" aria-label="Instagram">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M7.8 2c-.5 0-1 .2-1.4.6C6 3 5.8 3.5 5.8 4v16c0 .5.2 1 .6 1.4.4.4.9.6 1.4.6h8.4c.5 0 1-.2 1.4-.6.4-.4.6-.9.6-1.4V4c0-.5-.2-1-.6-1.4-.4-.4-.9-.6-1.4-.6H7.8zM12 16a4 4 0 100-8 4 4 0 000 8zm-6.2-12h12.4v12.4h-12.4V4zm6.2 2a6 6 0 110 12 6 6 0 010-12zm-3-1.5c.8 0 1.5-.7 1.5-1.5s-.7-1.5-1.5-1.5-1.5.7-1.5 1.5.7 1.5 1.5 1.5z"></path></svg>
+                </a>
+                <a href="https://www.facebook.com/nahuala.bio" target="_blank" class="text-white hover:text-golden transition-colors" aria-label="Facebook">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.815c-3.234 0-4.185 1.22-4.185 4.573v2.427z"></path></svg>
+                </a>
+                <a href="https://www.tiktok.com/@nahuala.bio" target="_blank" class="text-white hover:text-golden transition-colors" aria-label="TikTok">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525 2.102c.813-.049 1.637-.035 2.457.067.172 1.62-.51 3.23-1.636 4.354-1.218 1.217-2.736 1.838-4.354 1.838v2.09c1.62-.036 3.238-.658 4.457-1.877 1.217-1.218 1.838-2.736 1.877-4.354.912.193 1.724.46 2.449.805.216 1.944-.509 3.886-1.838 5.215-1.218 1.217-2.736 1.838-4.354 1.838v2.09c1.62-.036 3.238-.658 4.457-1.877 1.217-1.218 1.838-2.736 1.877-4.354.912.193 1.724.46 2.449.805.216 1.944-.509 3.886-1.838 5.215-1.218 1.217-2.736 1.838-4.354 1.838v2.09c1.62-.036 3.238-.658 4.457-1.877 1.217-1.218 1.838-2.736 1.877-4.354.912.193 1.724.46 2.449.805.216 1.944-.509 3.886-1.838 5.215-1.218 1.217-2.736 1.838-4.354 1.838v2.09c1.62-.036 3.238-.658 4.457-1.877 1.217-1.218 1.838-2.736 1.877-4.354.912.193 1.724.46 2.449.805.216 1.944-.509 3.886-1.838 5.215-1.218 1.217-2.736" clip-rule="evenodd"></path></svg>
+                </a>
+            </div>
+            <a href="mailto:info@nahuala.bio" class="hover:text-golden transition-colors">info@nahuala.bio</a>
+        </div>
+    </footer>
+
+    <script>
+        // Set the current year for the footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Check local storage for preferred language, default to Spanish ('es')
+        let currentLang = localStorage.getItem('nahualaLang') || 'es';
+        
+        const toggleSwitch = document.getElementById('language-toggle');
+        const handleText = document.getElementById('handle-text');
+        const body = document.body;
+
+        // Function to set the page content language
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('nahualaLang', lang);
+
+            if (lang === 'en') {
+                body.classList.add('english');
+                toggleSwitch.classList.add('english');
+                toggleSwitch.classList.remove('spanish');
+                handleText.textContent = 'EN';
+                document.documentElement.lang = 'en';
+                body.setAttribute('data-lang', 'en');
+            } else {
+                body.classList.remove('english');
+                toggleSwitch.classList.add('spanish');
+                toggleSwitch.classList.remove('english');
+                handleText.textContent = 'ES';
+                document.documentElement.lang = 'es';
+                body.setAttribute('data-lang', 'es');
+            }
+        }
+
+        // Toggle function called by the switch click
+        function toggleLanguage() {
+            const newLang = currentLang === 'es' ? 'en' : 'es';
+            setLanguage(newLang);
+        }
+
+        // Initialize the language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage(currentLang);
+        });
+    </script>
+</body>
+</html>
