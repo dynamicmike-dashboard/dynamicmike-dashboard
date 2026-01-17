@@ -1,13 +1,13 @@
 import Link from 'next/link';
-import fs from 'fs';
-import path from 'path';
 
 export default function Sidebar() {
-  const contentDir = path.join(process.cwd(), 'public', 'content');
-  // Get all site folders
-  const sites = fs.readdirSync(contentDir).filter(file => 
-    fs.statSync(path.join(contentDir, file)).isDirectory()
-  );
+  // Hard-coded list for Vercel/Cloud visibility
+  const sites = [
+    "breath-of-life", "fifeart", "inspiringspeakerspdc", 
+    "louisevandervelde", "maistermind", "pdcyes", 
+    "playaphotos", "playavida", "pranatowers", 
+    "realaicasa", "reallifeavengers"
+  ];
 
   return (
     <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col h-full overflow-y-auto">
