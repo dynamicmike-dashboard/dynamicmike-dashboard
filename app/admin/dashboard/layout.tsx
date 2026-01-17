@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import Sidebar from '@/components/Sidebar'; // Ensure this matches Sidebar.tsx exactly
+import Link from 'next/link'; // <--- ADD THIS LINE
+import Sidebar from '@/components/Sidebar';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,7 +17,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Mobile Sidebar Overlay */}
       <div className={`fixed inset-0 z-50 md:hidden transition-all duration-300 ${isMenuOpen ? "visible" : "invisible"}`}>
         <div className={`absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity ${isMenuOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsMenuOpen(false)} />
-        <div className={`relative w-64 h-full transition-transform ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        <div className={`relative w-72 h-full transition-transform ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
           <Sidebar onClose={() => setIsMenuOpen(false)} />
         </div>
       </div>
