@@ -1,4 +1,5 @@
-import "./global.css"; // Check: Is your file named global.css or globals.css?
+// Change "globals" to "global" if that is what your file is named
+import "./global.css"; 
 
 export default function RootLayout({
   children,
@@ -6,7 +7,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className="bg-slate-950 text-white">
         {children}
       </body>

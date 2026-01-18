@@ -1,15 +1,15 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone', 
+  output: 'standalone',
+  // Move it here, outside of experimental
+  outputFileTracingExcludes: {
+    '*': [
+      'node_modules/@swc/core-linux-x64-gnu',
+      'node_modules/@swc/core-linux-x64-musl',
+      'public/content/**',
+    ],
+  },
   experimental: {
-    // This helps Next.js ignore heavy folders that aren't needed for the UI
-    outputFileTracingExcludes: {
-      '*': [
-        'node_modules/@swc/core-linux-x64-gnu',
-        'node_modules/@swc/core-linux-x64-musl',
-        'public/content/**', // Exclude the 1GB+ of site content from function bundling
-      ],
-    },
+    // Keep this empty or add other experimental flags here
   },
 };
 
