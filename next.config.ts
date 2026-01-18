@@ -1,15 +1,16 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
-  // This prevents Next.js from trying to "watch" your 1GB of site content for changes
-  watchOptions: {
-    ignored: ['**/public/content/**', '**/node_modules/**'],
-  },
+  // Next.js 15 root-level property for slimming down the build
   outputFileTracingExcludes: {
     '*': [
       'node_modules/@swc/core-linux-x64-gnu',
       'node_modules/@swc/core-linux-x64-musl',
       'public/content/**',
     ],
+  },
+  experimental: {
+    // Keep this clean to avoid terminal warnings
   },
 };
 
