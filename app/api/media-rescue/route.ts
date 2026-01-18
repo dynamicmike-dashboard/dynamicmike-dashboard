@@ -6,45 +6,47 @@ import axios from 'axios';
 export async function POST(request: Request) {
   try {
     const { siteId, htmlContent } = await request.json();
+    
+    // Path to your F: drive content folder
     const imagesDir = path.join(process.cwd(), 'public', 'content', siteId, 'images');
 
-    // Create images folder if it doesn't exist
-    if (!fs.existsSync(imagesDir)) fs.mkdirSync(imagesDir, { recursive: true });
+    if (!fs.existsSync(imagesDir)) {
+      fs.mkdirSync(imagesDir, { recursive: true });
+    }
 
-    // Find all image URLs (src="...")
     const imgRegex = /<img[^>]+src="([^">]+)"/g;
     let match;
     let updatedHtml = htmlContent;
-    const downloadedFiles = [];
+    let count = 0;
 
     while ((match = imgRegex.exec(htmlContent)) !== null) {
       const externalUrl = match[1];
-      
-      // Skip if already local or a data URI
-      if (externalUrl.startsWith('images/') || externalUrl.startsWith('data:')) continue;
 
-      try {
-        const fileName = path.basename(new URL(externalUrl).pathname) || `img-${Date.now()}.png`;
-        const localPath = path.join(imagesDir, fileName);
+      // Only rescue external links (GHL or Google)
+      if (externalUrl.includes('http')) {
+        try {
+          // Create a clean filename from the URL or timestamp
+          const urlObj = new URL(externalUrl);
+          let fileName = path.basename(urlObj.pathname).split('?')[0];
+          if (!fileName || fileName.length < 3) fileName = `asset-${Date.now()}-${count}.png`;
+          
+          const localPath = path.join(imagesDir, fileName);
 
-        // Download the image
-        const response = await axios.get(externalUrl, { responseType: 'arraybuffer' });
-        fs.writeFileSync(localPath, Buffer.from(response.data));
+          // Fetch from Google/GHL and save to F: drive
+          const response = await axios.get(externalUrl, { responseType: 'arraybuffer' });
+          fs.writeFileSync(localPath, Buffer.from(response.data));
 
-        // Update the HTML string to use local path
-        updatedHtml = updatedHtml.replace(externalUrl, `images/${fileName}`);
-        downloadedFiles.push(fileName);
-      } catch (e) {
-        console.error(`Failed to download: ${externalUrl}`);
+          // Update the HTML reference
+          updatedHtml = updatedHtml.replace(externalUrl, `images/${fileName}`);
+          count++;
+        } catch (err) {
+          console.error(`Skipped: ${externalUrl}`);
+        }
       }
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      updatedHtml, 
-      count: downloadedFiles.length 
-    });
+    return NextResponse.json({ success: true, updatedHtml, count });
   } catch (error) {
-    return NextResponse.json({ success: false, error: "Media rescue failed" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Sync failed" }, { status: 500 });
   }
 }
