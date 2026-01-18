@@ -1,52 +1,91 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Link from 'next/link';
 
-export default function LandingPage() {
-  const [sites, setSites] = useState<string[]>([]);
+export default function Home() {
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    fetch('/api/get-sites').then(res => res.json()).then(setSites);
-  }, []);
+  const sites = [
+  { id: "Breath of Life", domain: "breathoflifepdc.org" }, // Example: Adjust to your actual domain
 
-  const filteredSites = sites.filter(s => 
-    s.toLowerCase().replace(/-/g, ' ').includes(search.toLowerCase())
+{ id: "InspiringSpeakersPDC", domain: "inspiringspeakerspdc.com" },
+
+{ id: "mAIstermind", domain: "maistermind.com" },
+
+{ id: "PDCYES", domain: "pdcyes.com" },
+
+{ id: "Playa Photos", domain: "playa.photos" },
+
+  { id: "PlayaVida", domain: "playavida.org" }, // Note the .org
+  { id: "Celestial Sign", domain: "celestialsigndesign.com" },
+
+{ id: "Chat All Day", domain: "chatall.day" },
+
+{ id: "Chillmaster Scotland", domain: "chillmasterscotland.com" },
+
+{ id: "Conscious Shifts", domain: "consciousshifts.co.uk" },
+
+{ id: "FifeArt", domain: "fifeart.com" },
+
+{ id: "Louise VDV", domain: "louisevandervelde.com" },
+
+  { id: "PranaTowers", domain: "pranatowers.com" },
+
+  { id: "RealLifeAvengers", domain: "reallifeavengers.com" },
+
+{ id: "RealAi casa", domain: "realaicasa.com" },
+
+{ id: "SMMS", domain: "social-media-management-services.com" },
+ ];
+
+  const filtered = sites.filter(s => 
+    s.id.toLowerCase().includes(search.toLowerCase()) || 
+    s.domain.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="bg-slate-950 min-h-screen text-white p-10 font-sans">
-      <header className="max-w-4xl mx-auto mb-12 text-center">
-        <h1 className="text-6xl font-black text-cyan-400 italic tracking-tighter mb-8">AURA DYNAMIC</h1>
-        <div className="relative max-w-md mx-auto">
-          <input 
-            type="text"
-            placeholder="Search rescued sites..."
-            className="w-full bg-slate-900 border border-slate-800 rounded-2xl px-6 py-4 text-white focus:ring-2 focus:ring-cyan-500 outline-none"
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <div className="absolute right-4 top-4 text-xs font-mono text-cyan-600 bg-cyan-950/30 px-2 py-1 rounded">
-            {filteredSites.length} MATCHING
-          </div>
+    <div className="min-h-screen bg-slate-950 text-white p-8">
+      <header className="max-w-6xl mx-auto mb-12 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div>
+          <h1 className="text-4xl font-black tracking-tighter text-cyan-400 italic">GHL RESCUE</h1>
+          <p className="text-slate-500 font-medium">Command Center & Site Manager</p>
         </div>
+        
+        <input 
+          type="text"
+          placeholder="Search your empire..."
+          className="w-full md:w-96 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-cyan-100 focus:outline-none focus:border-cyan-500 transition-all"
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </header>
-      
-      <main className="max-w-4xl mx-auto grid gap-6 grid-cols-1 md:grid-cols-2">
-        {/* THIS IS THE KEY: We map over filteredSites, not 'sites' */}
-        {filteredSites.map((folderId) => (
-          <div key={folderId} className="p-8 bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl hover:border-cyan-500 transition-all group">
-            <h2 className="text-2xl font-bold mb-6 capitalize">{folderId.replace(/-/g, ' ')}</h2>
-            <div className="flex flex-col gap-3">
-              <a href={`/view/${folderId}`} className="bg-cyan-600 px-6 py-3 rounded-xl font-bold text-center hover:bg-cyan-500 shadow-lg shadow-cyan-900/20">
-                Visit Public Site
-              </a>
-              <a href={`/admin/dashboard/${folderId}`} className="border border-slate-700 px-6 py-3 rounded-xl text-slate-400 text-center hover:bg-slate-800">
-                Open Admin Dashboard
+
+      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filtered.map(site => (
+          <div key={site.id} className="bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-cyan-500/50 transition-all group shadow-xl">
+            <h3 className="text-xl font-bold capitalize mb-1 group-hover:text-cyan-400 transition-colors">
+              {site.id.replace(/-/g, ' ')}
+            </h3>
+            <p className="text-xs text-slate-500 font-mono mb-6">{site.domain}</p>
+            
+            <div className="flex gap-3">
+              <Link 
+                href={`/admin/dashboard/${site.id}`}
+                className="flex-1 bg-slate-800 hover:bg-cyan-600 text-white text-center py-2 rounded-lg text-xs font-black transition-all"
+              >
+                MANAGE
+              </Link>
+              <a 
+                href={`https://${site.domain}`}
+                target="_blank"
+                className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-center py-2 rounded-lg text-xs font-black transition-all"
+              >
+                LIVE SITE
               </a>
             </div>
           </div>
         ))}
-      </main>
+      </div>
     </div>
   );
 }
