@@ -25,10 +25,14 @@ export async function POST(request: Request) {
       // Only rescue external links (GHL or Google)
       if (externalUrl.includes('http')) {
         try {
-          // Create a clean filename from the URL or timestamp
           const urlObj = new URL(externalUrl);
+          // NEW FILENAME LOGIC: Truncate long AI prompt filenames
           let fileName = path.basename(urlObj.pathname).split('?')[0];
-          if (!fileName || fileName.length < 3) fileName = `asset-${Date.now()}-${count}.png`;
+          
+          if (!fileName || fileName.length > 50 || fileName.length < 3) {
+            // Generates a short, unique name like img-1737241800-452.png
+            fileName = `img-${Date.now()}-${Math.floor(Math.random() * 1000)}.png`;
+          }
           
           const localPath = path.join(imagesDir, fileName);
 

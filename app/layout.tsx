@@ -1,4 +1,3 @@
-// Change "globals" to "global" if that is what your file is named
 import "./global.css"; 
 
 export default function RootLayout({
