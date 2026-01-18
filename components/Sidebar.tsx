@@ -9,27 +9,26 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const [search, setSearch] = useState("");
 
   // Update this list whenever you add a new site to middleware
-  const sites = [
-   { id: "Breath of Life", domain: "breathoflifepdc.org" }, // Example: Adjust to your actual domain
-{ id: "InspiringSpeakersPDC", domain: "inspiringspeakerspdc.com" },
-{ id: "mAIstermind", domain: "maistermind.com" },
-{ id: "PDCYES", domain: "pdcyes.com" },
-{ id: "Playa Photos", domain: "playa.photos" },
-  { id: "PlayaVida", domain: "playavida.org" }, // Note the .org
+ const sites = [
+  { id: "breath-of-life", label: "Breath of Life", domain: "breathoflifepdc.org" },
+  { id: "inspiringspeakerspdc", label: "InspiringSpeakersPDC", domain: "inspiringspeakerspdc.com" },
+  { id: "maistermind", label: "mAIstermind", domain: "maistermind.com" },
+  { id: "pdcyes", label: "PDCYES", domain: "pdcyes.com" },
+  { id: "playaphotos", label: "Playa Photos", domain: "playa.photos" },
+  { id: "playavida", label: "PlayaVida", domain: "playavida.org" },
+  { id: "celestial-sign-design", label: "Celestial Sign", domain: "celestialsigndesign.com" },
+  { id: "chatallday", label: "Chat All Day", domain: "chatall.day" },
+  { id: "chillmasterscotland", label: "Chillmaster Scotland", domain: "chillmasterscotland.com" },
+  { id: "consciousshifts", label: "Conscious Shifts", domain: "consciousshifts.co.uk" },
+  { id: "fifeart", label: "FifeArt", domain: "fifeart.com" },
+  { id: "louisevandervelde", label: "Louise VDV", domain: "louisevandervelde.com" },
+  { id: "pranatowers", label: "PranaTowers", domain: "pranatowers.com" },
+  { id: "reallifeavengers", label: "RealLifeAvengers", domain: "reallifeavengers.com" },
+  { id: "realaicasas", label: "RealAi casa", domain: "realaicasa.com" },
+  { id: "smms", label: "SMMS", domain: "social-media-management-services.com" },
+ { id: "nahuala", label: "Nahuala", domain: "nahuala.bio" },
 
-  // Add the new sites you added to middleware here:
-  { id: "Celestial Sign", domain: "celestialsigndesign.com" },
-{ id: "Chat All Day", domain: "chatall.day" },
-{ id: "Chillmaster Scotland", domain: "chillmasterscotland.com" },
-{ id: "Conscious Shifts", domain: "consciousshifts.co.uk" },
-{ id: "FifeArt", domain: "fifeart.com" },
-{ id: "Louise VDV", domain: "louisevandervelde.com" },
-  { id: "PranaTowers", domain: "pranatowers.com" },
-  { id: "RealLifeAvengers", domain: "reallifeavengers.com" },
-{ id: "RealAi casa", domain: "realaicasa.com" },
-{ id: "SMMS", domain: "social-media-management-services.com" },
-
- ];
+];
 
   const filteredSites = sites.filter(site => 
     site.id.toLowerCase().includes(search.toLowerCase()) || 
@@ -80,36 +79,37 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
       </div>
       
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto scrollbar-hide">
-        <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold px-3 mb-2">
-          {search ? `Results (${filteredSites.length})` : "Active Projects"}
-        </p>
-        
-        {filteredSites.map(site => (
-          <div key={site.id} className="group flex flex-col p-1 rounded-lg hover:bg-slate-800/50 transition-all border border-transparent hover:border-slate-800">
-            <div className="flex items-center justify-between px-2 py-1">
-              <span className="text-sm font-medium text-slate-300 capitalize truncate">{site.id.replace(/-/g, ' ')}</span>
-            </div>
-            
-            <div className="flex gap-1 mt-1">
-              <Link 
-                href={`/admin/dashboard/${site.id}`}
-                onClick={onClose}
-                className="flex-1 text-[10px] font-bold text-center py-1.5 bg-slate-800 text-slate-400 rounded hover:bg-cyan-600 hover:text-white transition-all"
-              >
-                EDIT
-              </Link>
-              <a 
-                href={`https://${site.domain}`} 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 text-[10px] font-bold text-center py-1.5 bg-slate-800 text-slate-400 rounded hover:bg-slate-700 hover:text-white transition-all"
-              >
-                VIEW LIVE
-              </a>
-            </div>
-          </div>
-        ))}
-      </nav>
+  <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold px-3 mb-2">
+    {search ? `Results (${filteredSites.length})` : "Active Projects"}
+  </p>
+  
+  {filteredSites.map(site => (
+    <div key={site.id} className="group flex flex-col p-1 rounded-lg hover:bg-slate-800/50 transition-all border border-transparent hover:border-slate-800">
+      <div className="flex items-center justify-between px-2 py-1">
+        {/* Use site.label for the display name */}
+        <span className="text-sm font-medium text-slate-300 truncate">{site.label}</span>
+      </div>
+      
+      <div className="flex gap-1 mt-1">
+        <Link 
+          href={`/admin/dashboard/${site.id}`} // Uses the lowercase ID for the URL
+          onClick={onClose}
+          className="flex-1 text-[10px] font-bold text-center py-1.5 bg-slate-800 text-slate-400 rounded hover:bg-cyan-600 hover:text-white transition-all"
+        >
+          EDIT
+        </Link>
+        <a 
+          href={`https://${site.domain}`} 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 text-[10px] font-bold text-center py-1.5 bg-slate-800 text-slate-400 rounded hover:bg-slate-700 hover:text-white transition-all"
+        >
+          VIEW LIVE
+        </a>
+      </div>
+    </div>
+  ))}
+</nav>
 
       <div className="p-4 bg-slate-900 border-t border-slate-800">
         <button 
