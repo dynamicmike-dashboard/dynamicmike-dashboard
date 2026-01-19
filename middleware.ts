@@ -8,24 +8,25 @@ export function middleware(request: NextRequest) {
   // Your verified domain mapping
   const domainMap: Record<string, string> = {
     "breathoflifepdc.org": "breath-of-life",
-   "celestialsigndesign.com": "celestial-sign-design",
-"chatall.day": "chatallday", 
-"chillmasterscotland.com": "chillmasterscotland",
-"consciousshifts.co.uk": "consciousshifts",
- "fifeart.com": "fifeart",
+    "celestialsigndesign.com": "celestial-sign-design",
+    "chatall.day": "chatallday", 
+    "chillmasterscotland.com": "chillmasterscotland",
+    "consciousshifts.co.uk": "consciousshifts",
+    "fifeart.com": "fifeart",
     "inspiringspeakerspdc.com": "inspiringspeakerspdc",
     "louisevandervelde.com": "louisevandervelde",
     "maistermind.com": "maistermind",
+    "nahuala.bio": "nahuala",
     "pdcyes.com": "pdcyes",
     "playa.photos": "playaphotos",
     "playavida.org": "playavida",
     "pranatowers.com": "pranatowers",
-    "realaicasa.com": "realaicasa",
+    "realaicasa.com": "realaicasas",
     "reallifeavengers.com": "reallifeavengers",
-"social-media-management-services.com": "smms",
-
-
+    "social-media-management-services.com": "smms",
   };
+
+ 
 
   // Handle both 'domain.com' and 'www.domain.com'
   const pureHost = hostname.replace('www.', '');
