@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RealAi: The Tire Kicker Terminator</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="terminator-page">
+    <div id="app">
+        <!-- Content injected by main.js or hardcoded here for landing -->
+        <header class="hero">
+            <img src="/realai-logo.png" alt="RealAi Elite" style="max-width: 200px; margin-bottom: 1rem;">
+            <h1>The Tire Kicker Terminator</h1>
+            <p class="subtext">Stop acting as a free tour guide. Only talk to buyers with proven capital.</p>
+        </header>
+
+        <section class="logic-flow">
+            <!-- Visual Flow: Teaser -> Gate -> Reveal -->
+            <div class="flow-step">
+                <div class="icon">🔮</div>
+                <h3>Teaser Answer</h3>
+            </div>
+            <div class="arrow">⬇️</div>
+            <div class="flow-step">
+                <div class="icon">🛡️</div>
+                <h3>Qualification Gate</h3>
+                <p>Cash or Pre-approval?</p>
+            </div>
+            <div class="arrow">⬇️</div>
+            <div class="flow-step">
+                <div class="icon">📂</div>
+                <h3>Data Reveal</h3>
+            </div>
+        </section>
+
+        <section class="offer-card">
+            <h2>Elite Pilot</h2>
+            <div class="price">$497</div>
+            <div class="scarcity" id="city-scarcity">
+                Only 2 Slots Remaining for <span id="user-city">Your City</span>
+            </div>
+            <button id="apply-btn" class="cta-btn">Apply Now</button>
+        </section>
+    </div>
+    <script type="module" src="/src/terminator.js"></script>
+  </body>
+</html>
