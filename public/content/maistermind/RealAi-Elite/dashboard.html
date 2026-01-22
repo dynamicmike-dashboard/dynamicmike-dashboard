@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RealAi-Elite Agent Dashboard</title>
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  </head>
+  <body class="dashboard-page">
+    <div class="dashboard-container">
+        <!-- Auth Overlay -->
+        <div id="auth-overlay" class="auth-overlay">
+            <div class="auth-box">
+                <img src="/realai-logo.png" alt="RealAi-Elite" style="width:100px; margin-bottom:1rem;">
+                <h2>Agent Access</h2>
+                <input type="email" id="auth-email" placeholder="Agent Email" />
+                <input type="password" id="auth-password" placeholder="Password" />
+                <button id="auth-login">Log In</button>
+                <button id="auth-signup" class="secondary">Sign Up</button>
+                <p id="auth-error" class="error-msg"></p>
+            </div>
+        </div>
+
+        <!-- Sidebar / Identity Vault -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <img src="/realai-logo.png" alt="RealAi-Elite" style="max-width: 150px; margin-bottom: 2rem;">
+            </div>
+            
+            <div class="identity-vault">
+                <h3>Identity Vault</h3>
+                <div class="input-group">
+                    <label>Agency Logo URL</label>
+                    <input type="text" id="agency-logo" placeholder="https://..." />
+                </div>
+                <div class="input-group">
+                    <label>API Key Override (Google Gemini)</label>
+                    <input type="password" id="api-key" placeholder="Gemini Key..." />
+                </div>
+                <div class="input-group toggle-group">
+                    <label>Lead Alerts (Red Badge)</label>
+                    <label class="switch">
+                        <input type="checkbox" id="lead-alert-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <button id="save-identity">Update Vault</button>
+            </div>
+
+            <div class="intelligence-vault">
+                <h3>Agency Intelligence</h3>
+                <div class="drop-zone" id="vault-drop-zone">
+                    <i class="fas fa-brain"></i>
+                    <p>Drag T&Cs / HOA Docs</p>
+                    <small>Max 10 files</small>
+                </div>
+                <ul id="file-list" class="file-list"></ul>
+            </div>
+
+            <div class="integrations-section">
+                <h3>Integrations (Beta)</h3>
+                <div class="crm-icons">
+                    <i class="fas fa-house-user disabled" title="Follow Up Boss (Coming Soon)"></i>
+                    <i class="fas fa-bell disabled" title="Chime (Coming Soon)"></i>
+                    <i class="fab fa-hubspot disabled" title="HubSpot (Coming Soon)"></i>
+                </div>
+            </div>
+
+            <div class="stats-mini">
+                <div class="stat-box">
+                    <span class="val" id="total-leads">0</span>
+                    <span class="label">Total Leads</span>
+                </div>
+                <div class="stat-box">
+                    <span class="val gold" id="high-value">0</span>
+                    <span class="label">High Value</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Live Lead Command</h1>
+                <div class="header-right">
+                    <div class="notification-wrapper">
+                        <i class="fas fa-bell"></i>
+                        <span id="red-badge" class="red-badge hidden"></span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Property Ingester -->
+            <section class="ingester-section">
+                <h2>Property Ingester</h2>
+                <div class="magic-input-wrapper">
+                    <input type="text" id="magic-input" placeholder="Paste URL or describe a property..." />
+                    <button id="mic-btn" class="icon-btn"><i class="fas fa-microphone"></i></button>
+                    <button id="add-prop-btn">Add Property</button>
+                </div>
+                <div id="ingest-result" class="ingest-result hidden"></div>
+            </section>
+
+            <!-- Lead Feed -->
+            <section class="lead-feed-section">
+                <h2>Incoming Signal Feed</h2>
+                <div class="lead-list-header">
+                    <span>Time</span>
+                    <span>Contact / ID</span>
+                    <span>Score</span>
+                    <span>Status</span>
+                    <span>Action</span>
+                </div>
+                <div id="live-feed" class="lead-list">
+                    <!-- Leads injected here -->
+                    <div class="empty-state">No active signals detected.</div>
+                </div>
+            </section>
+
+            <!-- Kanban Board -->
+            <section class="kanban-section">
+                <h2>Pipeline Kanban</h2>
+                <div class="kanban-board">
+                    <div class="kanban-col" data-status="New Lead">
+                        <h3>New Lead</h3>
+                        <div class="kanban-items" id="col-new"></div>
+                    </div>
+                    <div class="kanban-col" data-status="Qualified">
+                        <h3>Qualified</h3>
+                        <div class="kanban-items" id="col-qualified"></div>
+                    </div>
+                    <div class="kanban-col" data-status="Viewing">
+                        <h3>Viewing</h3>
+                        <div class="kanban-items" id="col-viewing"></div>
+                    </div>
+                    <div class="kanban-col" data-status="Closed">
+                        <h3>Closed</h3>
+                        <div class="kanban-items" id="col-closed"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script type="module" src="/src/dashboard.js"></script>
+  </body>
+</html>

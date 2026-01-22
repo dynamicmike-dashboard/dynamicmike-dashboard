@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RealAi-Elite: Exclusive Property Access</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="hero">
+        <h1>RealAi-Elite Luxury Estates</h1>
+        <p class="subtext">Ask about any property. Data is just a question away.</p>
+      </header>
+
+      <main>
+        <div id="chat-interface" class="chat-container">
+            <div id="chat-history" class="chat-history"></div>
+            <div class="input-area">
+                <input type="text" id="user-input" placeholder="Ask about a property..." />
+                <button id="send-btn">Send</button>
+            </div>
+        </div>
+      </main>
+
+      <div id="velvet-rope-overlay" class="overlay hidden">
+          <div class="glass-modal">
+              <h2>🔒 Digital Velvet Rope</h2>
+              <p>To access deep data, please verify your credentials.</p>
+              <div id="dynamic-form-container"></div>
+          </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/terminator.js"></script>
+  </body>
+</html>
