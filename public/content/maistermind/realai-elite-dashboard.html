@@ -3,17 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RealAi Agent Dashboard</title>
-    <link rel="stylesheet" href="/src/style.css" />
+    <title>RealAi-Elite Agent Dashboard</title>
+    <link rel="stylesheet" href="RealAi-Elite/src/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   </head>
   <body class="dashboard-page">
     <div class="dashboard-container">
-        
+        <!-- Auth Overlay -->
+        <div id="auth-overlay" class="auth-overlay">
+            <div class="auth-box">
+                <img src="RealAi-Elite/public/realai-logo.png" alt="RealAi-Elite" style="width:100px; margin-bottom:1rem;">
+                <h2>Agent Access</h2>
+                <input type="email" id="auth-email" placeholder="Agent Email" />
+                <input type="password" id="auth-password" placeholder="Password" />
+                <button id="auth-login">Log In</button>
+                <button id="auth-signup" class="secondary">Sign Up</button>
+                <p id="auth-error" class="error-msg"></p>
+            </div>
+        </div>
+
         <!-- Sidebar / Identity Vault -->
         <aside class="sidebar">
             <div class="logo-area">
-                <img src="/realai-logo.png" alt="RealAi Elite" style="max-width: 150px; margin-bottom: 2rem;">
+                <img src="RealAi-Elite/public/realai-logo.png" alt="RealAi-Elite" style="max-width: 150px; margin-bottom: 2rem;">
             </div>
             
             <div class="identity-vault">
@@ -23,8 +35,15 @@
                     <input type="text" id="agency-logo" placeholder="https://..." />
                 </div>
                 <div class="input-group">
-                    <label>API Key Override</label>
+                    <label>API Key Override (Google Gemini)</label>
                     <input type="password" id="api-key" placeholder="Gemini Key..." />
+                </div>
+                <div class="input-group toggle-group">
+                    <label>Lead Alerts (Red Badge)</label>
+                    <label class="switch">
+                        <input type="checkbox" id="lead-alert-toggle">
+                        <span class="slider round"></span>
+                    </label>
                 </div>
                 <button id="save-identity">Update Vault</button>
             </div>
@@ -123,6 +142,6 @@
             </section>
         </main>
     </div>
-    <script type="module" src="/src/dashboard.js"></script>
+    <script type="module" src="RealAi-Elite/src/dashboard.js"></script>
   </body>
 </html>
