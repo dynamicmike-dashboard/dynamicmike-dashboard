@@ -76,5 +76,5 @@ export function middleware(request: NextRequest) {
 
 // Ensure the middleware only runs on page requests, not images/assets
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|content|favicon.ico).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|content|realai-app|favicon.ico).*)'],
 };
