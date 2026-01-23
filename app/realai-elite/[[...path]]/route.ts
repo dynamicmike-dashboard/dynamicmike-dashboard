@@ -39,9 +39,8 @@ export async function GET(
   }
 
   // Determine filesystem path
-  // Note: Vercel 'standalone' output copies public folder, but even if not, 
-  // typical deployments have public at root.
-  const publicDir = path.join(process.cwd(), 'public', 'realai-elite');
+  // Debug output showed files are nested in: public/realai-elite/realai-app
+  const publicDir = path.join(process.cwd(), 'public', 'realai-elite', 'realai-app');
   let filePath = path.join(publicDir, relativePath);
 
   // If path is a directory, try index.html
@@ -52,35 +51,7 @@ export async function GET(
   // Check if file exists
   if (!fs.existsSync(filePath)) {
     console.log(`[Manual Route] File not found: ${filePath}`);
-    
-    // DEBUG: Return diagnostic info to the browser to check Vercel filesystem
-    const cwd = process.cwd();
-    let debugInfo = `File not found\n\nDebug Info:\nAllowed Path: ${filePath}\nCWD: ${cwd}\n`;
-    
-    try {
-      const rootFiles = fs.readdirSync(cwd).join(', ');
-      debugInfo += `\nFiles in CWD: ${rootFiles}`;
-      
-      const publicPath = path.join(cwd, 'public');
-      if (fs.existsSync(publicPath)) {
-         const publicFiles = fs.readdirSync(publicPath).join(', ');
-         debugInfo += `\nFiles in public/: ${publicFiles}`;
-         
-         const elitePath = path.join(publicPath, 'realai-elite');
-         if (fs.existsSync(elitePath)) {
-            const eliteFiles = fs.readdirSync(elitePath).join(', ');
-            debugInfo += `\nFiles in public/realai-elite: ${eliteFiles}`;
-         } else {
-            debugInfo += `\npublic/realai-elite does not exist.`;
-         }
-      } else {
-         debugInfo += `\npublic/ directory does not exist at ${publicPath}`;
-      }
-    } catch (err: any) {
-      debugInfo += `\nError listing files: ${err.message}`;
-    }
-
-    return new NextResponse(debugInfo, { status: 404 });
+    return new NextResponse('File not found', { status: 404 });
   }
 
   // Get content type
