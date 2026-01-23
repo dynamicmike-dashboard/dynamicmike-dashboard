@@ -12,6 +12,33 @@ const nextConfig = {
   experimental: {
     // Keep this clean to avoid terminal warnings
   },
+  async rewrites() {
+    return [
+      {
+        source: '/realai-elite',
+        destination: '/content/maistermind/realai-elite/index.html',
+      },
+      {
+        // Handle the original specific file URL the user is testing
+        source: '/realai-elite/realai-elite.html',
+        destination: '/content/maistermind/realai-elite/index.html',
+      },
+      {
+        source: '/realai-dashboard',
+        destination: '/content/maistermind/realai-elite/app.html',
+      },
+      {
+        // General wildcard for assets (css, js, images)
+        source: '/realai-elite/:path*',
+        destination: '/content/maistermind/realai-elite/:path*',
+      },
+      {
+        // Case-insensitive fallback
+        source: '/RealAi-Elite/:path*',
+        destination: '/content/maistermind/realai-elite/:path*',
+      },
+    ];
+  },
 };
 
 export default nextConfig;
