@@ -48,7 +48,6 @@ export function middleware(request: NextRequest) {
 
 // Ensure the middleware only runs on page requests, not images/assets
 export const config = {
-  // Exclude realai-elite so it is served statically
-  // Also excluding probe-test.txt as verified working
-  matcher: ['/((?!api|_next/static|_next/image|content|realai-elite|favicon.ico|probe-test.txt).*)'],
+  // Broad exclusion for static-like paths and explicit exclusions for our static features
+  matcher: ['/((?!api|_next/static|_next/image|content|favicon.ico|realai-elite|probe-test\\.txt).*)'],
 };
