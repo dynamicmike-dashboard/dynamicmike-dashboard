@@ -4,42 +4,13 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const hostname = request.headers.get('host') || "";
-
-  // ---------------------------------------------------------
-  // FIX: Force RealAi-Elite to serve from static folder (realai-app)
-  // This bypasses Next.js dynamic routing and case-sensitivity issues
-  // ---------------------------------------------------------
   const path = url.pathname.toLowerCase();
-  
-  // 1. Main Entry Point (and legacy .html access)
-  if (
-    path === '/realai-elite' || 
-    path === '/realai-elite/' || 
-    url.pathname.endsWith('realai-elite.html') // Check original casing for file
-  ) {
-    console.log(`[Middleware] Rewriting ${path} to /realai-app/index.html`);
-    return NextResponse.rewrite(new URL('/realai-app/index.html', request.url));
-  }
 
-  // 2. Dashboard Entry Point
+  // 1. Dashboard Entry Point (Vanity URL)
   if (path === '/realai-dashboard' || path === '/realai-dashboard/') {
-    console.log(`[Middleware] Rewriting ${path} to /realai-app/app.html`);
-    return NextResponse.rewrite(new URL('/realai-app/app.html', request.url));
+    // Rewrite to the static file in the new folder location
+    return NextResponse.rewrite(new URL('/realai-elite/app.html', request.url));
   }
-
-  // 3. Asset/Subpath handling (CSS, JS, Images)
-  // Check for both cases to be safe, though we lowercased 'path' variable for checking
-  if (path.startsWith('/realai-elite/') || path.startsWith('/realai-app/')) {
-    // Replace the start of the path with the correct static folder location
-    // We use original url.pathname to preserve casing of filenames if they matter (though usually static assets are lowercase now)
-    // But since we renamed folder to 'realai-app', we just want to map /realai-elite/XYZ -> /realai-app/XYZ
-    
-    // logic: if user asks for /realai-elite/style.css -> /realai-app/style.css
-    const newPath = url.pathname.replace(/^\/realai-elite/i, '/realai-app');
-    console.log(`[Middleware] Rewriting asset ${path} to ${newPath}`);
-    return NextResponse.rewrite(new URL(newPath, request.url));
-  }
-  // ---------------------------------------------------------
 
   // Your verified domain mapping
   const domainMap: Record<string, string> = {
@@ -62,8 +33,6 @@ export function middleware(request: NextRequest) {
     "social-media-management-services.com": "smms",
   };
 
- 
-
   // Handle both 'domain.com' and 'www.domain.com'
   const pureHost = hostname.replace('www.', '');
   const folderName = domainMap[pureHost];
@@ -79,5 +48,7 @@ export function middleware(request: NextRequest) {
 
 // Ensure the middleware only runs on page requests, not images/assets
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|content|realai-app|favicon.ico|probe-test.txt).*)'],
+  // Exclude realai-elite so it is served statically
+  // Also excluding probe-test.txt as verified working
+  matcher: ['/((?!api|_next/static|_next/image|content|realai-elite|favicon.ico|probe-test.txt).*)'],
 };
