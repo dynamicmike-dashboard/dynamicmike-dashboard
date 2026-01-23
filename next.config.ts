@@ -16,26 +16,26 @@ const nextConfig = {
     return [
       {
         source: '/realai-elite',
-        destination: '/content/maistermind/realai-elite/index.html',
+        destination: '/content/maistermind/realai-app/index.html',
       },
       {
         // Handle the original specific file URL the user is testing
         source: '/realai-elite/realai-elite.html',
-        destination: '/content/maistermind/realai-elite/index.html',
+        destination: '/content/maistermind/realai-app/index.html',
       },
       {
         source: '/realai-dashboard',
-        destination: '/content/maistermind/realai-elite/app.html',
+        destination: '/content/maistermind/realai-app/app.html',
       },
       {
         // General wildcard for assets (css, js, images)
         source: '/realai-elite/:path*',
-        destination: '/content/maistermind/realai-elite/:path*',
+        destination: '/content/maistermind/realai-app/:path*',
       },
       {
         // Case-insensitive fallback
         source: '/RealAi-Elite/:path*',
-        destination: '/content/maistermind/realai-elite/:path*',
+        destination: '/content/maistermind/realai-app/:path*',
       },
     ];
   },
