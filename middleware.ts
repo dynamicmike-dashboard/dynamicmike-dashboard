@@ -17,11 +17,13 @@ export function middleware(request: NextRequest) {
     path === '/realai-elite/' || 
     url.pathname.endsWith('realai-elite.html') // Check original casing for file
   ) {
+    console.log(`[Middleware] Rewriting ${path} to /realai-app/index.html`);
     return NextResponse.rewrite(new URL('/realai-app/index.html', request.url));
   }
 
   // 2. Dashboard Entry Point
   if (path === '/realai-dashboard' || path === '/realai-dashboard/') {
+    console.log(`[Middleware] Rewriting ${path} to /realai-app/app.html`);
     return NextResponse.rewrite(new URL('/realai-app/app.html', request.url));
   }
 
@@ -34,6 +36,7 @@ export function middleware(request: NextRequest) {
     
     // logic: if user asks for /realai-elite/style.css -> /realai-app/style.css
     const newPath = url.pathname.replace(/^\/realai-elite/i, '/realai-app');
+    console.log(`[Middleware] Rewriting asset ${path} to ${newPath}`);
     return NextResponse.rewrite(new URL(newPath, request.url));
   }
   // ---------------------------------------------------------
