@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
     path === '/realai-elite/' || 
     url.pathname.endsWith('realai-elite.html') // Check original casing for file
   ) {
-    return NextResponse.rewrite(new URL('/content/maistermind/realai-app/index.html', request.url));
+    return NextResponse.redirect(new URL('/content/maistermind/realai-app/index.html', request.url));
   }
 
   // 2. Dashboard Entry Point
