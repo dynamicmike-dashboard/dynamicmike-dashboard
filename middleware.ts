@@ -5,6 +5,39 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const hostname = request.headers.get('host') || "";
 
+  // ---------------------------------------------------------
+  // FIX: Force RealAi-Elite to serve from static folder (realai-app)
+  // This bypasses Next.js dynamic routing and case-sensitivity issues
+  // ---------------------------------------------------------
+  const path = url.pathname.toLowerCase();
+  
+  // 1. Main Entry Point (and legacy .html access)
+  if (
+    path === '/realai-elite' || 
+    path === '/realai-elite/' || 
+    url.pathname.endsWith('realai-elite.html') // Check original casing for file
+  ) {
+    return NextResponse.rewrite(new URL('/content/maistermind/realai-app/index.html', request.url));
+  }
+
+  // 2. Dashboard Entry Point
+  if (path === '/realai-dashboard' || path === '/realai-dashboard/') {
+    return NextResponse.rewrite(new URL('/content/maistermind/realai-app/app.html', request.url));
+  }
+
+  // 3. Asset/Subpath handling (CSS, JS, Images)
+  // Check for both cases to be safe, though we lowercased 'path' variable for checking
+  if (path.startsWith('/realai-elite/') || path.startsWith('/realai-app/')) {
+    // Replace the start of the path with the correct static folder location
+    // We use original url.pathname to preserve casing of filenames if they matter (though usually static assets are lowercase now)
+    // But since we renamed folder to 'realai-app', we just want to map /realai-elite/XYZ -> /content/maistermind/realai-app/XYZ
+    
+    // logic: if user asks for /realai-elite/style.css -> /content/maistermind/realai-app/style.css
+    const newPath = url.pathname.replace(/^\/realai-elite/i, '/content/maistermind/realai-app');
+    return NextResponse.rewrite(new URL(newPath, request.url));
+  }
+  // ---------------------------------------------------------
+
   // Your verified domain mapping
   const domainMap: Record<string, string> = {
     "breathoflifepdc.org": "breath-of-life",
