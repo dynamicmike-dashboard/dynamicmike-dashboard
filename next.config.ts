@@ -7,7 +7,8 @@ const nextConfig = {
       'node_modules/@swc/core-linux-x64-gnu',
       'node_modules/@swc/core-linux-x64-musl',
       // Exclude large content folders to prevent API function size limit errors (1.5GB+)
-      // We MUST keep 'public/content/maistermind' for RealAi-Elite
+      // Now that RealAi-Elite is moved to 'public/realai-app', we can exclude ALL of maistermind
+      'public/content/maistermind/**',
       'public/content/breath-of-life/**',
       'public/content/celestial-sign-design/**',
       'public/content/chatallday/**',
