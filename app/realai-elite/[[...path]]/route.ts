@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { getType } from 'mime'; // We might not have 'mime' installed, better to use a simple map if unsure, but let's try a robust map.
 
-// Simple mime type map to avoid dependency issues if 'mime' isn't in package.json
+// Simple mime type map to avoid dependency issues since 'mime' package is missing
 const MIME_TYPES: Record<string, string> = {
   '.html': 'text/html',
   '.css': 'text/css',
