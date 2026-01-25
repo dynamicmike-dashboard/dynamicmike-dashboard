@@ -66,7 +66,29 @@ export async function GET(
   // Check if file exists
   if (!fs.existsSync(filePath)) {
     console.log(`[Manual Route] File not found: ${filePath}`);
-    return new NextResponse('File not found', { status: 404 });
+    
+    // DEBUGGING: List the directory contents to see where we are
+    const cwd = process.cwd();
+    let debugInfo = `Current Working Directory: ${cwd}\n`;
+    debugInfo += `Attempted Path: ${filePath}\n`;
+    
+    try {
+        const checkDir = path.dirname(filePath);
+        if (fs.existsSync(checkDir)) {
+             const files = fs.readdirSync(checkDir);
+             debugInfo += `\nFiles in ${checkDir}:\n${files.join('\n')}`;
+        } else {
+             debugInfo += `\nDirectory does not exist: ${checkDir}`;
+             const publicDir = path.join(cwd, 'public');
+              if (fs.existsSync(publicDir)) {
+                  debugInfo += `\nFiles in public:\n${fs.readdirSync(publicDir).join('\n')}`;
+              }
+        }
+    } catch (e) {
+        debugInfo += `Error listing files: ${e}`;
+    }
+
+    return new NextResponse(`File not found\n\nDEBUG INFO:\n${debugInfo}`, { status: 404 });
   }
 
   // Get content type
