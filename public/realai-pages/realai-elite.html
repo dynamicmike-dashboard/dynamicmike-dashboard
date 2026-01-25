@@ -327,7 +327,7 @@
     </section>
 
     <!-- PRODUCT SHOWCASE (New) -->
-    <section style="background: #111827; padding-bottom: 80px; text-align: center;">
+    <section class="showcase-section" style="background: #111827; padding-bottom: 80px; text-align: center;">
         <div class="container">
             <h2 style="color: white; margin-bottom: 40px; font-size: 2rem;">Inside the Agent OS</h2>
             
@@ -469,7 +469,7 @@
             // 3. PRODUCT SHOWCASE: Stagger Up
             gsap.from(".container img", {
                 scrollTrigger: {
-                    trigger: "section[style*='background: #111827']", // Target the showcase section
+                    trigger: ".showcase-section", // Updated selector
                     start: "top 75%",
                 },
                 y: 50,
@@ -516,6 +516,11 @@
                 opacity: 0,
                 duration: 0.8,
                 ease: "back.out(1.2)"
+            });
+
+            // REFRESH ON LOAD (Fix for image layout shifts)
+            window.addEventListener("load", () => {
+                ScrollTrigger.refresh();
             });
         });
     </script>
