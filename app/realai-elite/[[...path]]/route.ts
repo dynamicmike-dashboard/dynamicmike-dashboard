@@ -43,23 +43,30 @@ export async function GET(
   let filePath = '';
   
   // SPECIAL ROUTES: Map specific paths to the new "Maistermind" content files
+  // NOTE: We moved files to 'public/realai-elite-assets' because Vercel was not seeing 'public/content'
+  const assetsDir = path.join(process.cwd(), 'public', 'realai-elite-assets');
+  
   if (pathSegments.length === 0) {
     // Landing Page
-    filePath = path.join(process.cwd(), 'public', 'content', 'maistermind', 'realai-elite.html');
+    filePath = path.join(assetsDir, 'realai-elite.html');
   } else if (pathSegments[0] === 'dashboard') {
     // New Agent OS Dashboard
-    filePath = path.join(process.cwd(), 'public', 'content', 'maistermind', 'realai-elite-dashboard.html');
+    filePath = path.join(assetsDir, 'realai-elite-dashboard.html');
   } else if (pathSegments[0] === 'confirmation') {
     // Confirmation Page
-    filePath = path.join(process.cwd(), 'public', 'content', 'maistermind', 'realai-elite-confirmation.html');
+    filePath = path.join(assetsDir, 'realai-elite-confirmation.html');
   } else {
-     // Default Fallback: Look in the original 'realai-app' directory for assets/other files
-      const publicDir = path.join(process.cwd(), 'public', 'realai-elite', 'realai-app');
-      filePath = path.join(publicDir, relativePath);
+     // Fallback / Asset delivery (e.g. images)
+      filePath = path.join(assetsDir, relativePath);
 
-      // If path is a directory, try index.html
-      if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-        filePath = path.join(filePath, 'index.html');
+      // Check legacy if not found in assets?
+      if (!fs.existsSync(filePath)) {
+          console.log(`[Manual Route] Asset not found in new dir, checking legacy: ${filePath}`);
+           const legacyDir = path.join(process.cwd(), 'public', 'realai-elite-legacy', 'realai-app');
+           filePath = path.join(legacyDir, relativePath);
+           if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+                filePath = path.join(filePath, 'index.html');
+           }
       }
   }
 
