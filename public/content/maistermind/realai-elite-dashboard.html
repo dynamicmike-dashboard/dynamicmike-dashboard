@@ -1,147 +1,470 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RealAi-Elite Agent Dashboard</title>
-    <link rel="stylesheet" href="RealAi-Elite/src/style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-  </head>
-  <body class="dashboard-page">
-    <div class="dashboard-container">
-        <!-- Auth Overlay -->
-        <div id="auth-overlay" class="auth-overlay">
-            <div class="auth-box">
-                <img src="RealAi-Elite/public/realai-logo.png" alt="RealAi-Elite" style="width:100px; margin-bottom:1rem;">
-                <h2>Agent Access</h2>
-                <input type="email" id="auth-email" placeholder="Agent Email" />
-                <input type="password" id="auth-password" placeholder="Password" />
-                <button id="auth-login">Log In</button>
-                <button id="auth-signup" class="secondary">Sign Up</button>
-                <p id="auth-error" class="error-msg"></p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563EB; /* Royal Blue */
+            --bg: #F8FAFC;
+            --surface: #FFFFFF;
+            --text: #1E293B;
+            --text-light: #64748B;
+            --border: #E2E8F0;
+            --success: #10B981;
+            --danger: #EF4444;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            color: var(--text);
+            padding-bottom: 80px; /* Space for nav */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* HEADER */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: var(--surface);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .header-logo {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            overflow: hidden;
+        }
+
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* VIEWS */
+        .view-section {
+            padding: 24px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .view-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* DASHBOARD VIEW */
+        .welcome-text { margin-bottom: 24px; }
+        .welcome-text h1 { font-size: 1.5rem; font-weight: 700; }
+        .welcome-text p { color: var(--text-light); }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: #EFF6FF;
+            color: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .stat-val { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        .stat-label { font-size: 0.85rem; color: var(--text-light); }
+
+        .vault-card {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            transition: transform 0.1s;
+        }
+
+        .vault-card:active { transform: scale(0.98); }
+
+        .vault-icon {
+            width: 48px;
+            height: 48px;
+            background: #F1F5F9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .vault-info { flex: 1; }
+        .vault-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+        .vault-info p { font-size: 0.85rem; color: var(--text-light); }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            margin-top: 32px;
+        }
+        
+        .section-header h2 { font-size: 1.1rem; font-weight: 600; }
+
+        .lead-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .lead-item {
+            background: var(--surface);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lead-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #E2E8F0;
+        }
+
+        .lead-info h4 { font-size: 0.95rem; font-weight: 600; }
+        .lead-info p { font-size: 0.75rem; color: var(--text-light); }
+        .lead-badge {
+            margin-left: auto;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .bg-new { background: #DCFCE7; color: #166534; }
+        .bg-pending { background: #FEF9C3; color: #854D0E; }
+
+        /* PROPERTY VIEW */
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .filter-pill {
+            padding: 8px 16px;
+            background: var(--surface);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .filter-pill.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .property-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .prop-img {
+            height: 200px;
+            background: #94A3B8;
+            position: relative;
+        }
+        
+        .status-tag {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #10B981;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .prop-details { padding: 16px; }
+        .prop-price { font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; }
+        .prop-addr { color: var(--text-light); font-size: 0.9rem; margin-bottom: 12px; }
+        
+        .prop-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+        }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-light);
+            font-size: 0.7rem;
+            text-decoration: none;
+            width: 60px;
+        }
+
+        .nav-item i { font-size: 1.2rem; }
+        
+        .nav-item.active { color: var(--primary); }
+
+        .fab {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+            margin-top: -20px; /* Pop out effect */
+        }
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="header-title">
+            <div class="header-logo"><i class="fas fa-th-large"></i></div>
+            Agent OS
+        </div>
+        <div class="header-actions">
+            <i class="fas fa-bell" style="font-size: 1.2rem; color: var(--text-light);"></i>
+            <div class="avatar"><img src="https://ui-avatars.com/api/?name=Agent" alt="Profile"></div>
+        </div>
+    </header>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="view-dashboard" class="view-section active">
+        <div class="welcome-text">
+            <h1>Dashboard</h1>
+            <p>Welcome back, Agent.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-home"></i></div>
+                <div class="stat-val">290</div>
+                <div class="stat-label">Properties</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-val">42</div>
+                <div class="stat-label">Active Leads</div>
             </div>
         </div>
 
-        <!-- Sidebar / Identity Vault -->
-        <aside class="sidebar">
-            <div class="logo-area">
-                <img src="RealAi-Elite/public/realai-logo.png" alt="RealAi-Elite" style="max-width: 150px; margin-bottom: 2rem;">
+        <div class="section-header">
+            <h2>Vaults</h2>
+        </div>
+
+        <div class="vault-card" onclick="switchView('view-properties')">
+            <div class="vault-icon"><i class="fas fa-building"></i></div>
+            <div class="vault-info">
+                <h3>Property Vault</h3>
+                <p>290 slots occupied</p>
             </div>
-            
-            <div class="identity-vault">
-                <h3>Identity Vault</h3>
-                <div class="input-group">
-                    <label>Agency Logo URL</label>
-                    <input type="text" id="agency-logo" placeholder="https://..." />
-                </div>
-                <div class="input-group">
-                    <label>API Key Override (Google Gemini)</label>
-                    <input type="password" id="api-key" placeholder="Gemini Key..." />
-                </div>
-                <div class="input-group toggle-group">
-                    <label>Lead Alerts (Red Badge)</label>
-                    <label class="switch">
-                        <input type="checkbox" id="lead-alert-toggle">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <button id="save-identity">Update Vault</button>
+            <i class="fas fa-chevron-right" style="color: var(--border);"></i>
+        </div>
+
+        <div class="vault-card">
+            <div class="vault-icon"><i class="fas fa-briefcase"></i></div>
+            <div class="vault-info">
+                <h3>Business Vault</h3>
+                <p>10 slots occupied</p>
             </div>
+            <i class="fas fa-chevron-right" style="color: var(--border);"></i>
+        </div>
 
-            <div class="intelligence-vault">
-                <h3>Agency Intelligence</h3>
-                <div class="drop-zone" id="vault-drop-zone">
-                    <i class="fas fa-brain"></i>
-                    <p>Drag T&Cs / HOA Docs</p>
-                    <small>Max 10 files</small>
+        <div class="section-header">
+            <h2>Recent Leads</h2>
+            <a href="#" style="color: var(--primary); text-decoration: none; font-size: 0.85rem;">View All</a>
+        </div>
+
+        <div class="lead-list">
+            <div class="lead-item">
+                <div class="lead-avatar"></div>
+                <div class="lead-info">
+                    <h4>Sarah Miller</h4>
+                    <p>Interested in Modern Loft</p>
                 </div>
-                <ul id="file-list" class="file-list"></ul>
+                <span class="lead-badge bg-new">New</span>
             </div>
-
-            <div class="integrations-section">
-                <h3>Integrations (Beta)</h3>
-                <div class="crm-icons">
-                    <i class="fas fa-house-user disabled" title="Follow Up Boss (Coming Soon)"></i>
-                    <i class="fas fa-bell disabled" title="Chime (Coming Soon)"></i>
-                    <i class="fab fa-hubspot disabled" title="HubSpot (Coming Soon)"></i>
+            <div class="lead-item">
+                <div class="lead-avatar"></div>
+                <div class="lead-info">
+                    <h4>David Chen</h4>
+                    <p>Viewing: Sunset Villa</p>
                 </div>
+                <span class="lead-badge bg-pending">Pending</span>
             </div>
-
-            <div class="stats-mini">
-                <div class="stat-box">
-                    <span class="val" id="total-leads">0</span>
-                    <span class="label">Total Leads</span>
-                </div>
-                <div class="stat-box">
-                    <span class="val gold" id="high-value">0</span>
-                    <span class="label">High Value</span>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="top-bar">
-                <h1>Live Lead Command</h1>
-                <div class="header-right">
-                    <div class="notification-wrapper">
-                        <i class="fas fa-bell"></i>
-                        <span id="red-badge" class="red-badge hidden"></span>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Property Ingester -->
-            <section class="ingester-section">
-                <h2>Property Ingester</h2>
-                <div class="magic-input-wrapper">
-                    <input type="text" id="magic-input" placeholder="Paste URL or describe a property..." />
-                    <button id="mic-btn" class="icon-btn"><i class="fas fa-microphone"></i></button>
-                    <button id="add-prop-btn">Add Property</button>
-                </div>
-                <div id="ingest-result" class="ingest-result hidden"></div>
-            </section>
-
-            <!-- Lead Feed -->
-            <section class="lead-feed-section">
-                <h2>Incoming Signal Feed</h2>
-                <div class="lead-list-header">
-                    <span>Time</span>
-                    <span>Contact / ID</span>
-                    <span>Score</span>
-                    <span>Status</span>
-                    <span>Action</span>
-                </div>
-                <div id="live-feed" class="lead-list">
-                    <!-- Leads injected here -->
-                    <div class="empty-state">No active signals detected.</div>
-                </div>
-            </section>
-
-            <!-- Kanban Board -->
-            <section class="kanban-section">
-                <h2>Pipeline Kanban</h2>
-                <div class="kanban-board">
-                    <div class="kanban-col" data-status="New Lead">
-                        <h3>New Lead</h3>
-                        <div class="kanban-items" id="col-new"></div>
-                    </div>
-                    <div class="kanban-col" data-status="Qualified">
-                        <h3>Qualified</h3>
-                        <div class="kanban-items" id="col-qualified"></div>
-                    </div>
-                    <div class="kanban-col" data-status="Viewing">
-                        <h3>Viewing</h3>
-                        <div class="kanban-items" id="col-viewing"></div>
-                    </div>
-                    <div class="kanban-col" data-status="Closed">
-                        <h3>Closed</h3>
-                        <div class="kanban-items" id="col-closed"></div>
-                    </div>
-                </div>
-            </section>
-        </main>
+        </div>
     </div>
-    <script type="module" src="RealAi-Elite/src/dashboard.js"></script>
-  </body>
+
+    <!-- PROPERTIES VIEW -->
+    <div id="view-properties" class="view-section">
+        <div class="welcome-text">
+            <h1>Properties</h1>
+            <p>Manage your portfolio</p>
+        </div>
+
+        <div class="filter-bar">
+            <div class="filter-pill active">All</div>
+            <div class="filter-pill">Residential</div>
+            <div class="filter-pill">Commercial</div>
+            <div class="filter-pill">Price Range</div>
+        </div>
+
+        <div class="property-card">
+            <div class="prop-img">
+                <div class="status-tag">ACTIVE</div>
+                <!-- Placeholder image bg -->
+                <div style="width:100%; height:100%; background:url('https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;"></div>
+            </div>
+            <div class="prop-details">
+                <div class="prop-price">$1,250,000</div>
+                <div class="prop-addr">123 Skyway Terrace, Ocean Side</div>
+                <div class="prop-meta">
+                    <span><i class="fas fa-bed"></i> 4</span>
+                    <span><i class="fas fa-bath"></i> 3</span>
+                    <span><i class="fas fa-ruler-combined"></i> 3,500 sqft</span>
+                </div>
+            </div>
+        </div>
+
+         <div class="property-card">
+            <div class="prop-img">
+                <div class="status-tag" style="background: #fbbf24;">DRAFT</div>
+                <div style="width:100%; height:100%; background:url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;"></div>
+            </div>
+            <div class="prop-details">
+                <div class="prop-price">$850,000</div>
+                <div class="prop-addr">4508 Oak Avenue, Pasadena</div>
+                <div class="prop-meta">
+                    <span><i class="fas fa-bed"></i> 3</span>
+                    <span><i class="fas fa-bath"></i> 2</span>
+                    <span><i class="fas fa-ruler-combined"></i> 2,100 sqft</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="switchView('view-dashboard', this)">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" onclick="switchView('view-properties', this)">
+            <i class="fas fa-building"></i>
+            <span>Properties</span>
+        </a>
+        <a href="#" class="nav-item">
+            <div class="fab"><i class="fas fa-plus"></i></div>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-briefcase"></i>
+            <span>Business</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <script>
+        function switchView(viewId, navEl) {
+            // Hide all views
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            // Show target
+            document.getElementById(viewId).classList.add('active');
+            
+            // Update Nav if clicked
+            if(navEl) {
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                navEl.classList.add('active');
+            }
+        }
+    </script>
+</body>
 </html>

@@ -39,13 +39,27 @@ export async function GET(
   }
 
   // Determine filesystem path
-  // Debug output showed files are nested in: public/realai-elite/realai-app
-  const publicDir = path.join(process.cwd(), 'public', 'realai-elite', 'realai-app');
-  let filePath = path.join(publicDir, relativePath);
+  let filePath = '';
+  
+  // SPECIAL ROUTES: Map specific paths to the new "Maistermind" content files
+  if (pathSegments.length === 0) {
+    // Landing Page
+    filePath = path.join(process.cwd(), 'public', 'content', 'maistermind', 'realai-elite.html');
+  } else if (pathSegments[0] === 'dashboard') {
+    // New Agent OS Dashboard
+    filePath = path.join(process.cwd(), 'public', 'content', 'maistermind', 'realai-elite-dashboard.html');
+  } else if (pathSegments[0] === 'confirmation') {
+    // Confirmation Page
+    filePath = path.join(process.cwd(), 'public', 'content', 'maistermind', 'realai-elite-confirmation.html');
+  } else {
+     // Default Fallback: Look in the original 'realai-app' directory for assets/other files
+      const publicDir = path.join(process.cwd(), 'public', 'realai-elite', 'realai-app');
+      filePath = path.join(publicDir, relativePath);
 
-  // If path is a directory, try index.html
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-    filePath = path.join(filePath, 'index.html');
+      // If path is a directory, try index.html
+      if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+        filePath = path.join(filePath, 'index.html');
+      }
   }
 
   // Check if file exists
