@@ -381,5 +381,83 @@
         <p>&copy; 2026 RealAi Elite. All rights reserved.</p>
     </footer>
 
+    <!-- GSAP ANIMATIONS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // 1. HERO: Fade Up
+            const heroTl = gsap.timeline();
+            heroTl.from(".hero h1", { y: 50, opacity: 0, duration: 1, ease: "power3.out" })
+                  .from(".hero p", { y: 30, opacity: 0, duration: 0.8, ease: "power3.out" }, "-=0.6");
+
+            // 2. DEMO: Scale In
+            gsap.from(".demo-container", {
+                scrollTrigger: {
+                    trigger: ".demo-section",
+                    start: "top 80%",
+                },
+                scale: 0.9,
+                opacity: 0,
+                duration: 1,
+                ease: "power2.out"
+            });
+
+            // 3. PRODUCT SHOWCASE: Stagger Up
+            gsap.from(".container img", {
+                scrollTrigger: {
+                    trigger: "section[style*='background: #111827']", // Target the showcase section
+                    start: "top 75%",
+                },
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: "back.out(1.7)"
+            });
+
+            // 4. FEATURES: Stagger Cards
+            gsap.from(".feature-card", {
+                scrollTrigger: {
+                    trigger: ".value-prop",
+                    start: "top 75%",
+                },
+                y: 40,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: "power2.out"
+            });
+
+            // 5. STEPS: Slide In
+            gsap.utils.toArray(".step").forEach((step, i) => {
+                gsap.from(step, {
+                    scrollTrigger: {
+                        trigger: step,
+                        start: "top 85%",
+                    },
+                    x: i % 2 === 0 ? -50 : 50, // Alternate left/right
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power2.out"
+                });
+            });
+
+            // 6. PRICING: Pop Up
+            gsap.from(".pricing-card", {
+                scrollTrigger: {
+                    trigger: ".pricing-section",
+                    start: "top 80%",
+                },
+                scale: 0.95,
+                opacity: 0,
+                duration: 0.8,
+                ease: "back.out(1.2)"
+            });
+        });
+    </script>
+
 </body>
 </html>

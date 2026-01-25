@@ -452,17 +452,54 @@
         </a>
     </nav>
 
+    <!-- GSAP CORE -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script>
+        // Initial Load Animation
+        document.addEventListener("DOMContentLoaded", () => {
+            const tl = gsap.timeline();
+            tl.from(".welcome-text", { y: 20, opacity: 0, duration: 0.6, ease: "power2.out" })
+              .from(".stat-card", { y: 20, opacity: 0, duration: 0.5, stagger: 0.1, ease: "back.out(1.7)" }, "-=0.4")
+              .from(".section-header, .vault-card, .lead-item", { y: 20, opacity: 0, duration: 0.5, stagger: 0.05, ease: "power2.out" }, "-=0.3");
+        });
+
         function switchView(viewId, navEl) {
-            // Hide all views
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            // Show target
-            document.getElementById(viewId).classList.add('active');
+            // 1. Identify active view
+            const currentView = document.querySelector('.view-section.active');
+            const newView = document.getElementById(viewId);
+
+            if (currentView === newView) return;
+
+            // 2. Animate Out
+            gsap.to(currentView, {
+                opacity: 0,
+                y: -10,
+                duration: 0.3,
+                onComplete: () => {
+                    currentView.classList.remove('active');
+                    gsap.set(currentView, { y: 0 }); // reset for next time
+
+                    // 3. Animate In
+                    newView.classList.add('active');
+                    gsap.fromTo(newView, 
+                        { opacity: 0, y: 10 },
+                        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+                    );
+
+                    // Re-run stagger for specific elements in the new view if needed
+                    if(viewId === 'view-properties') {
+                        gsap.from(".property-card", { y: 20, opacity: 0, duration: 0.5, stagger: 0.1, delay: 0.1 });
+                    }
+                }
+            });
             
-            // Update Nav if clicked
+            // 4. Update Nav
             if(navEl) {
                 document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
                 navEl.classList.add('active');
+                
+                // Pop effect for nav icon
+                gsap.from(navEl.querySelector('i'), { scale: 0.5, duration: 0.3, ease: "back.out(2)" });
             }
         }
     </script>
