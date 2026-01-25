@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- DEPLOY TIMESTAMP: 2026-01-25 15:05 -->
+    <title>RealAi Elite - Your 24/7 Property Expert</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #111827; /* Dark Gray/Black */
+            --accent: #2563EB; /* Professional Blue */
+            --text: #374151;
+            --bg: #F3F4F6;
+            --white: #ffffff;
+            --success: #10B981;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--bg);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            background: var(--white);
+            text-align: center;
+            padding: 80px 20px 60px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            color: var(--primary);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: #4B5563;
+        }
+
+        /* DEMO CENTERPIECE */
+        .demo-section {
+            background: var(--primary);
+            padding: 60px 0;
+            text-align: center;
+            color: var(--white);
+        }
+        
+        .demo-container {
+            background: #000;
+            max-width: 800px;
+            margin: 0 auto;
+            aspect-ratio: 16/9;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #374151;
+        }
+
+        .demo-placeholder {
+            color: #9CA3AF;
+            font-size: 1.1rem;
+        }
+
+        .demo-hook {
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #E5E7EB;
+        }
+
+        /* VALUE PROP 3-COL */
+        .value-prop {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            text-align: left;
+            padding: 30px;
+            background: #F9FAFB;
+            border-radius: 12px;
+            border: 1px solid #E5E7EB;
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* HOW IT WORKS */
+        .how-it-works {
+            padding: 80px 0;
+            background: var(--bg);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 3rem;
+        }
+
+        .step {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            background: var(--accent);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        /* PRICING */
+        .pricing-section {
+            padding: 80px 0;
+            background: var(--white);
+            text-align: center;
+        }
+
+        .pricing-card {
+            background: var(--primary);
+            color: white;
+            max-width: 500px;
+            margin: 0 auto;
+            border-radius: 20px;
+            padding: 50px 30px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pil-badge {
+            background: var(--success);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .price {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+        
+        .price span {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #9CA3AF;
+        }
+
+        .setup-fee {
+            font-size: 1.2rem;
+            color: #D1D5DB;
+            margin-bottom: 30px;
+        }
+
+        .features-list {
+            text-align: left;
+            margin: 0 auto 40px;
+            max-width: 350px;
+            list-style: none;
+        }
+
+        .features-list li {
+            margin-bottom: 12px;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .btn-buy {
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            padding: 18px 40px;
+            border-radius: 10px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: inline-block;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        .btn-buy:hover {
+            background: #1D4ED8;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="container">
+            <h1>Your 24/7 Property Expert.<br>Never Miss a Lead Again.</h1>
+            <p>The first AI Assistant that actually reads your property files. It answers buyer questions, captures contact info, and pings you immediately—while you're at dinner or asleep.</p>
+        </div>
+    </header>
+
+    <!-- DEMO -->
+    <section class="demo-section">
+        <div class="container">
+            <p class="demo-hook">"Watch our AI explain a complex HOA rule from a 50-page PDF in 3 seconds."</p>
+            <div class="demo-container">
+                <!-- Replace this placeholder with your Loom Embed Code -->
+                <div class="demo-placeholder">
+                    [▶️ Video Placeholder: Loom Walkthrough]
+                    <br><small>Your 24/7 Concierge in Action</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT SHOWCASE (New) -->
+    <section style="background: #111827; padding-bottom: 80px; text-align: center;">
+        <div class="container">
+            <h2 style="color: white; margin-bottom: 40px; font-size: 2rem;">Inside the Agent OS</h2>
+            <div style="display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; text-align: left;">
+                <img src="/realai-elite-assets/images/agent-os-dashboard.png" alt="Dashboard" style="height: 500px; border-radius: 20px; border: 4px solid #374151;">
+                <img src="/realai-elite-assets/images/agent-os-chat.png" alt="Chat" style="height: 500px; border-radius: 20px; border: 4px solid #374151;">
+                <img src="/realai-elite-assets/images/agent-os-vault.png" alt="Vault" style="height: 500px; border-radius: 20px; border: 4px solid #374151;">
+            </div>
+            <p style="color: #9CA3AF; margin-top: 20px;">* Actual Beta Interface</p>
+        </div>
+    </section>
+
+
+    <!-- VALUE PROPS -->
+    <section class="value-prop">
+        <div class="container">
+            <div class="grid-3">
+                <div class="feature-card">
+                    <span class="icon">🧠</span>
+                    <h3>Knows the Details</h3>
+                    <p>Unlike generic bots, this one scans your specific PDFs, URLs, and floor plans to give 100% accurate property details.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="icon">🎣</span>
+                    <h3>Captures the Lead</h3>
+                    <p>It politely gates deep info (like T&Cs or exact specs) behind a contact form so you get a name and number every time.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="icon">📲</span>
+                    <h3>Instantly Notifies You</h3>
+                    <p>The second a user asks for a viewing, you get a push notification on your phone with the full chat transcript.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">From Listing to Lead in 3 Simple Steps</h2>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div>
+                    <h3>Build Your Property Brain</h3>
+                    <p>Stop manually answering the same questions about square footage and school zones. Simply send us your listing URLs, PDFs, or even a quick voice memo. We upload them into your AI’s "Property Vault," creating a custom knowledge base.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div>
+                    <h3>The "Helpful Gatekeeper" Chatbot</h3>
+                    <p>We embed a sleek, professional concierge on your website. When a buyer asks a specific question, the AI provides a helpful "teaser" answer. It then politely offers the full spec sheet in exchange for their name and phone number.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div>
+                    <h3>Instant Lead Alerts</h3>
+                    <p>The moment a buyer identifies themselves, the "Qualification Gate" opens. The AI provides them with the deep data, while simultaneously sending a push notification to your phone with the full transcript.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="pricing-card">
+                <div class="pil-badge">FOUNDER’S BETA (Limit 10)</div>
+                <h2>The "Jumpstart" Package</h2>
+                <div class="price">$99<span>/mo</span></div>
+                <div class="setup-fee">+ $299 One-time Setup</div>
+                
+                <ul class="features-list">
+                    <li>Full "Property Brain" Setup</li>
+                    <li>Manual Data Entry (We do it for you)</li>
+                    <li>Up to 300 Document Sources</li>
+                    <li>Smart Lead Gating Logic</li>
+                    <li>Instant SMS/Push Notifications</li>
+                </ul>
+
+                <!-- LINK TO CONFIRMATION PAGE (Simulating Stripe Redirect) -->
+                <a href="realai-elite-confirmation.html" class="btn-buy">Buy Now &rarr;</a>
+                <p style="margin-top: 15px; font-size: 0.9rem; color: #9CA3AF;">Secure Stripe Checkout</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 RealAi Elite. All rights reserved.</p>
+    </footer>
+
+    <!-- GSAP ANIMATIONS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // 1. HERO: Fade Up
+            const heroTl = gsap.timeline();
+            heroTl.from(".hero h1", { y: 50, opacity: 0, duration: 1, ease: "power3.out" })
+                  .from(".hero p", { y: 30, opacity: 0, duration: 0.8, ease: "power3.out" }, "-=0.6");
+
+            // 2. DEMO: Scale In
+            gsap.from(".demo-container", {
+                scrollTrigger: {
+                    trigger: ".demo-section",
+                    start: "top 80%",
+                },
+                scale: 0.9,
+                opacity: 0,
+                duration: 1,
+                ease: "power2.out"
+            });
+
+            // 3. PRODUCT SHOWCASE: Stagger Up
+            gsap.from(".container img", {
+                scrollTrigger: {
+                    trigger: "section[style*='background: #111827']", // Target the showcase section
+                    start: "top 75%",
+                },
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: "back.out(1.7)"
+            });
+
+            // 4. FEATURES: Stagger Cards
+            gsap.from(".feature-card", {
+                scrollTrigger: {
+                    trigger: ".value-prop",
+                    start: "top 75%",
+                },
+                y: 40,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: "power2.out"
+            });
+
+            // 5. STEPS: Slide In
+            gsap.utils.toArray(".step").forEach((step, i) => {
+                gsap.from(step, {
+                    scrollTrigger: {
+                        trigger: step,
+                        start: "top 85%",
+                    },
+                    x: i % 2 === 0 ? -50 : 50, // Alternate left/right
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power2.out"
+                });
+            });
+
+            // 6. PRICING: Pop Up
+            gsap.from(".pricing-card", {
+                scrollTrigger: {
+                    trigger: ".pricing-section",
+                    start: "top 80%",
+                },
+                scale: 0.95,
+                opacity: 0,
+                duration: 0.8,
+                ease: "back.out(1.2)"
+            });
+        });
+    </script>
+
+</body>
+</html>

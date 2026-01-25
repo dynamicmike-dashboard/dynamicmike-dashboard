@@ -42,32 +42,25 @@ export async function GET(
   // Determine filesystem path
   let filePath = '';
   
-  // SPECIAL ROUTES: Map specific paths to the new "Maistermind" content files
-  // NOTE: We moved files to 'public/realai-elite-assets' because Vercel was not seeing 'public/content'
-  const assetsDir = path.join(process.cwd(), 'public', 'realai-elite-assets');
+  // SPECIAL ROUTES: Map specific paths to the new lightweight HTML folder
+  // HTML files are in 'public/realai-pages' (bundled with Lambda)
+  // Images are in 'public/realai-elite-assets' (served statically, referenced by absolute URL in HTML)
+  const pagesDir = path.join(process.cwd(), 'public', 'realai-pages');
   
   if (pathSegments.length === 0) {
     // Landing Page
-    filePath = path.join(assetsDir, 'realai-elite.html');
+    filePath = path.join(pagesDir, 'realai-elite.html');
   } else if (pathSegments[0] === 'dashboard') {
     // New Agent OS Dashboard
-    filePath = path.join(assetsDir, 'realai-elite-dashboard.html');
+    filePath = path.join(pagesDir, 'realai-elite-dashboard.html');
   } else if (pathSegments[0] === 'confirmation') {
     // Confirmation Page
-    filePath = path.join(assetsDir, 'realai-elite-confirmation.html');
+    filePath = path.join(pagesDir, 'realai-elite-confirmation.html');
   } else {
-     // Fallback / Asset delivery (e.g. images)
-      filePath = path.join(assetsDir, relativePath);
-
-      // Check legacy if not found in assets?
-      if (!fs.existsSync(filePath)) {
-          console.log(`[Manual Route] Asset not found in new dir, checking legacy: ${filePath}`);
-           const legacyDir = path.join(process.cwd(), 'public', 'realai-elite-legacy', 'realai-app');
-           filePath = path.join(legacyDir, relativePath);
-           if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-                filePath = path.join(filePath, 'index.html');
-           }
-      }
+     // Fallback: This route handler should NO LONGER serve assets.
+     // Assets are served statically from /realai-elite-assets/...
+     // Use debug logic or returns 404.
+    return new NextResponse('Resource not found. If looking for assets, ensure URL is /realai-elite-assets/...', { status: 404 });
   }
 
   // Check if file exists
