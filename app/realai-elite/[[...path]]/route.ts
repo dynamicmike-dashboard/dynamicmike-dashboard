@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 // Simple mime type map to avoid dependency issues since 'mime' package is missing
+// Update Timestamp: 2026-01-25 15:05
 const MIME_TYPES: Record<string, string> = {
   '.html': 'text/html',
   '.css': 'text/css',
