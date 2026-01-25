@@ -3,147 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>You're In! - RealAi Elite</title>
+    <title>Welcome to the Elite - RealAi</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #111827; 
-            --accent: #2563EB; 
-            --text: #374151;
-            --success: #10B981;
-        }
-        
         body {
             font-family: 'Inter', sans-serif;
-            color: var(--text);
             background: #F3F4F6;
+            color: #111827;
             margin: 0;
             padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            line-height: 1.6;
         }
-
-        .container {
-            max-width: 700px;
-            background: white;
-            padding: 50px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        
+        .header {
+            background: #111827;
+            color: white;
             text-align: center;
-            margin: 20px;
+            padding: 60px 20px;
         }
 
-        .success-icon {
-            font-size: 4rem;
-            color: var(--success);
+        .header h1 {
+            font-size: 2.5rem;
             margin-bottom: 20px;
         }
 
-        h1 {
-            color: var(--primary);
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+        .header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            color: #E5E7EB;
         }
 
-        .subtitle {
-            font-size: 1.2rem;
-            color: #6B7280;
-            margin-bottom: 40px;
-        }
-
-        .steps-container {
-            text-align: left;
-            background: #F9FAFB;
-            padding: 30px;
+        .container {
+            max-width: 800px;
+            margin: -40px auto 60px;
+            background: white;
+            padding: 40px;
             border-radius: 12px;
-            border: 1px solid #E5E7EB;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
 
-        .step-item {
-            display: flex;
-            gap: 15px;
+        h2 {
+            border-bottom: 1px solid #E5E7EB;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            color: #2563EB;
+        }
+
+        .form-group {
             margin-bottom: 25px;
         }
 
-        .step-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .step-num {
-            background: var(--primary);
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .step-content h3 {
-            margin: 0 0 5px 0;
-            color: var(--primary);
-        }
-
-        .rush-box {
-            margin-top: 30px;
-            padding: 20px;
-            background: #EEF2FF;
-            border: 1px solid var(--accent);
-            border-radius: 10px;
-            color: var(--accent);
-            font-size: 0.95rem;
-        }
-
-        .rush-box strong {
+        label {
             display: block;
-            margin-bottom: 5px;
-            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .help-text {
+            font-size: 0.9rem;
+            color: #6B7280;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .range-slider {
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .btn-submit {
+            background: #10B981;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #059669;
         }
 
     </style>
 </head>
 <body>
 
+    <header class="header">
+        <h1>You’re In. Welcome to the Elite.</h1>
+        <p>Congratulations! You’ve just secured one of our 10 Founder’s Beta slots. While other agents are manually chasing tire-kickers, your agency is now officially powered by a 24/7 "Property-Aware" brain.</p>
+    </header>
+
     <div class="container">
-        <div class="success-icon">🎉</div>
-        <h1>You’re in!</h1>
-        <p class="subtitle">Let’s Get Your Property Brain Online.<br>You are now one of only 10 agents with access to the Founder’s Beta.</p>
+        <p style="margin-bottom: 30px; font-size: 1.1rem;">
+            We are about to build your custom AI Concierge. This assistant won't just "chat"—it will master your specific listings, floor plans, and legal disclosures to turn your website into a lead-generating powerhouse.
+            <br><br>
+            <strong>What happens next:</strong> Please complete the form below. Once submitted, our team begins the manual training of your AI. You will receive your custom installation code and your first 'Lead Alert' dashboard access within 24 hours.
+        </p>
 
-        <div class="steps-container">
-            <div class="step-item">
-                <div class="step-num">1</div>
-                <div class="step-content">
-                    <h3>The Data Drop</h3>
-                    <p>Check your inbox. You’ll find an "Onboarding Link." Simply reply with the URLs of your active listings or attach the PDFs/Floor plans you want your AI to master.</p>
-                </div>
-            </div>
+        <form action="https://formspree.io/f/your-form-id" method="POST">
+            <h2>Let's Build Your Property Brain</h2>
             
-            <div class="step-item">
-                <div class="step-num">2</div>
-                <div class="step-content">
-                    <h3>We Build the Brain</h3>
-                    <p>Our team will manually train your custom AI concierge on your specific properties and personal "tone of voice."</p>
+            <div class="form-group">
+                <label>Primary Website</label>
+                <span class="help-text">What is the URL where you want the bot installed?</span>
+                <input type="url" name="website" placeholder="https://www.youragency.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>Top 3 Priority Listings</label>
+                <span class="help-text">Paste the URLs of the 3 listings you want the bot to master first.</span>
+                <textarea name="listings" rows="3" placeholder="1. https://...&#10;2. https://...&#10;3. https://..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>The "Knowledge Vault" (Files)</label>
+                <span class="help-text">Please upload or link to any PDF floor plans, HOA documents, or Area Guides you want to use as the "Source of Truth".</span>
+                <textarea name="files" rows="3" placeholder="Paste DropBox/Google Drive links here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Agent Identity</label>
+                <span class="help-text">Name, Phone, and Email for "Lead Alerts":</span>
+                <input type="text" name="agent_info" placeholder="John Doe, 555-0123, john@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>Brand Voice (1 to 10)</label>
+                <span class="help-text">1 = Strict/Professional, 10 = Casual/Witty/Fun</span>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span>Professional</span>
+                    <input type="range" name="voice" min="1" max="10" value="5" class="range-slider">
+                    <span>Fun</span>
                 </div>
             </div>
 
-            <div class="step-item">
-                <div class="step-num">3</div>
-                <div class="step-content">
-                    <h3>Go-Live by Tomorrow</h3>
-                    <p>We will send you your custom Chatbot Code to paste into your site, along with a digital QR code for your physical yard signs.</p>
-                </div>
+            <div class="form-group">
+                <label>The "Success" Metric</label>
+                <span class="help-text">What is the #1 question you are tired of answering manually?</span>
+                <input type="text" name="success_metric" placeholder="e.g. 'How much are HOA fees?' or 'Is this still available?'">
             </div>
-        </div>
 
-        <div class="rush-box">
-            <strong>Need to move faster?</strong>
-            If you have a hot listing going live today, text us at <strong>[Your Number]</strong> with the subject "RUSH" and the property link. We will prioritize your build.
-        </div>
+            <button type="submit" class="btn-submit">Initialize Agent OS &rarr;</button>
+        </form>
     </div>
 
 </body>

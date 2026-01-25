@@ -41,6 +41,33 @@
             text-align: center;
             padding: 80px 20px 60px;
             border-bottom: 1px solid #e5e7eb;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .video-bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.3; /* Subtle background */
+        }
+        
+        .video-bg .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0.95));
         }
 
         .hero h1 {
@@ -266,9 +293,21 @@
 
     <!-- HERO -->
     <header class="hero">
-        <div class="container">
-            <h1>Your 24/7 Property Expert.<br>Never Miss a Lead Again.</h1>
-            <p>The first AI Assistant that actually reads your property files. It answers buyer questions, captures contact info, and pings you immediately—while you're at dinner or asleep.</p>
+        <!-- VIDEO BACKGROUND -->
+        <div class="video-bg">
+            <!-- User to provide: hero-flyby.mp4 -->
+            <video autoplay muted loop playsinline poster="/realai-elite-assets/images/hero-poster.jpg">
+                <source src="/realai-elite-assets/images/hero-flyby.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+
+        <div class="container" style="position: relative; z-index: 2;">
+            <!-- LOGO -->
+            <img src="/realai-elite-assets/images/realai-logo-gold.png" alt="RealAi Elite" style="height: 60px; margin-bottom: 20px;">
+            
+            <h1>The World's First AI Assistant that actually reads your property files.</h1>
+            <p>It answers buyer questions, captures contact info, and pings you immediately after pre-qualifying the lead for you.</p>
         </div>
     </header>
 
@@ -290,10 +329,17 @@
     <section style="background: #111827; padding-bottom: 80px; text-align: center;">
         <div class="container">
             <h2 style="color: white; margin-bottom: 40px; font-size: 2rem;">Inside the Agent OS</h2>
+            
+            <!-- Updated Carousel with User Uploaded Images -->
             <div style="display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; text-align: left;">
-                <img src="/realai-elite-assets/images/agent-os-dashboard.png" alt="Dashboard" style="height: 500px; border-radius: 20px; border: 4px solid #374151;">
-                <img src="/realai-elite-assets/images/agent-os-chat.png" alt="Chat" style="height: 500px; border-radius: 20px; border: 4px solid #374151;">
-                <img src="/realai-elite-assets/images/agent-os-vault.png" alt="Vault" style="height: 500px; border-radius: 20px; border: 4px solid #374151;">
+                <!-- Mobile App Showcase -->
+                <img src="/realai-elite-assets/images/mobile-app-Showcase.png" alt="Mobile Dashboard" style="height: 500px; border-radius: 20px; border: 4px solid #374151;">
+                
+                <!-- Dark Mode Showcase -->
+                <img src="/realai-elite-assets/images/dark-mode-Showcase.png" alt="Dark Mode Chat" style="height: 500px; border-radius: 20px; border: 4px solid #374151;">
+                
+                <!-- Vault Health -->
+                <img src="/realai-elite-assets/images/vault-health.png" alt="Vault Health" style="height: 500px; border-radius: 20px; border: 4px solid #374151;">
             </div>
             <p style="color: #9CA3AF; margin-top: 20px;">* Actual Beta Interface</p>
         </div>
@@ -307,16 +353,16 @@
                 <div class="feature-card">
                     <span class="icon">🧠</span>
                     <h3>Knows the Details</h3>
-                    <p>Unlike generic bots, this one scans your specific PDFs, URLs, and floor plans to give 100% accurate property details.</p>
+                    <p>Verified accuracy based on your specific files. Unlike generic bots, this one scans your specific PDFs, URLs, and floor plans.</p>
                 </div>
                 <div class="feature-card">
                     <span class="icon">🎣</span>
-                    <h3>Captures the Lead</h3>
-                    <p>It politely gates deep info (like T&Cs or exact specs) behind a contact form so you get a name and number every time.</p>
+                    <h3>The VIP Unlock</h3>
+                    <p>Instead of a cold contact form, our AI offers to 'Unlock the Property Vault'. It provides a valuable teaser first, then secures the lead.</p>
                 </div>
                 <div class="feature-card">
                     <span class="icon">📲</span>
-                    <h3>Instantly Notifies You</h3>
+                    <h3>Real-time lead alerts</h3>
                     <p>The second a user asks for a viewing, you get a push notification on your phone with the full chat transcript.</p>
                 </div>
             </div>
@@ -331,8 +377,8 @@
             <div class="step">
                 <div class="step-number">1</div>
                 <div>
-                    <h3>Build Your Property Brain</h3>
-                    <p>Stop manually answering the same questions about square footage and school zones. Simply send us your listing URLs, PDFs, or even a quick voice memo. We upload them into your AI’s "Property Vault," creating a custom knowledge base.</p>
+                    <h3>Paste any URL to Build the Brain</h3>
+                    <p>Stop manually answering the same questions. Simply send us your listing URLs, PDFs, or even a quick voice memo. We upload them into your AI’s "Property Vault," creating a custom knowledge base.</p>
                 </div>
             </div>
 
@@ -358,17 +404,28 @@
     <section class="pricing-section">
         <div class="container">
             <div class="pricing-card">
-                <div class="pil-badge">FOUNDER’S BETA (Limit 10)</div>
+                <div class="pil-badge">JANUARY SPECIAL (First 10 Only)</div>
                 <h2>The "Jumpstart" Package</h2>
-                <div class="price">$99<span>/mo</span></div>
-                <div class="setup-fee">+ $299 One-time Setup</div>
+                
+                <!-- Anchor Price -->
+                <div style="text-decoration: line-through; color: #9CA3AF; font-size: 1.1rem; margin-top: 10px;">
+                    Standard: $1,497 Setup + $199/mo
+                </div>
+                
+                <!-- New Price -->
+                <div class="price">$495<span> One-time Setup</span></div>
+                <div class="setup-fee">Then $149/mo (Cancel Anytime)</div>
+                
+                <p style="font-size: 0.9rem; color: #FFF; margin-bottom: 20px; opacity: 0.9;">
+                     *Our team manually audits every property source to ensure your AI never misses a detail.
+                </p>
                 
                 <ul class="features-list">
                     <li>Full "Property Brain" Setup</li>
                     <li>Manual Data Entry (We do it for you)</li>
                     <li>Up to 300 Document Sources</li>
                     <li>Smart Lead Gating Logic</li>
-                    <li>Instant SMS/Push Notifications</li>
+                    <li>Real-time Lead Alerts</li>
                 </ul>
 
                 <!-- LINK TO CONFIRMATION PAGE (Simulating Stripe Redirect) -->
