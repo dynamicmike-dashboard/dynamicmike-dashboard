@@ -5,18 +5,27 @@ const nextConfig = {
   // Force static priority by rewriting to self
   async rewrites() {
     return [
+      // 1. Landing Page
       {
         source: '/realai-elite',
-        destination: '/realai-elite/index.html',
+        destination: '/realai-pages/realai-elite.html',
       },
+      // 2. Dashboard
       {
-        source: '/realai-elite/:path*',
-        destination: '/realai-elite/:path*',
+        source: '/realai-elite/dashboard',
+        destination: '/realai-pages/realai-elite-dashboard.html',
       },
+      // 3. Confirmation
+      {
+        source: '/realai-elite/confirmation',
+        destination: '/realai-pages/realai-elite-confirmation.html',
+      },
+      // 4. Probe Test (Legacy)
       {
         source: '/probe-test.txt',
         destination: '/probe-test.txt',
       },
+      // 5. Existing rewrites (if any needed)
     ];
   },
 
