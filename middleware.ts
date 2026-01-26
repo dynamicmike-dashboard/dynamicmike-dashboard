@@ -6,10 +6,14 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || "";
   const path = url.pathname.toLowerCase();
 
-  // 1. Dashboard Entry Point (Vanity URL)
+  // 1. Dashboard Entry Points (Vanity URLs)
   if (path === '/realai-dashboard' || path === '/realai-dashboard/') {
     // Rewrite to the static file in the new folder location
     return NextResponse.rewrite(new URL('/realai-elite/app.html', request.url));
+  }
+
+  if (path === '/realai-elite-dashboard' || path === '/realai-elite-dashboard/') {
+    return NextResponse.rewrite(new URL('/realai-pages/realai-elite-dashboard.html', request.url));
   }
 
   // Your verified domain mapping
