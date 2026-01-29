@@ -1,0 +1,24 @@
+{
+  "default": {
+    "id": "default",
+    "name": "Mike Anderson",
+    "agencyName": "Dynamic Estates",
+    "bio": "Top 1% luxury agent specializing in coastal properties and investment portfolios.",
+    "themeColor": "#D4AF37",
+    "logoUrl": "https://ui-avatars.com/api/?name=Dynamic+Estates&background=0D8ABC&color=fff",
+    "securityEnabled": true,
+    "gatingThreshold": 2,
+    "apiKey": ""
+  },
+  "test-agent": {
+    "id": "test-agent",
+    "name": "Sarah Connor",
+    "agencyName": "SkyNet Realty",
+    "bio": "Protecting your future investments with absolute certainty.",
+    "themeColor": "#EF4444",
+    "logoUrl": "https://ui-avatars.com/api/?name=SkyNet&background=EF4444&color=fff",
+    "securityEnabled": false,
+    "gatingThreshold": 3,
+    "apiKey": ""
+  }
+}

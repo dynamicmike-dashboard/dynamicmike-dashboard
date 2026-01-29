@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>You're In! - RealAi Elite</title>
+    <title>Agent Onboarding - RealAi Elite</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,98 +11,132 @@
             --accent: #2563EB; 
             --text: #374151;
             --success: #10B981;
+            --bg: #F3F4F6;
         }
         
         body {
             font-family: 'Inter', sans-serif;
             color: var(--text);
-            background: #F3F4F6;
+            background: var(--bg);
             margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 40px 20px;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
         }
 
         .container {
             max-width: 700px;
+            width: 100%;
             background: white;
             padding: 50px;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .header {
             text-align: center;
-            margin: 20px;
+            margin-bottom: 40px;
         }
 
         .success-icon {
-            font-size: 4rem;
-            color: var(--success);
-            margin-bottom: 20px;
+            font-size: 3rem;
+            margin-bottom: 10px;
         }
 
         h1 {
             color: var(--primary);
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 10px;
         }
 
         .subtitle {
-            font-size: 1.2rem;
             color: #6B7280;
-            margin-bottom: 40px;
+            font-size: 1.1rem;
         }
 
-        .steps-container {
-            text-align: left;
-            background: #F9FAFB;
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid #E5E7EB;
+        /* FORM STYLES */
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #E5E7EB;
         }
 
-        .step-item {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
+        .form-section:last-child {
+            border-bottom: none;
         }
 
-        .step-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .step-num {
-            background: var(--primary);
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .step-content h3 {
-            margin: 0 0 5px 0;
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 10px;
             color: var(--primary);
         }
 
-        .rush-box {
-            margin-top: 30px;
-            padding: 20px;
-            background: #EEF2FF;
-            border: 1px solid var(--accent);
-            border-radius: 10px;
-            color: var(--accent);
-            font-size: 0.95rem;
+        .helper-text {
+            font-size: 0.9rem;
+            color: #6B7280;
+            margin-bottom: 15px;
+            font-weight: 400;
         }
 
-        .rush-box strong {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 1.1rem;
+        select, input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .radio-option:hover {
+            background: #F9FAFB;
+        }
+
+        .radio-option input {
+            margin-top: 4px;
+        }
+
+        .btn-submit {
+            background: var(--accent);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #1D4ED8;
         }
 
     </style>
@@ -110,40 +144,91 @@
 <body>
 
     <div class="container">
-        <div class="success-icon">🎉</div>
-        <h1>You’re in!</h1>
-        <p class="subtitle">Let’s Get Your Property Brain Online.<br>You are now one of only 10 agents with access to the Founder’s Beta.</p>
-
-        <div class="steps-container">
-            <div class="step-item">
-                <div class="step-num">1</div>
-                <div class="step-content">
-                    <h3>The Data Drop</h3>
-                    <p>Check your inbox. You’ll find an "Onboarding Link." Simply reply with the URLs of your active listings or attach the PDFs/Floor plans you want your AI to master.</p>
-                </div>
-            </div>
-            
-            <div class="step-item">
-                <div class="step-num">2</div>
-                <div class="step-content">
-                    <h3>We Build the Brain</h3>
-                    <p>Our team will manually train your custom AI concierge on your specific properties and personal "tone of voice."</p>
-                </div>
-            </div>
-
-            <div class="step-item">
-                <div class="step-num">3</div>
-                <div class="step-content">
-                    <h3>Go-Live by Tomorrow</h3>
-                    <p>We will send you your custom Chatbot Code to paste into your site, along with a digital QR code for your physical yard signs.</p>
-                </div>
-            </div>
+        <div class="header">
+            <div class="success-icon">🤖</div>
+            <h1>Train Your AI Concierge</h1>
+            <p class="subtitle">Complete this profile to activate your "Elite" status settings.</p>
         </div>
 
-        <div class="rush-box">
-            <strong>Need to move faster?</strong>
-            If you have a hot listing going live today, text us at <strong>[Your Number]</strong> with the subject "RUSH" and the property link. We will prioritize your build.
-        </div>
+        <form>
+            <!-- 1. SPECIALTY -->
+            <div class="form-section">
+                <label>1. What is your primary Real Estate specialty?</label>
+                <p class="helper-text">This helps the AI understand the terminology it should use.</p>
+                <select name="specialty" required>
+                    <option value="" disabled selected>Select your focus...</option>
+                    <option value="Sales">Residential Sales</option>
+                    <option value="Rentals">High-End Rentals / Leasing</option>
+                    <option value="Commercial">Commercial / Retail</option>
+                    <option value="Land">Land & Development</option>
+                </select>
+            </div>
+
+            <!-- 2. IDENTITY -->
+            <div class="form-section">
+                <label>2. What is your "Closing Identity"?</label>
+                <p class="helper-text">How should the bot sound when pushing for the lead?</p>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="identity" value="Luxury" required>
+                        <div>
+                            <strong>Ultra-High-End Luxury</strong>
+                            <div style="font-size: 0.9rem; color:#6B7280; margin-top:4px;">"It would be my pleasure to arrange a private viewing." (Polite, distant, exclusive)</div>
+                        </div>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="identity" value="Consultative">
+                        <div>
+                            <strong>Consultative & Helpful</strong>
+                            <div style="font-size: 0.9rem; color:#6B7280; margin-top:4px;">"I want to make sure you have all the facts before you decide." (Educational, warm)</div>
+                        </div>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="identity" value="Aggressive">
+                        <div>
+                            <strong>Direct & Aggressive</strong>
+                            <div style="font-size: 0.9rem; color:#6B7280; margin-top:4px;">"This property is moving fast. What time can you be here?" (Urgent, sales-heavy)</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 3. TOP 3 BENEFITS -->
+            <div class="form-section">
+                <label>3. The "Local Expert" Logic</label>
+                <p class="helper-text">List 3 specific benefits of your area (e.g., "Walkable to Whole Foods," "Blue Ribbon School District," "No HOA fees") used to sell EVERY listing.</p>
+                <textarea name="benefits" rows="4" placeholder="1. Benefit One...&#10;2. Benefit Two...&#10;3. Benefit Three..." required></textarea>
+            </div>
+
+            <!-- 4. ESTATE GUARD -->
+            <div class="form-section">
+                <label>4. Estate Guard™ Security Setting</label>
+                <p class="helper-text">This controls how strictly we gate information.</p>
+                <div class="radio-group">
+                    <label class="radio-option" style="background: #EEF2FF; border-color: #C7D2FE;">
+                        <input type="radio" name="security" value="on" checked>
+                        <div>
+                            <strong>Default ON (Recommended)</strong>
+                            <div style="font-size: 0.9rem; color:#6B7280; margin-top:4px;">Immediately gate specifics for any property over $5M. Requires Name/Phone to see Floor Plans.</div>
+                        </div>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="security" value="off">
+                        <div>
+                            <strong>Default OFF</strong>
+                            <div style="font-size: 0.9rem; color:#6B7280; margin-top:4px;">Answer all questions freely. Only gate when explicitly asked for "Private Documents."</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Initialize My AI Agent &rarr;</button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 20px; font-size: 0.85rem; color: #9CA3AF;">
+            Changing these settings later is easy via your Agent PWA Dashboard.
+        </p>
+
     </div>
 
 </body>

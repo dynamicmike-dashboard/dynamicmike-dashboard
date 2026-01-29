@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Site Demo - EstateGuard</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 40px;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        h1 { color: #111827; }
+        p { line-height: 1.6; }
+        .cta {
+            background: #2563EB;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome to Dynamic Estates</h1>
+        <p>This page simulates a client's website (e.g., WordPress, Wix) where the <strong>EstateGuard Widget</strong> is embedded.</p>
+        <p>
+            Look for the gold chat bubble in the bottom right corner. 
+            This widget is "Powered by EstateGuard" but branded for the agent.
+        </p>
+        
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+
+        <h3>Test Scenarios:</h3>
+        <ol>
+            <li><strong>Opening:</strong> Click the bubble to open the "Concierge".</li>
+            <li><strong>Chit-Chat:</strong> Ask "What is this website?" (Should answer generic)</li>
+            <li><strong>Gating Check:</strong> Ask "How much is the ocean view property?" twice. 
+                <br><em>If Security is ON, the 3rd time should ask for your name/phone.</em>
+            </li>
+        </ol>
+
+        <a href="#" class="cta">View Properties</a>
+    </div>
+
+    <!-- ESTATE GUARD EMBED -->
+    <!-- Pointing to local widget.js for testing -->
+    <script 
+        src="/widget.js" 
+        data-agent-id="default" 
+        data-theme="#D4AF37" 
+        async>
+    </script>
+
+</body>
+</html>
