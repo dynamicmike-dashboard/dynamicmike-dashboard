@@ -299,12 +299,39 @@
         </div>
     </section>
 
-    <!-- DASHBOARD PREVIEW (Screenshot 4) -->
+    <!-- DASHBOARD PREVIEW (Horizontal Carousel) -->
     <section class="dashboard-preview">
         <div class="container">
-            <img src="images/os-dashboard.png" alt="Agent OS Dashboard" class="db-img fade-up">
+            <!-- Carousel Container -->
+            <div class="carousel-container" style="overflow-x: auto; white-space: nowrap; padding-bottom: 20px; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; display: flex; gap: 20px; scroll-behavior: smooth;">
+                <!-- Slide 1 -->
+                <img src="images/elite-slide-1.png" alt="Agent OS Dashboard" class="carousel-item shadow-2xl" style="display: inline-block; width: 85%; max-width: 1000px; border-radius: 12px; scroll-snap-align: center; border: 4px solid #334155;">
+                <!-- Slide 2 -->
+                <img src="images/elite-slide-2.png" alt="Command Center" class="carousel-item shadow-2xl" style="display: inline-block; width: 85%; max-width: 1000px; border-radius: 12px; scroll-snap-align: center; border: 4px solid #334155;">
+                <!-- Slide 3 -->
+                <img src="images/elite-slide-3.png" alt="Portfolio Control" class="carousel-item shadow-2xl" style="display: inline-block; width: 85%; max-width: 1000px; border-radius: 12px; scroll-snap-align: center; border: 4px solid #334155;">
+                <!-- Slide 4 -->
+                <img src="images/elite-slide-4.png" alt="Business Data" class="carousel-item shadow-2xl" style="display: inline-block; width: 85%; max-width: 1000px; border-radius: 12px; scroll-snap-align: center; border: 4px solid #334155;">
+                <!-- Slide 5 -->
+                <img src="images/elite-slide-5.png" alt="Identity & Branding" class="carousel-item shadow-2xl" style="display: inline-block; width: 85%; max-width: 1000px; border-radius: 12px; scroll-snap-align: center; border: 4px solid #334155;">
+            </div>
+            <p style="text-align: center; color: #94A3B8; font-size: 0.9rem; margin-top: 10px;">
+                <i class="fas fa-hand-pointer"></i> Swipe to explore the Agent OS
+            </p>
         </div>
     </section>
+
+    <style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .carousel-container {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
 
     <!-- STEPS (Screenshot 2) -->
     <section class="steps-section">
