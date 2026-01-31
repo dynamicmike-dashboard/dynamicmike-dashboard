@@ -278,12 +278,27 @@
             </p>
 
             <!-- Navigation Buttons -->
-            <button id="presSlideLeft" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); z-index: 10; background: rgba(212, 175, 55, 0.8); color: black; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 20px rgba(212,175,55,0.3);">
+            <button id="presSlideLeft" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); z-index: 20; background: rgba(255, 255, 255, 0.9); color: #1e293b; border: 1px solid #cbd5e1; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
                 <i class="fas fa-arrow-left"></i>
             </button>
-            <button id="presSlideRight" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); z-index: 10; background: rgba(212, 175, 55, 0.8); color: black; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 20px rgba(212,175,55,0.3);">
-                <i class="fas fa-arrow-right"></i>
+            <button id="presSlideRight" class="pulse-btn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); z-index: 20; background: #D4AF37; color: black; border: none; width: 60px; height: 60px; border-radius: 50%; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 20px rgba(212,175,55,0.5); display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-arrow-right" style="font-size: 1.2rem;"></i>
             </button>
+
+            <style>
+                @keyframes pulse-gold {
+                    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); transform: translateY(-50%) scale(1); }
+                    70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); transform: translateY(-50%) scale(1.1); }
+                    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); transform: translateY(-50%) scale(1); }
+                }
+                .pulse-btn {
+                    animation: pulse-gold 2s infinite;
+                }
+                .pulse-btn:hover {
+                    animation: none;
+                    transform: translateY(-50%) scale(1.1) !important;
+                }
+            </style>
 
             <!-- Carousel Container -->
             <div id="presCarouselContainer" class="carousel-container" style="overflow-x: auto; white-space: nowrap; padding-bottom: 20px; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; display: flex; gap: 30px; scroll-behavior: smooth;">
