@@ -120,55 +120,51 @@
 
     <div class="container">
         <p style="margin-bottom: 30px; font-size: 1.1rem;">
-            We are about to build your custom AI Concierge. This assistant won't just "chat"—it will master your specific listings, floor plans, and legal disclosures to turn your website into a lead-generating powerhouse.
+            Your "Agent OS" architecture is secured. Now, let's initialize your account.
             <br><br>
-            <strong>What happens next:</strong> Please complete the form below. Once submitted, our team begins the manual training of your AI. You will receive your custom installation code and your first 'Lead Alert' dashboard access within 24 hours.
+            <strong>Next Steps:</strong> Please perform this initial self-setup. Once completed, your AI Dashboard will be ready for active property learning.
         </p>
 
         <form action="https://formspree.io/f/your-form-id" method="POST">
-            <h2>Let's Build Your Property Brain</h2>
+            <h2>Initialize Your Account</h2>
             
+            <!-- 1. Identity -->
             <div class="form-group">
-                <label>Primary Website</label>
-                <span class="help-text">What is the URL where you want the bot installed?</span>
-                <input type="url" name="website" placeholder="https://www.youragency.com" required>
+                <label>Your Name</label>
+                <input type="text" name="user_name" placeholder="Full Name" required>
             </div>
 
             <div class="form-group">
-                <label>Top 3 Priority Listings</label>
-                <span class="help-text">Paste the URLs of the 3 listings you want the bot to master first.</span>
-                <textarea name="listings" rows="3" placeholder="1. https://...&#10;2. https://...&#10;3. https://..."></textarea>
+                <label>Business Name</label>
+                <input type="text" name="business_name" placeholder="Agency or Team Name" required>
             </div>
 
+            <!-- 2. Knowledge Vault -->
             <div class="form-group">
                 <label>The "Knowledge Vault" (Files)</label>
                 <span class="help-text">Please upload or link to any PDF floor plans, HOA documents, or Area Guides you want to use as the "Source of Truth".</span>
+                
+                <!-- NEW NOTICE -->
+                <div style="background: #FFFBEB; border-left: 4px solid #F59E0B; padding: 10px; margin-bottom: 10px; font-size: 0.9rem; color: #92400E;">
+                    <strong>IMPORTANT:</strong> Ensure each file is clearly labelled with the reference to the specific related property (e.g. "123_Main_St_Floorplan.pdf").
+                </div>
+
                 <textarea name="files" rows="3" placeholder="Paste DropBox/Google Drive links here..."></textarea>
             </div>
 
-            <div class="form-group">
-                <label>Agent Identity</label>
-                <span class="help-text">Name, Phone, and Email for "Lead Alerts":</span>
-                <input type="text" name="agent_info" placeholder="John Doe, 555-0123, john@example.com" required>
-            </div>
-
-            <div class="form-group">
-                <label>Brand Voice (1 to 10)</label>
-                <span class="help-text">1 = Strict/Professional, 10 = Casual/Witty/Fun</span>
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <span>Professional</span>
-                    <input type="range" name="voice" min="1" max="10" value="5" class="range-slider">
-                    <span>Fun</span>
+            <!-- 3. Quick Start (Replaces Questions) -->
+            <div style="margin-top: 40px; border-top: 1px solid #E5E7EB; padding-top: 30px;">
+                <h2>Quick Start Guide</h2>
+                <div style="background: #F0F9FF; padding: 20px; border-radius: 8px; border: 1px solid #BAE6FD;">
+                    <ul style="margin: 0; padding-left: 20px; color: #0C4A6E;">
+                        <li style="margin-bottom: 10px;"><strong>Step 1:</strong> Log in to your Dashboard using the credentials you created.</li>
+                        <li style="margin-bottom: 10px;"><strong>Step 2:</strong> Navigate to the "Property Brain" tab to add new listings manually.</li>
+                        <li style="margin-bottom: 10px;"><strong>Step 3:</strong> Use the "Test Chat" feature to verify the AI's knowledge before sharing the link.</li>
+                    </ul>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>The "Success" Metric</label>
-                <span class="help-text">What is the #1 question you are tired of answering manually?</span>
-                <input type="text" name="success_metric" placeholder="e.g. 'How much are HOA fees?' or 'Is this still available?'">
-            </div>
-
-            <button type="submit" class="btn-submit">Initialize Agent OS &rarr;</button>
+            <button type="submit" class="btn-submit" style="margin-top: 30px;">Complete Setup &rarr;</button>
         </form>
     </div>
 
