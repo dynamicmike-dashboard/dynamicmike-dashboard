@@ -32,6 +32,9 @@ export function middleware(request: NextRequest) {
       if (path === '/realai-elite' || path === '/realai-elite/') {
            return NextResponse.rewrite(new URL('/realai-pages/realai-elite.html', request.url));
       }
+      if (path === '/realai-elite/confirmation' || path === '/realai-elite/confirmation/') {
+           return NextResponse.rewrite(new URL('/realai-pages/realai-elite-confirmation.html', request.url));
+      }
   }
 
   // Your verified domain mapping
