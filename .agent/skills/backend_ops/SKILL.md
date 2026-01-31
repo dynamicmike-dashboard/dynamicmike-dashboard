@@ -16,14 +16,16 @@ description: Rules for Database (Supabase) management and Deployment workflows.
     *   *References:* In HTML/Code, reference as `/realai-pages/images/file.png` (no `public` prefix).
 
 ## 3. Deployment Logistics (Git)
-Before running `git push`:
-1.  **Check Status:** `git status` to see what's changed.
-2.  **Add Carefully:** `git add .` (if at root) or specific files. Avoid adding `node_modules` or `.env`.
-3.  **Commit Messages:** Use Conventional Commits.
-    *   `feat: Add new feature`
-    *   `fix: Resolve bug`
-    *   `chore: Maintenance/Refactor`
-    *   `style: CSS/Animation updates`
+**CRITICAL: Filesystem Verification**
+Before running `git push`, you MUST:
+1.  **Identify Targets:** Explicitly list which files and folders are being staged/pushed.
+2.  **Confirm Scope:** If the user hasn't explicitly authorized these specific paths, ASK for confirmation: "I am about to push changes to [Folder/File]. Proceed?"
+
+**Standard Workflow:**
+1.  `git status` (Check what's changed)
+2.  `git add [specific_path]` (Avoid `git add .` unless confirming the entire root)
+3.  `git commit -m "..."`
+4.  `git push`
 
 ## 4. Verification Checklist
 *   [ ] Does the build run locally? (if applicable)
