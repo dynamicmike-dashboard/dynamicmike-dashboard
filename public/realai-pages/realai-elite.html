@@ -270,9 +270,87 @@
         </div>
     </header>
 
-    <!-- VIDEO SECTION REMOVED PER USER REQUEST -->
+    <!-- PRESENTATION SLIDES (The "Why" Carousel) -->
+    <section class="presentation-section" style="background: #0f172a; padding: 40px 0; position: relative;">
+        <div class="container" style="position: relative;">
+            <p class="fade-up" style="text-align: center; color: #94A3B8; font-size: 0.9rem; margin-bottom: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;">
+                The Reality of the Modern Market
+            </p>
 
-    <!-- FEATURES (Screenshot 3/4) -->
+            <!-- Navigation Buttons -->
+            <button id="presSlideLeft" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); z-index: 10; background: rgba(212, 175, 55, 0.8); color: black; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 20px rgba(212,175,55,0.3);">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <button id="presSlideRight" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); z-index: 10; background: rgba(212, 175, 55, 0.8); color: black; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 20px rgba(212,175,55,0.3);">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <!-- Carousel Container -->
+            <div id="presCarouselContainer" class="carousel-container" style="overflow-x: auto; white-space: nowrap; padding-bottom: 20px; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; display: flex; gap: 30px; scroll-behavior: smooth;">
+                
+                <!-- Slide 1b -->
+                <img src="/realai-pages/images/presentation%20Slide%201b%20The%20Reality%20of%20the%20Modern%20Agent.png" 
+                     class="carousel-item shadow-2xl" 
+                     style="display: inline-block; height: 600px; max-height: 80vh; w: auto; border-radius: 12px; scroll-snap-align: center; border: 1px solid #334155;">
+                
+                <!-- Slide 1c -->
+                <img src="/realai-pages/images/presentation%20Slide%201c%20The%20Reality%20of%20the%20Modern%20Agent.png" 
+                     class="carousel-item shadow-2xl" 
+                     style="display: inline-block; height: 600px; max-height: 80vh; w: auto; border-radius: 12px; scroll-snap-align: center; border: 1px solid #334155;">
+
+                <!-- Slide 2 -->
+                <img src="/realai-pages/images/presentation%20Slide%202%20The%20Time%20Waster%20Dilemma.png" 
+                     class="carousel-item shadow-2xl" 
+                     style="display: inline-block; height: 600px; max-height: 80vh; w: auto; border-radius: 12px; scroll-snap-align: center; border: 1px solid #334155;">
+
+                <!-- Slide 2b -->
+                <img src="/realai-pages/images/presentation%20Slide%202b%20The%20Time%20Waster%20Dilemma.png" 
+                     class="carousel-item shadow-2xl" 
+                     style="display: inline-block; height: 600px; max-height: 80vh; w: auto; border-radius: 12px; scroll-snap-align: center; border: 1px solid #334155;">
+
+                <!-- Slide 3 -->
+                <img src="/realai-pages/images/presentation%20Slide%203%20The%20Repetitive%20Inquiry%20Trap.png" 
+                     class="carousel-item shadow-2xl" 
+                     style="display: inline-block; height: 600px; max-height: 80vh; w: auto; border-radius: 12px; scroll-snap-align: center; border: 1px solid #334155;">
+
+                <!-- Slide 3b -->
+                <img src="/realai-pages/images/presentation%20Slide%203b%20The%20Repetitive%20Inquiry%20Trap.png" 
+                     class="carousel-item shadow-2xl" 
+                     style="display: inline-block; height: 600px; max-height: 80vh; w: auto; border-radius: 12px; scroll-snap-align: center; border: 1px solid #334155;">
+
+                <!-- Slide 4 -->
+                <img src="/realai-pages/images/presentation%20Slide%204%20The%20Hyper-Local%20Knowledge%20Gap.png" 
+                     class="carousel-item shadow-2xl" 
+                     style="display: inline-block; height: 600px; max-height: 80vh; w: auto; border-radius: 12px; scroll-snap-align: center; border: 1px solid #334155;">
+
+                <!-- Slide 4b -->
+                <img src="/realai-pages/images/presentation%20Slide%204b%20The%20Hyper-Local%20Knowledge%20Gap.png" 
+                     class="carousel-item shadow-2xl" 
+                     style="display: inline-block; height: 600px; max-height: 80vh; w: auto; border-radius: 12px; scroll-snap-align: center; border: 1px solid #334155;">
+
+                <!-- Slide 5b -->
+                <img src="/realai-pages/images/presentation%20Slide%205b%20The%20Speed%20to%20Lead%20Failure.png" 
+                     class="carousel-item shadow-2xl" 
+                     style="display: inline-block; height: 600px; max-height: 80vh; w: auto; border-radius: 12px; scroll-snap-align: center; border: 1px solid #334155;">
+
+                <!-- Slide 5c -->
+                <img src="/realai-pages/images/presentation%20Slide%205c%20The%20Speed%20to%20Lead%20Failure.png" 
+                     class="carousel-item shadow-2xl" 
+                     style="display: inline-block; height: 600px; max-height: 80vh; w: auto; border-radius: 12px; scroll-snap-align: center; border: 1px solid #334155;">
+
+                <!-- Slide 6b -->
+                <img src="/realai-pages/images/presentation%20Slide%206b%20The%20Solution%20–%20Your%20PWA%20&%20Chatbot.png" 
+                     class="carousel-item shadow-2xl" 
+                     style="display: inline-block; height: 600px; max-height: 80vh; w: auto; border-radius: 12px; scroll-snap-align: center; border: 1px solid #334155;">
+
+                <!-- Slide 6d (Fixed encoding for endash/hyphen) -->
+                <img src="/realai-pages/images/presentation%20Slide%206d%20The%20Solution%20–%20Your%20PWA%20&%20Chatbot.png" 
+                     class="carousel-item shadow-2xl" 
+                     style="display: inline-block; height: 600px; max-height: 80vh; w: auto; border-radius: 12px; scroll-snap-align: center; border: 1px solid #334155;">
+
+            </div>
+        </div>
+    </section>
     <section class="features-section">
         <div class="container">
             <h2 class="fade-up" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">Inside the Agent OS</h2>
@@ -469,13 +547,22 @@
         document.addEventListener("DOMContentLoaded", () => {
             gsap.registerPlugin(ScrollTrigger);
 
-            // CAROUSEL LOGIC
+            // CAROUSEL LOGIC (Dashboard)
             const container = document.getElementById('carouselContainer');
             document.getElementById('slideLeft').addEventListener('click', () => {
                 container.scrollBy({ left: -300, behavior: 'smooth' });
             });
             document.getElementById('slideRight').addEventListener('click', () => {
                 container.scrollBy({ left: 300, behavior: 'smooth' });
+            });
+
+            // CAROUSEL LOGIC (Presentation)
+            const presContainer = document.getElementById('presCarouselContainer');
+            document.getElementById('presSlideLeft').addEventListener('click', () => {
+                presContainer.scrollBy({ left: -400, behavior: 'smooth' });
+            });
+            document.getElementById('presSlideRight').addEventListener('click', () => {
+                presContainer.scrollBy({ left: 400, behavior: 'smooth' });
             });
 
             // 1. Hero Fade Up (Trigger on load, but robust)
