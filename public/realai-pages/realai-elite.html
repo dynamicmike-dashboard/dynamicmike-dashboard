@@ -592,8 +592,22 @@
                 ease: "back.out(1.2)"
             });
 
-            // 3. Dashboard Slide Up (Carousel)
-            gsap.from(".db-img, .carousel-container", { // Added carousel-container to target
+            // 3. (A) Presentation Carousel Fade In
+            gsap.from("#presCarouselContainer, #presSlideLeft, #presSlideRight", {
+                scrollTrigger: {
+                    trigger: ".presentation-section",
+                    start: "top 80%",
+                    toggleActions: commonToggle
+                },
+                y: 40,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: "power2.out"
+            });
+
+            // 3. (B) Dashboard Slide Up (Specific ID)
+            gsap.from(".db-img, #carouselContainer, #slideLeft, #slideRight", { 
                 scrollTrigger: {
                     trigger: ".dashboard-preview",
                     start: "top 80%",
