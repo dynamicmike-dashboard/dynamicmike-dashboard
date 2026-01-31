@@ -16,6 +16,24 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(new URL('/realai-pages/realai-elite-dashboard.html', request.url));
   }
 
+  // 2. Special Domain Routing (Split Worlds Strategy)
+  
+  // A. EstateGuard Premium Domain(s) -> Direct to Landing Page
+  // Covers: realiai.casa, realaicasa.com
+  if (hostname.includes('realiai.casa') || hostname.includes('realaicasa.com') || hostname.includes('realai.casa')) {
+     if (path === '/' || path === '/index.html') {
+         return NextResponse.rewrite(new URL('/realai-pages/realai-estateguard.html', request.url));
+     }
+  }
+
+  // B. Maistermind Elite Path -> Direct to Elite Landing Page
+  // Allows maistermind.com/realai-elite to show the Elite offer
+  if (hostname.includes('maistermind.com')) {
+      if (path === '/realai-elite' || path === '/realai-elite/') {
+           return NextResponse.rewrite(new URL('/realai-pages/realai-elite.html', request.url));
+      }
+  }
+
   // Your verified domain mapping
   const domainMap: Record<string, string> = {
     "breathoflifepdc.org": "breath-of-life",
@@ -32,7 +50,7 @@ export function middleware(request: NextRequest) {
     "playa.photos": "playaphotos",
     "playavida.org": "playavida",
     "pranatowers.com": "pranatowers",
-    "realaicasa.com": "realaicasas",
+    "realaicasa.com": "realaicasas", // Kept for other paths, but root is hijacked above
     "reallifeavengers.com": "reallifeavengers",
     "social-media-management-services.com": "smms",
   };

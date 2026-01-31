@@ -1,507 +1,177 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent OS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>RealAi Elite - Features</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1349ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101522",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
     <style>
-        :root {
-            --primary: #2563EB; /* Royal Blue */
-            --bg: #F8FAFC;
-            --surface: #FFFFFF;
-            --text: #1E293B;
-            --text-light: #64748B;
-            --border: #E2E8F0;
-            --success: #10B981;
-            --danger: #EF4444;
-            --radius-lg: 20px;
-            --radius-md: 12px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: var(--bg); 
-            color: var(--text);
-            padding-bottom: 80px; /* Space for nav */
-            -webkit-tap-highlight-color: transparent;
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-
-        /* HEADER */
-        .app-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px;
-            background: var(--surface);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-
-        .header-logo {
-            width: 32px;
-            height: 32px;
-            background: var(--primary);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 15px;
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #cbd5e1;
-            overflow: hidden;
-        }
-
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* VIEWS */
-        .view-section {
-            padding: 24px;
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .view-section.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* DASHBOARD VIEW */
-        .welcome-text { margin-bottom: 24px; }
-        .welcome-text h1 { font-size: 1.5rem; font-weight: 700; }
-        .welcome-text p { color: var(--text-light); }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: var(--surface);
-            padding: 16px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow);
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            background: #EFF6FF;
-            color: var(--primary);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 12px;
-        }
-
-        .stat-val { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
-        .stat-label { font-size: 0.85rem; color: var(--text-light); }
-
-        .vault-card {
-            background: var(--surface);
-            padding: 20px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 16px;
-            transition: transform 0.1s;
-        }
-
-        .vault-card:active { transform: scale(0.98); }
-
-        .vault-icon {
-            width: 48px;
-            height: 48px;
-            background: #F1F5F9;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: var(--primary);
-        }
-
-        .vault-info { flex: 1; }
-        .vault-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
-        .vault-info p { font-size: 0.85rem; color: var(--text-light); }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            margin-top: 32px;
-        }
-        
-        .section-header h2 { font-size: 1.1rem; font-weight: 600; }
-
-        .lead-list { display: flex; flex-direction: column; gap: 12px; }
-
-        .lead-item {
-            background: var(--surface);
-            padding: 12px;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .lead-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #E2E8F0;
-        }
-
-        .lead-info h4 { font-size: 0.95rem; font-weight: 600; }
-        .lead-info p { font-size: 0.75rem; color: var(--text-light); }
-        .lead-badge {
-            margin-left: auto;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-        .bg-new { background: #DCFCE7; color: #166534; }
-        .bg-pending { background: #FEF9C3; color: #854D0E; }
-
-        /* PROPERTY VIEW */
-        .filter-bar {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-        }
-
-        .filter-pill {
-            padding: 8px 16px;
-            background: var(--surface);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            border: 1px solid var(--border);
-            white-space: nowrap;
-        }
-
-        .filter-pill.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .property-card {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .prop-img {
-            height: 200px;
-            background: #94A3B8;
+        .feature-card-glow {
             position: relative;
         }
-        
-        .status-tag {
+        .feature-card-glow::after {
+            content: '';
             position: absolute;
-            top: 12px;
-            left: 12px;
-            background: #10B981;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-
-        .prop-details { padding: 16px; }
-        .prop-price { font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; }
-        .prop-addr { color: var(--text-light); font-size: 0.9rem; margin-bottom: 12px; }
-        
-        .prop-meta {
-            display: flex;
-            gap: 16px;
-            font-size: 0.85rem;
-            color: var(--text-light);
-            border-top: 1px solid var(--border);
-            padding-top: 12px;
-        }
-
-        /* BOTTOM NAV */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
             right: 0;
-            background: var(--surface);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0;
-            z-index: 1000;
+            bottom: 0;
+            background: radial-gradient(circle at 10% 10%, rgba(19, 73, 236, 0.1), transparent 40%);
+            pointer-events: none;
+            border-radius: inherit;
         }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: var(--text-light);
-            font-size: 0.7rem;
-            text-decoration: none;
-            width: 60px;
-        }
-
-        .nav-item i { font-size: 1.2rem; }
-        
-        .nav-item.active { color: var(--primary); }
-
-        .fab {
-            width: 48px;
-            height: 48px;
-            background: var(--primary);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
-            margin-top: -20px; /* Pop out effect */
+    </style>
+    <style>
+        body {
+          min-height: max(884px, 100dvh);
         }
     </style>
 </head>
-<body>
-
-    <header class="app-header">
-        <div class="header-title">
-            <div class="header-logo"><i class="fas fa-th-large"></i></div>
-            Agent OS
+<body class="bg-background-light dark:bg-background-dark text-white selection:bg-primary selection:text-white">
+<!-- Top Navigation Bar -->
+<div class="fixed top-0 left-0 right-0 z-50 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 pb-2 justify-between border-b border-[#232c48]">
+    <div class="text-white flex size-10 shrink-0 items-center justify-center bg-primary rounded-lg">
+        <span class="material-symbols-outlined">home</span>
+    </div>
+    <h2 class="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display">RealAi Elite</h2>
+    <div class="flex w-10 items-center justify-end">
+        <button class="flex items-center justify-center rounded-full h-10 w-10 bg-[#192033] text-white border border-[#323f67]">
+            <span class="material-symbols-outlined">person</span>
+        </button>
+    </div>
+</div>
+<!-- Main Content Area -->
+<main class="pt-20 pb-24">
+    <!-- Headline Section -->
+    <div class="px-4 py-8">
+        <h1 class="text-white tracking-tight text-3xl font-black leading-tight text-center pb-2 pt-4 font-display">
+            Inside the Agent OS
+        </h1>
+        <p class="text-[#92a0c9] text-center text-sm max-w-xs mx-auto leading-relaxed">
+            The high-performance operating system for the modern real estate professional.
+        </p>
+    </div>
+    <!-- Features Section -->
+    <div class="px-4 py-4 flex flex-col gap-4 @container">
+        <div class="flex flex-col gap-2 mb-2">
+            <h2 class="text-white text-xl font-bold font-display px-1">Core Capabilities</h2>
         </div>
-        <div class="header-actions">
-            <i class="fas fa-bell" style="font-size: 1.2rem; color: var(--text-light);"></i>
-            <div class="avatar"><img src="https://ui-avatars.com/api/?name=Agent" alt="Profile"></div>
-        </div>
-    </header>
-
-    <!-- DASHBOARD VIEW -->
-    <div id="view-dashboard" class="view-section active">
-        <div class="welcome-text">
-            <h1>Dashboard</h1>
-            <p>Welcome back, Agent.</p>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-home"></i></div>
-                <div class="stat-val">290</div>
-                <div class="stat-label">Properties</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-users"></i></div>
-                <div class="stat-val">42</div>
-                <div class="stat-label">Active Leads</div>
-            </div>
-        </div>
-
-        <div class="section-header">
-            <h2>Vaults</h2>
-        </div>
-
-        <div class="vault-card" onclick="switchView('view-properties')">
-            <div class="vault-icon"><i class="fas fa-building"></i></div>
-            <div class="vault-info">
-                <h3>Property Vault</h3>
-                <p>290 slots occupied</p>
-            </div>
-            <i class="fas fa-chevron-right" style="color: var(--border);"></i>
-        </div>
-
-        <div class="vault-card">
-            <div class="vault-icon"><i class="fas fa-briefcase"></i></div>
-            <div class="vault-info">
-                <h3>Business Vault</h3>
-                <p>10 slots occupied</p>
-            </div>
-            <i class="fas fa-chevron-right" style="color: var(--border);"></i>
-        </div>
-
-        <div class="section-header">
-            <h2>Recent Leads</h2>
-            <a href="#" style="color: var(--primary); text-decoration: none; font-size: 0.85rem;">View All</a>
-        </div>
-
-        <div class="lead-list">
-            <div class="lead-item">
-                <div class="lead-avatar"></div>
-                <div class="lead-info">
-                    <h4>Sarah Miller</h4>
-                    <p>Interested in Modern Loft</p>
+        <!-- Feature 1: Knows the Details -->
+        <div class="feature-card-glow flex flex-col gap-4 rounded-xl border border-[#323f67] bg-[#192033] p-6 shadow-xl">
+            <div class="flex items-center gap-4">
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/20 text-primary border border-primary/30">
+                    <span class="material-symbols-outlined" style="font-size: 28px;">psychology</span>
                 </div>
-                <span class="lead-badge bg-new">New</span>
+                <h3 class="text-white text-lg font-bold leading-tight font-display">Knows the Details</h3>
             </div>
-            <div class="lead-item">
-                <div class="lead-avatar"></div>
-                <div class="lead-info">
-                    <h4>David Chen</h4>
-                    <p>Viewing: Sunset Villa</p>
+            <p class="text-[#92a0c9] text-base font-normal leading-relaxed">
+                AI scans your property files and documents to answer every niche buyer question instantly, accurately, and 24/7.
+            </p>
+        </div>
+        <!-- Feature 2: The VIP Unlock -->
+        <div class="feature-card-glow flex flex-col gap-4 rounded-xl border border-[#323f67] bg-[#192033] p-6 shadow-xl">
+            <div class="flex items-center gap-4">
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/20 text-primary border border-primary/30">
+                    <span class="material-symbols-outlined" style="font-size: 28px;">lock_person</span>
                 </div>
-                <span class="lead-badge bg-pending">Pending</span>
+                <h3 class="text-white text-lg font-bold leading-tight font-display">The VIP Unlock</h3>
             </div>
+            <p class="text-[#92a0c9] text-base font-normal leading-relaxed">
+                Automatically gate sensitive property info to capture and qualify high-intent leads before they gain full access.
+            </p>
+        </div>
+        <!-- Feature 3: Real-time lead alerts -->
+        <div class="feature-card-glow flex flex-col gap-4 rounded-xl border border-[#323f67] bg-[#192033] p-6 shadow-xl">
+            <div class="flex items-center gap-4">
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/20 text-primary border border-primary/30">
+                    <span class="material-symbols-outlined" style="font-size: 28px;">notifications_active</span>
+                </div>
+                <h3 class="text-white text-lg font-bold leading-tight font-display">Real-time Lead Alerts</h3>
+            </div>
+            <p class="text-[#92a0c9] text-base font-normal leading-relaxed">
+                Never miss a beat with instant push notifications delivered to your device the second a lead is ready to move.
+            </p>
         </div>
     </div>
-
-    <!-- PROPERTIES VIEW -->
-    <div id="view-properties" class="view-section">
-        <div class="welcome-text">
-            <h1>Properties</h1>
-            <p>Manage your portfolio</p>
-        </div>
-
-        <div class="filter-bar">
-            <div class="filter-pill active">All</div>
-            <div class="filter-pill">Residential</div>
-            <div class="filter-pill">Commercial</div>
-            <div class="filter-pill">Price Range</div>
-        </div>
-
-        <div class="property-card">
-            <div class="prop-img">
-                <div class="status-tag">ACTIVE</div>
-                <!-- Placeholder image bg -->
-                <div style="width:100%; height:100%; background:url('https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;"></div>
+    <!-- CTA Section -->
+    <div class="px-4 py-12 @container">
+        <div class="flex flex-col items-center gap-6 text-center">
+            <div class="flex flex-col gap-2">
+                <h2 class="text-white text-2xl font-bold leading-tight font-display">
+                    Ready to upgrade?
+                </h2>
+                <p class="text-[#92a0c9] text-sm leading-normal max-w-[280px] mx-auto">
+                    Join the elite circle of AI-powered real estate professionals today.
+                </p>
             </div>
-            <div class="prop-details">
-                <div class="prop-price">$1,250,000</div>
-                <div class="prop-addr">123 Skyway Terrace, Ocean Side</div>
-                <div class="prop-meta">
-                    <span><i class="fas fa-bed"></i> 4</span>
-                    <span><i class="fas fa-bath"></i> 3</span>
-                    <span><i class="fas fa-ruler-combined"></i> 3,500 sqft</span>
-                </div>
-            </div>
-        </div>
-
-         <div class="property-card">
-            <div class="prop-img">
-                <div class="status-tag" style="background: #fbbf24;">DRAFT</div>
-                <div style="width:100%; height:100%; background:url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;"></div>
-            </div>
-            <div class="prop-details">
-                <div class="prop-price">$850,000</div>
-                <div class="prop-addr">4508 Oak Avenue, Pasadena</div>
-                <div class="prop-meta">
-                    <span><i class="fas fa-bed"></i> 3</span>
-                    <span><i class="fas fa-bath"></i> 2</span>
-                    <span><i class="fas fa-ruler-combined"></i> 2,100 sqft</span>
-                </div>
-            </div>
+            <button class="flex w-full max-w-[320px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary text-white text-base font-bold shadow-lg shadow-primary/20">
+                <span class="truncate">Get Started Now</span>
+            </button>
         </div>
     </div>
-
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active" onclick="switchView('view-dashboard', this)">
-            <i class="fas fa-home"></i>
-            <span>Dashboard</span>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 border-t border-[#232c48] bg-[#192033]/90 backdrop-blur-lg px-4 pb-6 pt-2">
+    <div class="flex gap-2 max-w-md mx-auto">
+        <a class="flex flex-1 flex-col items-center justify-center gap-1 text-[#92a0c9]" href="#">
+            <div class="flex h-8 items-center justify-center">
+                <span class="material-symbols-outlined">home</span>
+            </div>
+            <p class="text-xs font-medium tracking-wide">Home</p>
         </a>
-        <a href="#" class="nav-item" onclick="switchView('view-properties', this)">
-            <i class="fas fa-building"></i>
-            <span>Properties</span>
+        <a class="flex flex-1 flex-col items-center justify-center gap-1 text-white" href="#">
+            <div class="flex h-8 items-center justify-center">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+            </div>
+            <p class="text-xs font-medium tracking-wide">Features</p>
         </a>
-        <a href="#" class="nav-item">
-            <div class="fab"><i class="fas fa-plus"></i></div>
+        <a class="flex flex-1 flex-col items-center justify-center gap-1 text-[#92a0c9]" href="#">
+            <div class="flex h-8 items-center justify-center">
+                <span class="material-symbols-outlined">group</span>
+            </div>
+            <p class="text-xs font-medium tracking-wide">Leads</p>
         </a>
-        <a href="#" class="nav-item">
-            <i class="fas fa-briefcase"></i>
-            <span>Business</span>
+        <a class="flex flex-1 flex-col items-center justify-center gap-1 text-[#92a0c9]" href="#">
+            <div class="flex h-8 items-center justify-center">
+                <span class="material-symbols-outlined">settings</span>
+            </div>
+            <p class="text-xs font-medium tracking-wide">Settings</p>
         </a>
-        <a href="#" class="nav-item">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-        </a>
-    </nav>
-
-    <!-- GSAP CORE -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script>
-        // Initial Load Animation
-        document.addEventListener("DOMContentLoaded", () => {
-            const tl = gsap.timeline();
-            tl.from(".welcome-text", { y: 20, opacity: 0, duration: 0.6, ease: "power2.out" })
-              .from(".stat-card", { y: 20, opacity: 0, duration: 0.5, stagger: 0.1, ease: "back.out(1.7)" }, "-=0.4")
-              .from(".section-header, .vault-card, .lead-item", { y: 20, opacity: 0, duration: 0.5, stagger: 0.05, ease: "power2.out" }, "-=0.3");
-        });
-
-        function switchView(viewId, navEl) {
-            // 1. Identify active view
-            const currentView = document.querySelector('.view-section.active');
-            const newView = document.getElementById(viewId);
-
-            if (currentView === newView) return;
-
-            // 2. Animate Out
-            gsap.to(currentView, {
-                opacity: 0,
-                y: -10,
-                duration: 0.3,
-                onComplete: () => {
-                    currentView.classList.remove('active');
-                    gsap.set(currentView, { y: 0 }); // reset for next time
-
-                    // 3. Animate In
-                    newView.classList.add('active');
-                    gsap.fromTo(newView, 
-                        { opacity: 0, y: 10 },
-                        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
-                    );
-
-                    // Re-run stagger for specific elements in the new view if needed
-                    if(viewId === 'view-properties') {
-                        gsap.from(".property-card", { y: 20, opacity: 0, duration: 0.5, stagger: 0.1, delay: 0.1 });
-                    }
-                }
-            });
-            
-            // 4. Update Nav
-            if(navEl) {
-                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                navEl.classList.add('active');
-                
-                // Pop effect for nav icon
-                gsap.from(navEl.querySelector('i'), { scale: 0.5, duration: 0.3, ease: "back.out(2)" });
-            }
-        }
-    </script>
+    </div>
+</nav>
+<!-- Bottom Spacer -->
+<div class="h-5 bg-[#192033]"></div>
 </body>
 </html>

@@ -4,312 +4,267 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RealAi EstateGuard - The Fortress for High-Net-Worth Portfolios</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #0F172A; /* Slate 900 - Darker/Premium */
-            --accent: #D4AF37; /* Gold for Elite/Security */
-            --text: #334155;
-            --bg: #F8FAFC;
-            --white: #ffffff;
-            --success: #15803D;
+            --primary: #020617; /* Slate 950 */
+            --secondary: #1e293b; /* Slate 800 */
+            --accent: #d4af37; /* Metallic Gold */
+            --accent-glow: rgba(212, 175, 55, 0.4);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(30, 41, 59, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.05);
         }
         
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: var(--text);
-            background-color: var(--bg);
+            background-color: var(--primary);
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, .price {
+            font-family: 'Playfair Display', serif;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
+            position: relative;
+            z-index: 2;
         }
 
-        /* HERO SECTION */
-        .hero {
-            background: var(--primary);
-            color: white;
-            text-align: center;
-            padding: 100px 20px 80px;
-            border-bottom: 4px solid var(--accent);
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            color: white;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            font-weight: 800;
-        }
-
-        .hero p {
-            font-size: 1.35rem;
-            max-width: 750px;
-            margin: 0 auto 2.5rem;
-            color: #94A3B8;
-        }
-
-        /* DEMO CENTERPIECE */
-        .demo-section {
-            background: #1E293B;
-            padding: 60px 0;
-            text-align: center;
-            color: var(--white);
+        /* UTILITIES */
+        .text-accent { color: var(--accent); }
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
-        .demo-container {
-            background: #000;
-            max-width: 800px;
-            margin: 0 auto;
-            aspect-ratio: 16/9;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        /* HERO SECTION */
+        .hero {
+            min-height: 90vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid #475569;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 10%, #1e293b 0%, #020617 70%);
         }
 
-        .demo-placeholder {
-            color: #9CA3AF;
-            font-size: 1.1rem;
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 1;
+            z-index: 1;
         }
 
-        .demo-hook {
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 6vw, 5rem);
+            line-height: 1.1;
             margin-bottom: 2rem;
-            font-size: 1.2rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            font-weight: 300;
+        }
+
+        /* BUTTONS */
+        .btn-buy {
+            background: linear-gradient(135deg, var(--accent) 0%, #b3922d 100%);
+            color: #000;
+            padding: 18px 40px;
+            border-radius: 4px;
             font-weight: 600;
-            color: var(--accent);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px var(--accent-glow);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
         }
 
-        /* VALUE PROP 3-COL */
-        .value-prop {
-            padding: 80px 0;
-            background: var(--white);
+        .btn-buy:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 20px 40px var(--accent-glow);
         }
 
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        /* SHOWCASE SCROLL */
+        .showcase-section {
+            padding: 100px 0;
+            background: #020617;
+            position: relative;
+        }
+
+        .scroll-container {
+            display: flex;
             gap: 40px;
+            overflow-x: auto;
+            padding: 40px 24px;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+            cursor: grab;
+        }
+        .scroll-container::-webkit-scrollbar { display: none; }
+
+        .app-screen {
+            flex: 0 0 500px; /* reduced width for aesthetics or adjust as needed */
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            transition: transform 0.5s ease;
+            opacity: 0.8;
+            filter: grayscale(30%);
+        }
+        
+        .app-screen:hover {
+            opacity: 1;
+            filter: grayscale(0%);
+            transform: scale(1.02);
+        }
+
+        /* FEATURES (GLASS CARDS) */
+        .value-prop {
+            padding: 120px 0;
+            background: radial-gradient(circle at 100% 0%, #1e293b 0%, #020617 50%);
         }
 
         .feature-card {
-            text-align: left;
-            padding: 35px;
-            background: #F9FAFB;
-            border-radius: 12px;
-            border: 1px solid #E2E8F0;
-            transition: transform 0.2s;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 16px;
+            transition: all 0.4s ease;
         }
 
         .feature-card:hover {
-            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.03);
             border-color: var(--accent);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-10px);
         }
 
         .icon {
             font-size: 2.5rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        /* HOW IT WORKS */
-        .how-it-works {
-            padding: 80px 0;
-            background: var(--bg);
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.2rem;
-            color: var(--primary);
-            margin-bottom: 3rem;
-        }
-
-        .step {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 40px;
-            align-items: flex-start;
-        }
-
-        .step-number {
-            background: var(--primary);
-            color: var(--accent);
-            width: 40px;
-            height: 40px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            flex-shrink: 0;
-            border: 1px solid var(--accent);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--accent), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         /* PRICING */
         .pricing-section {
-            padding: 80px 0;
-            background: #0F172A url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            text-align: center;
-            color: white;
+            padding: 120px 0;
+            background: #020617;
+            position: relative;
         }
 
         .pricing-card {
-            background: rgba(30, 41, 59, 0.95);
-            color: white;
-            max-width: 550px;
-            margin: 0 auto;
-            border-radius: 20px;
-            padding: 60px 30px;
-            box-shadow: 0 0 40px rgba(212, 175, 55, 0.15);
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(180deg, rgba(30,41,59,0.8) 0%, rgba(15,23,42,0.95) 100%);
             border: 1px solid var(--accent);
+            border-radius: 24px;
+            padding: 80px 40px;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 100px rgba(212, 175, 55, 0.1);
         }
 
-        .pil-badge {
-            background: var(--accent);
-            color: var(--primary);
-            padding: 6px 18px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 800;
-            display: inline-block;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .pricing-card::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(180deg, var(--accent), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            pointer-events: none;
         }
 
         .price {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin: 10px 0;
+            font-size: 5rem;
+            line-height: 1;
             color: var(--accent);
-        }
-        
-        .price span {
-            font-size: 1.2rem;
-            font-weight: 400;
-            color: #CBD5E1;
-        }
-
-        .setup-fee {
-            font-size: 1.3rem;
-            color: white;
-            font-weight: 600;
-            margin-bottom: 35px;
-        }
-
-        .features-list {
-            text-align: left;
-            margin: 0 auto 45px;
-            max-width: 380px;
-            list-style: none;
+            margin: 20px 0 10px;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
         }
 
         .features-list li {
-            margin-bottom: 15px;
-            padding-left: 30px;
-            position: relative;
             font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-main);
+            opacity: 0.9;
         }
 
-        .features-list li::before {
-            content: "🛡️";
-            position: absolute;
-            left: 0;
+        .features-list li svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--accent);
         }
 
-        .btn-buy {
-            background: var(--accent);
-            color: var(--primary);
-            text-decoration: none;
-            padding: 20px 45px;
-            border-radius: 5px;
-            font-size: 1.3rem;
-            font-weight: 800;
-            display: inline-block;
-            transition: all 0.3s;
-            width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        /* ANIMATION UTILS */
+        .reveal-text { overflow: hidden; }
+        .reveal-text > * { transform: translateY(100%); }
 
-        .btn-buy:hover {
-            background: #FCD34D;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px;
-            color: #6B7280;
-            font-size: 0.9rem;
-            background: var(--white);
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.2rem; }
-            .grid-3 { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body>
 
     <!-- HERO -->
     <header class="hero">
-        <div class="container" style="position: relative;">
-            <div style="position: absolute; top: -60px; right: 20px;">
-                <a href="https://realai-estateguard.vercel.app" class="btn-buy" style="padding: 10px 25px; font-size: 1rem; width: auto; background: var(--accent); color: var(--primary); border: none;">Login</a>
+        <div class="container hero-content">
+            <div style="position: absolute; top: -100px; right: 0;">
+                <a href="https://realai-estateguard.vercel.app" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase;">Member Login</a>
             </div>
-            <h1>Protect Your Seller's Identity.<br>Secure Every Showing.</h1>
-            <p>The first AI Security Concierge built for high-net-worth listings. EstateGuard strictly vets every lead, verifies identity, and protects sensitive property details behind a digital vault.</p>
+            <div class="reveal-text"><h1>Protect Your Seller's Identity.<br><span class="text-accent">Secure Every Showing.</span></h1></div>
+            <p class="fade-in">The first AI Security Concierge built for high-net-worth listings. EstateGuard strictly vets every lead, verifies identity, and protects sensitive property details behind a digital vault.</p>
+            <div class="fade-in" style="margin-top: 40px;">
+                <a href="#pricing" class="btn-buy">Secure My Territory</a>
+            </div>
         </div>
     </header>
 
-    <!-- DEMO -->
-    <section class="demo-section">
-        <div class="container">
-            <p class="demo-hook">"Watch how EstateGuard stops an unverified lead from seeing the floor plan."</p>
-            <div class="demo-container">
-                <div class="demo-placeholder">
-                    [▶️ Video Placeholder: Security Logic Demo]
-                    <br><small>Identity Protection System in Action</small>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- PRODUCT SHOWCASE -->
-    <section style="background: #0F172A; padding-bottom: 80px; text-align: center; border-bottom: 1px solid #1E293B;">
+    <section class="showcase-section">
         <div class="container">
-            <h2 style="color: white; margin-bottom: 40px; font-size: 2rem;">The Command Center</h2>
-            <div style="display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; text-align: left;">
-                <img src="images/agent-os-dashboard.png" alt="Dashboard" style="height: 500px; border-radius: 12px; border: 2px solid #334155;">
-                <img src="images/agent-os-chat.png" alt="Chat" style="height: 500px; border-radius: 12px; border: 2px solid #334155;">
-                <img src="images/agent-os-vault.png" alt="Vault" style="height: 500px; border-radius: 12px; border: 2px solid #334155;">
+            <h2 class="section-title text-center mb-5 fade-in">The Command Center</h2>
+            <div class="scroll-container">
+                <img src="images/os-dashboard.png" class="app-screen" alt="Dashboard">
+                <img src="images/os-portfolio.png" class="app-screen" alt="Portfolio">
+                <img src="images/os-guard.png" class="app-screen" alt="Security Guard">
+                <img src="images/os-identity.png" class="app-screen" alt="Identity">
+                <img src="images/os-knowledge.png" class="app-screen" alt="Knowledge Base">
             </div>
-            <p style="color: #64748B; margin-top: 20px;">* Proprietary Security Interface</p>
+            <p class="text-center mt-4 text-muted fade-in" style="font-size: 0.9rem; letter-spacing: 1px;">SWIPE TO EXPLORE INTERFACE</p>
         </div>
     </section>
 
@@ -318,95 +273,57 @@
         <div class="container">
             <div class="grid-3">
                 <div class="feature-card">
-                    <span class="icon">🔒</span>
+                    <div class="icon">🔒</div>
                     <h3>Identity Firewall</h3>
-                    <p>Celebrity and HNW sellers demand privacy. EstateGuard refuses to release precise location or internal schematics until the lead is verified.</p>
+                    <p class="text-muted">Celebrity and HNW sellers demand privacy. EstateGuard refuses to release precise location or internal schematics until the lead is verified.</p>
                 </div>
                 <div class="feature-card">
-                    <span class="icon">🕵️</span>
+                    <div class="icon">🕵️</div>
                     <h3>Smart Vetting</h3>
-                    <p>Our AI analyzes inquiry patterns. If a user asks "suspicious" questions about security systems or access points, they are flagged instantly.</p>
+                    <p class="text-muted">Our AI analyzes inquiry patterns. If a user asks "suspicious" questions about security systems or access points, they are flagged instantly.</p>
                 </div>
                 <div class="feature-card">
-                    <span class="icon">💼</span>
-                    <h3>The "Velvet Rope" Experience</h3>
-                    <p>Create an aura of exclusivity. Buyers must "apply" to view details, elevating the perceived value of your listing immediately.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- HOW IT WORKS -->
-    <section class="how-it-works">
-        <div class="container">
-            <h2 class="section-title">The "Fortress" Protocol</h2>
-            
-            <div class="step">
-                <div class="step-number">1</div>
-                <div>
-                    <h3>Secure Ingestion</h3>
-                    <p>We upload your sensitive documents (surveys, blueprints, security specs) into an encrypted "Dark Vault" that the public cannot crawl or index.</p>
-                </div>
-            </div>
-
-            <div class="step">
-                <div class="step-number">2</div>
-                <div>
-                    <h3>Two-Strike Verification</h3>
-                    <p>The AI answers generic lifestyle questions freely. But on the 2nd specific request (or ANY security question), the "Gate Drops." No data is released without confirmed ID.</p>
-                </div>
-            </div>
-
-            <div class="step">
-                <div class="step-number">3</div>
-                <div>
-                    <h3>Audit Trail</h3>
-                    <p>Every interaction is logged. You get a full transcript stamped with the user's IP and contact details before you ever approve a showing.</p>
+                    <div class="icon">✨</div>
+                    <h3>The "Velvet Rope"</h3>
+                    <p class="text-muted">Create an aura of exclusivity. Buyers must "apply" to view details, elevating the perceived value of your listing immediately.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- PRICING -->
-    <section class="pricing-section">
+    <section class="pricing-section" id="pricing">
         <div class="container">
             <div class="pricing-card">
-                <div class="pil-badge">JANUARY SPECIAL (First 5 Only)</div>
+                <div style="color: var(--accent); font-weight: bold; letter-spacing: 2px; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 20px;">Limited Availability</div>
                 <h2>EstateGuard™ Enterprise</h2>
                 
-                 <div style="text-decoration: line-through; color: #64748B; font-size: 0.95rem; margin-bottom: 10px;">
-                    Standard: $4,999 Setup + $997/mo
-                </div>
+                <div class="price">$2,499</div>
+                <div style="color: var(--text-main); font-weight: bold; margin-bottom: 40px;">+ $497/mo (Locked For Life)</div>
                 
-                <div class="price">$2,499<span style="font-size: 1.5rem; color: #CBD5E1;"> Setup</span></div>
-                <div class="setup-fee">Then $497/mo (Locked For Life)</div>
-                
-                <p style="font-size: 0.9rem; color: #94A3B8; margin-bottom: 35px; font-style: italic;">
-                    *Includes White-Glove Manual Security Audit of all property files.
-                </p>
-
-                <ul class="features-list">
-                    <li>Full Identity Protection Suite</li>
-                    <li>"Dark Vault" Document Storage</li>
-                    <li>Security-First AI Training</li>
-                    <li>Priority Vetting Logic</li>
-                    <li>24/7 Threat Monitoring (Chat)</li>
+                <ul class="features-list" style="text-align: left; max-width: 350px; margin: 0 auto 50px;">
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Full Identity Protection Suite</li>
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> "Dark Vault" Document Storage</li>
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Security-First AI Training</li>
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Priority Vetting Logic</li>
+                    <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 24/7 Threat Monitoring</li>
                 </ul>
 
-                <!-- STRIPE CHECKOUT LINK (Placeholder) -->
                 <a href="https://buy.stripe.com/test_5kA03G5h62bcaJOaEE" class="btn-buy" target="_blank">
-                    Secure My Territory &rarr;
+                    Secure My Territory
                 </a>
                 
-                <p style="margin-top: 15px; font-size: 0.85rem; color: #64748B;">
-                    Price returns to $4,999 on Feb 1st.
+                <p style="margin-top: 30px; font-size: 0.8rem; color: var(--text-muted); opacity: 0.6;">
+                    Standard setup fee returns to $4,999 on Feb 1st.
                 </p>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 RealAi EstateGuard. All rights reserved.</p>
+        <div class="container" style="padding: 40px 0; border-top: 1px solid var(--secondary); text-align: center; color: var(--text-muted);">
+            <p>&copy; 2026 RealAi EstateGuard. All rights reserved.</p>
+        </div>
     </footer>
 
     <!-- GSAP ANIMATIONS -->
@@ -416,31 +333,69 @@
         document.addEventListener("DOMContentLoaded", () => {
             gsap.registerPlugin(ScrollTrigger);
 
-            const heroTl = gsap.timeline();
-            heroTl.from(".hero h1", { y: 50, opacity: 0, duration: 1, ease: "power3.out" })
-                  .from(".hero p", { y: 30, opacity: 0, duration: 0.8, ease: "power3.out" }, "-=0.6");
-
-            gsap.from(".pricing-card", {
-                scrollTrigger: {
-                    trigger: ".pricing-section",
-                    start: "top 80%",
-                },
-                scale: 0.95,
-                opacity: 0,
-                duration: 0.8,
-                ease: "back.out(1.2)"
+            // Hero Text Reveal
+            gsap.to(".reveal-text h1", {
+                y: 0,
+                opacity: 1,
+                duration: 1.5,
+                ease: "power4.out",
+                delay: 0.2
             });
             
+            gsap.from(".reveal-text h1", {
+                y: 100,
+                opacity: 0,
+                duration: 1.5,
+                ease: "power4.out",
+                delay: 0.2
+            });
+
+            gsap.from(".fade-in", {
+                y: 30,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2,
+                ease: "power3.out",
+                delay: 0.8
+            });
+
+            // Showcase Horizontal Scroll Effect
+            let sections = gsap.utils.toArray(".app-screen");
+            
+            gsap.from(sections, {
+                x: 100,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.1,
+                scrollTrigger: {
+                    trigger: ".showcase-section",
+                    start: "top 70%",
+                }
+            });
+
+            // Feature Cards Stagger
             gsap.from(".feature-card", {
+                y: 60,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2,
+                ease: "back.out(1.2)",
                 scrollTrigger: {
                     trigger: ".value-prop",
                     start: "top 75%",
-                },
-                y: 40,
+                }
+            });
+
+            // Pricing Card Pop
+            gsap.from(".pricing-card", {
+                scale: 0.9,
                 opacity: 0,
-                duration: 0.8,
-                stagger: 0.2,
-                ease: "power2.out"
+                duration: 1,
+                ease: "elastic.out(1, 0.5)",
+                scrollTrigger: {
+                    trigger: ".pricing-section",
+                    start: "top 70%",
+                }
             });
         });
     </script>
