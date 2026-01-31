@@ -1,196 +1,443 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>RealAi Elite | AI Real Estate Assistant</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "primary": "#1349ec",
-              "background-light": "#f6f6f8",
-              "background-dark": "#101522",
-            },
-            fontFamily: {
-              "display": ["Inter", "sans-serif"]
-            },
-            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
-          },
-        },
-      }
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RealAi Elite - The Agent OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #101828; 
+            --accent: #2563EB;
+            --text-main: #1D2939;
+            --text-sub: #475467;
+            --bg-light: #F9FAFB;
+            --white: #ffffff;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
             font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
+            color: var(--text-main);
+            background: var(--white);
+            line-height: 1.5;
+            overflow-x: hidden;
         }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
-    </style>
-    <style>
-        body {
-          min-height: max(884px, 100dvh);
+
+        /* BTN UTILS */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s;
         }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-dark { background: var(--primary); color: white; }
+        .btn:hover { transform: translateY(-2px); }
+
+        /* HERO - Screenshot 5 */
+        .hero {
+            position: relative;
+            padding: 120px 0 160px;
+            text-align: center;
+            background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.8)), url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
+        }
+        
+        .nav-login {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: var(--primary);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-sub);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        /* VIDEO SECTION - Screenshot 5/4 */
+        .video-section {
+            background: #101828;
+            padding: 80px 0;
+            text-align: center;
+            color: white;
+            margin-top: -60px; /* Overlap hero */
+        }
+        
+        .video-container {
+            max-width: 900px;
+            margin: 0 auto;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        /* FEATURES - Screenshot 3/4 */
+        .features-section {
+            padding: 100px 0;
+            background: var(--bg-light);
+            text-align: center;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .feature-box {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid #EAECF0;
+            text-align: left;
+            box-shadow: 0 4px 6px -2px rgba(16, 24, 40, 0.03);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-box:hover { transform: translateY(-5px); box-shadow: 0 12px 16px -4px rgba(16, 24, 40, 0.08); }
+
+        .f-icon { font-size: 2.5rem; margin-bottom: 20px; display: block; }
+
+        /* DASHBOARD PREVIEW - Screenshot 4/4 */
+        .dashboard-preview {
+            background: #101828;
+            padding: 80px 0 0;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .db-img {
+            max-width: 1200px;
+            margin: 40px auto -10px; /* peeking bottom */
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            border: 4px solid #334155;
+            border-bottom: none;
+            box-shadow: 0 -20px 60px rgba(0,0,0,0.5);
+        }
+
+        /* STEPS - Screenshot 2 */
+        .steps-section {
+            padding: 100px 0;
+            background: var(--bg-light);
+        }
+
+        .step-row {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 40px;
+            align-items: flex-start;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .step-circle {
+            background: var(--accent);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* PRICING - Screenshot 1 */
+        .pricing-section {
+            padding: 100px 0;
+            background: white;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pricing-card {
+            background: #101828; /* Dark Navy */
+            color: white;
+            padding: 60px 40px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .special-badge {
+            background: #10B981; /* Green */
+            color: #064E3B;
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+        }
+
+        .price-large { font-size: 5rem; font-weight: 800; line-height: 1; margin: 10px 0; }
+        .price-sub { font-size: 1.2rem; display: block; margin-bottom: 30px; color: #94A3B8; }
+
+        .check-list {
+            text-align: left;
+            margin: 40px auto;
+            max-width: 350px;
+            list-style: none;
+        }
+
+        .check-list li {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 1.05rem;
+        }
+
+        .check-list i { color: #10B981; }
+
+        .cta-btn {
+            background: #2563EB;
+            color: white;
+            width: 100%;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition:  background 0.2s;
+        }
+        .cta-btn:hover { background: #1d4ed8; }
+
+        footer { text-align: center; padding: 40px; color: #667085; font-size: 0.9rem; }
+
     </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-300">
-<!-- TopAppBar -->
-<header class="sticky top-0 z-50 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-white/10">
-    <div class="flex items-center justify-between h-16 px-4 max-w-md mx-auto">
-        <div class="flex items-center gap-2">
-            <div class="flex items-center justify-center size-8 rounded-lg bg-primary text-white">
-                <span class="material-symbols-outlined text-[20px] font-bold">domain</span>
-            </div>
-            <h2 class="text-slate-900 dark:text-white text-lg font-extrabold tracking-tight">RealAi Elite</h2>
+<body>
+
+    <!-- HERO (Screenshot 5) -->
+    <header class="hero">
+        <div class="nav-login">
+            <a href="#" class="btn btn-dark">Login</a>
         </div>
-        <div class="flex items-center">
-            <button class="text-slate-600 dark:text-slate-400 text-sm font-semibold px-3 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
-                Login
-            </button>
-        </div>
-    </div>
-</header>
-<main class="max-w-md mx-auto pb-20 overflow-x-hidden">
-    <!-- HeroSection -->
-    <section class="relative px-4 py-8 overflow-hidden">
-        <!-- Background Glow Decor -->
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>
-        <div class="relative flex flex-col gap-6 items-center text-center">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                </span>
-                Next-Gen Real Estate AI
+        <div class="container">
+            <div style="width: 50px; height: 50px; background: #000; border-radius: 8px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                <span style="color: #D4AF37; font-weight: bold; font-size: 24px;">A</span>
             </div>
-            <h1 class="text-slate-900 dark:text-white text-4xl font-black leading-[1.1] tracking-[-0.03em]">
-                The World's First AI Assistant that <span class="text-primary italic">actually</span> reads your property files.
-            </h1>
-            <p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-relaxed px-2">
-                Automate inquiries, qualify leads, and close deals while you sleep. Built exclusively for elite agents.
+            <h1 class="fade-up">The World's First AI Assistant that <span style="color: var(--accent);">actually</span> reads your property files.</h1>
+            <p class="fade-up">It answers buyer questions, captures contact info, and pings you immediately after pre-qualifying the lead for you.</p>
+        </div>
+    </header>
+
+    <!-- VIDEO (Screenshot 5/4) -->
+    <section class="video-section fade-up">
+        <div class="container">
+            <h3 style="margin-bottom: 30px; font-weight: 500; font-size: 1.1rem; color: #94A3B8;">"Watch our AI explain a complex HOA rule from a 50-page PDF in 3 seconds."</h3>
+            <div class="video-container">
+                <div>
+                    <i class="fas fa-play" style="font-size: 3rem; color: white; opacity: 0.8;"></i>
+                    <p style="margin-top: 20px; font-weight: 600;">Video Placeholder: Loom Walkthrough</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES (Screenshot 3/4) -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="fade-up" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">Inside the Agent OS</h2>
+            
+            <div class="features-grid">
+                <div class="feature-box card-anim">
+                    <span class="f-icon">🧠</span>
+                    <h3>Knows the Details</h3>
+                    <p style="color: var(--text-sub); margin-top: 10px;">Verified accuracy based on your specific files. Unlike generic bots, this one scans your specific PDFs, URLs, and floor plans.</p>
+                </div>
+                <div class="feature-box card-anim">
+                    <span class="f-icon">🔐</span>
+                    <h3>The VIP Unlock</h3>
+                    <p style="color: var(--text-sub); margin-top: 10px;">Instead of a cold contact form, our AI offers to 'Unlock the Property Vault'. It provides a valuable teaser first, then secures the lead.</p>
+                </div>
+                <div class="feature-box card-anim">
+                    <span class="f-icon">📲</span>
+                    <h3>Real-time lead alerts</h3>
+                    <p style="color: var(--text-sub); margin-top: 10px;">The second a user asks for a viewing, you get a push notification on your phone with the full chat transcript.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DASHBOARD PREVIEW (Screenshot 4) -->
+    <section class="dashboard-preview">
+        <div class="container">
+            <img src="images/os-dashboard.png" alt="Agent OS Dashboard" class="db-img fade-up">
+        </div>
+    </section>
+
+    <!-- STEPS (Screenshot 2) -->
+    <section class="steps-section">
+        <div class="container">
+            <h2 class="fade-up" style="text-align: center; font-size: 2.5rem; font-weight: 800; margin-bottom: 60px; color: var(--primary);">From Listing to Lead in 3 Simple Steps</h2>
+            
+            <div class="step-row slide-in">
+                <div class="step-circle">1</div>
+                <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px;">Paste any URL to Build the Brain</h3>
+                    <p style="color: var(--text-sub);">Stop manually answering the same questions. Simply send us your listing URLs, PDFs, or even a quick voice memo. We upload them into your AI's "Property Vault," creating a custom knowledge base.</p>
+                </div>
+            </div>
+            
+            <div class="step-row slide-in">
+                <div class="step-circle">2</div>
+                <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px;">The "Helpful Gatekeeper" Chatbot</h3>
+                    <p style="color: var(--text-sub);">We embed a sleek, professional concierge on your website. When a buyer asks a specific question, the AI provides a helpful "teaser" answer. It then politely offers the full spec sheet in exchange for their name and phone number.</p>
+                </div>
+            </div>
+
+            <div class="step-row slide-in">
+                <div class="step-circle">3</div>
+                <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px;">Instant Lead Alerts</h3>
+                    <p style="color: var(--text-sub);">The moment a buyer identifies themselves, the "Qualification Gate" opens. The AI provides them with the deep data, while simultaneously sending a push notification to your phone with the full transcript.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING (Screenshot 1) -->
+    <section class="pricing-section">
+        <div class="pricing-card scale-up">
+            <div class="special-badge">JANUARY SPECIAL (First 10 Only)</div>
+            <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 10px;">The "Jumpstart" Package</h2>
+            <p style="color: #94A3B8; text-decoration: line-through;">Standard: $1,497 Setup + $199/mo</p>
+            
+            <div class="price-large">$495 <span style="font-size: 1.5rem; font-weight: 500; color: #CBD5E1;">One-time Setup</span></div>
+            <span class="price-sub">Then $149/mo (Locked In For Life)</span>
+
+            <p style="font-size: 0.9rem; color: #CBD5E1; max-width: 400px; margin: 0 auto; line-height: 1.4;">
+                *Our team manually audits every property source to ensure your AI never misses a detail.
             </p>
-            <div class="w-full pt-2">
-                <button class="w-full flex cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-6 bg-primary text-white text-lg font-bold shadow-xl shadow-primary/20 active:scale-[0.98] transition-all">
-                    <span class="truncate">Claim Early Bird Discount</span>
-                </button>
-                <p class="mt-3 text-xs text-slate-500 dark:text-slate-500 font-medium">Limited time offer: 50% off for first 100 agents</p>
-            </div>
-        </div>
-    </section>
-    <!-- SectionHeader -->
-    <section class="mt-8 mb-2">
-        <h4 class="text-slate-400 dark:text-slate-500 text-xs font-bold leading-normal tracking-[0.2em] px-4 text-center uppercase">Product Walkthrough</h4>
-    </section>
-    <!-- MediaPlayer (Loom Walkthrough Placeholder) -->
-    <section class="px-4">
-        <div class="relative group">
-            <div class="absolute -inset-1 bg-gradient-to-r from-primary/50 to-purple-600/50 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
-            <div class="relative flex flex-col items-center justify-center bg-slate-900 aspect-video rounded-xl overflow-hidden border border-white/5 shadow-2xl" data-alt="Luxury home interior with overlay of AI chat interface" style='background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDIjvuytB0fYjpOrTxLeLZ88aTvsJy4OmQvX4Pec90VJ-jwY8bDOCp7sEvSVATfVMKGU3QeuxnZWYBkPuw9EVDIQJWI4nwuxsZQFU7u1n0rQ9rccju7ELoQBsU9eIDTWJIo7Do0VcBztetCaab24afsDkDe03rvBUtfpgWKwB3v7r79IoGBwpziRQUXkHkGTPIeUJG_FA0qv2PBEgw_ccJSerzJvuqjqrYDkZ95iZFCAJpeq7e8wbr4CdbELUne6TH_wosRR11Yqz4"); background-size: cover; background-position: center;'>
-                <button class="flex shrink-0 items-center justify-center rounded-full size-20 bg-primary/90 text-white shadow-lg backdrop-blur-sm transform transition hover:scale-105 active:scale-95">
-                    <span class="material-symbols-outlined text-[40px] translate-x-0.5">play_arrow</span>
-                </button>
-                <div class="absolute inset-x-0 bottom-0 px-4 py-4 bg-gradient-to-t from-black/80 to-transparent">
-                    <div class="flex h-1 items-center justify-center mb-3">
-                        <div class="h-1 flex-1 rounded-full bg-primary"></div>
-                        <div class="relative"><div class="absolute -left-1.5 -top-1.5 size-3 rounded-full bg-white shadow-sm shadow-black"></div></div>
-                        <div class="h-1 flex-[2] rounded-full bg-white/30"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <p class="text-white text-[10px] font-bold uppercase tracking-wider">Demo: Reading Listing PDF</p>
-                        <p class="text-white/70 text-[10px] font-medium">0:37 / 2:23</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <p class="text-center mt-4 text-slate-500 dark:text-slate-400 text-sm italic">"RealAi understands complicated clauses and taxes instantly."</p>
-    </section>
-    <!-- Trust Section -->
-    <section class="mt-12 px-6">
-        <div class="flex flex-col items-center gap-4 py-6 border-y border-slate-200 dark:border-white/5">
-            <div class="flex -space-x-3 overflow-hidden">
-                <img alt="" class="inline-block h-10 w-10 rounded-full ring-2 ring-background-light dark:ring-background-dark" data-alt="Portrait of a professional male real estate agent" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRf4ZYhP0aGylj_lY673d08Un4l3r-2fCvCehJq9oSfl2lH7Xuu0nCeniZe4V1nfOA_Jawwnf-aONxkufCJuqmiJmcksAXRhXw3dSI12bi-Bhj-pLcT26QAWks6QnVmbzsbJklMrwTJTV2WUtgqGzfl_loKrA1yx1CV8WIvn8X4mnai72iGsbwRrLFH044UITvqgFVNcqQpMa0ojMzkaN7pGmuQK8wgxbFyX87wY90uZCZwqGQ0hYTN_IxfEKiR-rKpu9f-_q4BbY"/>
-                <img alt="" class="inline-block h-10 w-10 rounded-full ring-2 ring-background-light dark:ring-background-dark" data-alt="Portrait of a smiling professional female real estate agent" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjrmpNcOxmsFiqM3EQfJFngJmr8aOrxhsVgPNaeOh_zVmHCOxw3KqOswTk26tLeLTGhpjL8paq_1hXy9cUcChIp2k65a6RRx1crQT3-Ur4inGAZIA1dB7Z-sjSPNqPs0UspIp3rqn-lwB_9fUIILdnltR7GDIQE2pSekg498WaIYOXsrtM3U87J2hwlXfyRe0Cuj-AUTQmxL0SI_TBpZZvFR2jJPks4O8reyOukmy5JOcRZ9UR7f0D8_TMGQx8CIsaonqkwbPvidA"/>
-                <img alt="" class="inline-block h-10 w-10 rounded-full ring-2 ring-background-light dark:ring-background-dark" data-alt="Portrait of a senior real estate broker" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7B-CPNQLeC035FWf7OKsAavzPU5ncmRwu9yShKISRRZvdQCfAJ3I4jk9blvxjoDdkoSuVIj2E5U4o5_InF0fjR7x4dnB6H0UiBKHDSsAwE5o-bqNVqLDsLx86MjjufH9K2HOFrP44qoZcJOUy2laGipgts6alUd6kowOjlKes-GdMMs9hW1kM_B3BWw1BeaNaSDFKjbN6-CiOWhqLEnFljB5Dh29YWT-m7VtOcbJnH6kST3WB7FTTwpXlhgDTqZ5zV4q6GpgTChs"/>
-                <div class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 ring-2 ring-background-light dark:ring-background-dark">
-                    <span class="text-[10px] font-bold text-slate-500">+12k</span>
-                </div>
-            </div>
-            <p class="text-slate-600 dark:text-slate-400 text-sm font-medium">Trusted by agents at RE/MAX, Zillow, and Keller Williams.</p>
-        </div>
-    </section>
-    <!-- Feature Grid (Custom Component) -->
-    <section class="px-4 mt-12 grid grid-cols-1 gap-4">
-        <div class="glass-effect p-6 rounded-2xl flex flex-col gap-3 border border-slate-200 dark:border-white/10">
-            <div class="size-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined">description</span>
-            </div>
-            <h3 class="font-bold text-lg dark:text-white">File Reading AI</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400">Upload listing PDFs, disclosure forms, or HOA rules. Our AI learns them in seconds to answer any inquiry.</p>
-        </div>
-        <div class="glass-effect p-6 rounded-2xl flex flex-col gap-3 border border-slate-200 dark:border-white/10">
-            <div class="size-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined">bolt</span>
-            </div>
-            <h3 class="font-bold text-lg dark:text-white">Instant Qualification</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400">AI automatically vets leads based on budget, timeline, and financing status before booking a tour.</p>
-        </div>
-    </section>
-    <!-- Sticky Footer CTA -->
-    <div class="fixed bottom-0 inset-x-0 p-4 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-lg border-t border-slate-200 dark:border-white/10 z-50 footer-cta translate-y-full opacity-0">
-        <div class="max-w-md mx-auto flex gap-3">
-            <button class="flex-1 flex cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 bg-primary text-white text-base font-bold shadow-lg shadow-primary/30 active:scale-[0.98] transition-all">
-                Claim Discount
+
+            <ul class="check-list">
+                <li><i class="fas fa-check"></i> Full "Property Brain" Setup</li>
+                <li><i class="fas fa-check"></i> Manual Data Entry (We do it for you)</li>
+                <li><i class="fas fa-check"></i> Up to 300 Document Sources</li>
+                <li><i class="fas fa-check"></i> Smart Lead Gating Logic</li>
+                <li><i class="fas fa-check"></i> Real-time Lead Alerts</li>
+            </ul>
+
+            <button class="cta-btn">
+                🚀 Claim My $1,000 January Discount →
             </button>
+            <p style="margin-top: 20px; font-size: 0.85rem; color: #64748B;">Final 4 slots remaining at $495</p>
         </div>
-    </div>
-</main>
+    </section>
 
-<!-- GSAP Animations -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        gsap.registerPlugin(ScrollTrigger);
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RealAi Elite. All rights reserved.</p>
+        </div>
+    </footer>
 
-        // Hero Animations
-        const heroTl = gsap.timeline();
-        heroTl.from("h1", { y: 30, opacity: 0, duration: 1, ease: "power3.out" })
-              .from("p", { y: 20, opacity: 0, duration: 0.8, ease: "power3.out" }, "-=0.6")
-              .from(".pt-2 button", { scale: 0.9, opacity: 0, duration: 0.6, ease: "back.out(1.7)" }, "-=0.4");
+    <!-- GSAP SCRIPTS & ANIMATION -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.registerPlugin(ScrollTrigger);
 
-        // Video Section
-        gsap.from("section[class*='px-4'] .group", {
-            scrollTrigger: { trigger: "section[class*='px-4'] .group", start: "top 80%" },
-            y: 40, opacity: 0, duration: 1, ease: "power2.out"
+            // Hero Fade Up
+            gsap.from(".fade-up", {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2,
+                ease: "power2.out"
+            });
+
+            // Feature Cards
+            gsap.from(".card-anim", {
+                scrollTrigger: {
+                    trigger: ".features-grid",
+                    start: "top 75%",
+                },
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: "back.out(1.2)"
+            });
+
+            // Dashboard Slide Up
+            gsap.from(".db-img", {
+                scrollTrigger: {
+                    trigger: ".dashboard-preview",
+                    start: "top 70%",
+                },
+                y: 100,
+                opacity: 0,
+                duration: 1.2,
+                ease: "power3.out"
+            });
+
+            // Steps Slide In
+            gsap.from(".slide-in", {
+                scrollTrigger: {
+                    trigger: ".steps-section",
+                    start: "top 70%",
+                },
+                x: -50,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: "power2.out"
+            });
+
+            // Pricing Pop
+            gsap.from(".scale-up", {
+                scrollTrigger: {
+                    trigger: ".pricing-section",
+                    start: "top 75%",
+                },
+                scale: 0.9,
+                opacity: 0,
+                duration: 0.8,
+                ease: "elastic.out(1, 0.5)"
+            });
         });
-
-        // Feature Grid Stagger
-        gsap.from(".glass-effect", {
-            scrollTrigger: { trigger: ".mt-12", start: "top 85%" },
-            y: 30, opacity: 0, duration: 0.8, stagger: 0.2, ease: "power2.out"
-        });
-
-        // Trust Section
-        gsap.from(".mt-12 .flex img", {
-            scrollTrigger: { trigger: ".mt-12", start: "top 90%" },
-            scale: 0, opacity: 0, duration: 0.5, stagger: 0.1, ease: "back.out(2)"
-        });
-
-        // Sticky Footer Reveal
-        gsap.to(".footer-cta", {
-            scrollTrigger: { trigger: "body", start: "top top", scrub: true }, // Simple trigger to ensure it's handled, or execute immediately if preferred
-            y: 0, opacity: 1, duration: 0.5, delay: 2 
-        });
-    });
-</script>
+    </script>
 </body>
 </html>
