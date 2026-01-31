@@ -423,7 +423,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             gsap.registerPlugin(ScrollTrigger);
 
-            // Hero Fade Up
+            // 1. Hero Fade Up (Trigger on load, but robust)
             gsap.from(".fade-up", {
                 y: 50,
                 opacity: 0,
@@ -432,55 +432,66 @@
                 ease: "power2.out"
             });
 
-            // Feature Cards
+            // Common ScrollTrigger Defaults
+            // "play none none reverse" -> Plays when entering, reverses when leaving up (so it plays again when you scroll down)
+            const commonToggle = "play none none reverse"; 
+
+            // 2. Feature Cards
             gsap.from(".card-anim", {
                 scrollTrigger: {
                     trigger: ".features-grid",
-                    start: "top 75%",
+                    start: "top 85%", // Start earlier (when top of grid hits 85% of viewport)
+                    toggleActions: commonToggle
                 },
                 y: 50,
                 opacity: 0,
-                duration: 0.8,
-                stagger: 0.2,
+                duration: 0.6, // Snappier
+                stagger: 0.15,
                 ease: "back.out(1.2)"
             });
 
-            // Dashboard Slide Up
-            gsap.from(".db-img", {
+            // 3. Dashboard Slide Up (Carousel)
+            gsap.from(".db-img, .carousel-container", { // Added carousel-container to target
                 scrollTrigger: {
                     trigger: ".dashboard-preview",
-                    start: "top 70%",
+                    start: "top 80%",
+                    toggleActions: commonToggle
                 },
-                y: 100,
+                y: 60,
                 opacity: 0,
-                duration: 1.2,
+                duration: 1,
                 ease: "power3.out"
             });
 
-            // Steps Slide In
+            // 4. Steps Slide In
             gsap.from(".slide-in", {
                 scrollTrigger: {
                     trigger: ".steps-section",
-                    start: "top 70%",
+                    start: "top 80%",
+                    toggleActions: commonToggle
                 },
-                x: -50,
+                x: -30,
                 opacity: 0,
-                duration: 0.8,
+                duration: 0.7,
                 stagger: 0.2,
                 ease: "power2.out"
             });
 
-            // Pricing Pop
+            // 5. Pricing Pop
             gsap.from(".scale-up", {
                 scrollTrigger: {
                     trigger: ".pricing-section",
-                    start: "top 75%",
+                    start: "top 80%",
+                    toggleActions: commonToggle
                 },
                 scale: 0.9,
                 opacity: 0,
                 duration: 0.8,
                 ease: "elastic.out(1, 0.5)"
             });
+
+            // Refresh ScrollTrigger after all assets (like video/images) load to ensure positions are correct
+            window.addEventListener("load", () => ScrollTrigger.refresh());
         });
     </script>
 </body>
