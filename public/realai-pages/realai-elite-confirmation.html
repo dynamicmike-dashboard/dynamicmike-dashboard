@@ -125,7 +125,7 @@
             <strong>Next Steps:</strong> Please perform this initial self-setup. Once completed, your AI Dashboard will be ready for active property learning.
         </p>
 
-        <form action="https://formspree.io/f/your-form-id" method="POST">
+        <form id="onboardingForm" action="https://formspree.io/f/your-form-id" method="POST">
             <h2>Initialize Your Account</h2>
             
             <!-- 1. Identity -->
@@ -152,7 +152,7 @@
                 <textarea name="files" rows="3" placeholder="Paste DropBox/Google Drive links here..."></textarea>
             </div>
 
-            <!-- 3. Quick Start (Replaces Questions) -->
+            <!-- 3. Quick Start -->
             <div style="margin-top: 40px; border-top: 1px solid #E5E7EB; padding-top: 30px;">
                 <h2>Quick Start Guide</h2>
                 <div style="background: #F0F9FF; padding: 20px; border-radius: 8px; border: 1px solid #BAE6FD;">
@@ -164,8 +164,29 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-submit" style="margin-top: 30px;">Complete Setup &rarr;</button>
+            <button type="submit" id="submitBtn" class="btn-submit" style="margin-top: 30px;">Complete Setup &rarr;</button>
         </form>
+    </div>
+
+    <script>
+        document.getElementById('onboardingForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Stop default Formspree submit (which fails if no ID)
+            
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.innerText;
+            
+            // 1. UI Feedback
+            btn.innerText = "Initializing Account...";
+            btn.style.background = "#6B7280"; // Grey out
+            btn.disabled = true;
+
+            // 2. Simulate Delay (or actual fetch if we had a real backend)
+            setTimeout(() => {
+                // 3. Force Redirect
+                window.location.href = "https://realai-estateguard.vercel.app/";
+            }, 1500);
+        });
+    </script>
     </div>
 
 </body>
