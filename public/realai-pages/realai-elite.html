@@ -126,9 +126,114 @@
         
         .feature-box:hover { transform: translateY(-5px); box-shadow: 0 12px 16px -4px rgba(16, 24, 40, 0.08); }
 
-        .f-icon { font-size: 2rem; margin-bottom: 20px; display: block; } /* Slightly smaller icon */
+        .f-icon { font-size: 2rem; margin-bottom: 20px; display: block; }
 
-        /* ... (skipping down to Header) ... */
+        /* DASHBOARD PREVIEW */
+        .dashboard-preview {
+            background: #101828;
+            padding: 80px 0;
+            text-align: center;
+            overflow: hidden;
+            color: white;
+        }
+
+        /* STEPS SECTION */
+        .steps-section {
+            padding: 100px 0;
+            background: var(--bg-light);
+        }
+
+        .step-row {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 40px;
+            align-items: flex-start;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .step-circle {
+            background: var(--accent);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* PRICING SECTION */
+        .pricing-section {
+            padding: 100px 0;
+            background: white;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pricing-card {
+            background: #101828;
+            color: white;
+            padding: 60px 40px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .special-badge {
+            background: #10B981;
+            color: #064E3B;
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+        }
+
+        .price-large { font-size: 5rem; font-weight: 800; line-height: 1; margin: 10px 0; }
+        .price-sub { font-size: 1.2rem; display: block; margin-bottom: 30px; color: #94A3B8; }
+
+        .check-list {
+            text-align: left;
+            margin: 40px auto;
+            max-width: 350px;
+            list-style: none;
+        }
+
+        .check-list li {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 1.05rem;
+        }
+
+        .check-list i { color: #10B981; }
+
+        .cta-btn {
+            background: #2563EB;
+            color: white;
+            width: 100%;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition:  background 0.2s;
+        }
+        .cta-btn:hover { background: #1d4ed8; }
+
+        footer { text-align: center; padding: 40px; color: #667085; font-size: 0.9rem; }
 
         /* HEADER */
         .hero {
@@ -169,7 +274,7 @@
         <div class="container">
             <!-- LOGO IMAGE (Replacing 'A' Block) -->
             <div style="margin: 0 auto 30px;">
-                <img src="/realai-pages/images/realai-logo-new.png" alt="RealAi Elite" style="height: 80px; width: auto; display: block; margin: 0 auto;">
+                <img src="/realai-pages/images/realai-logo.png" alt="RealAi Elite" style="height: 80px; width: auto; display: block; margin: 0 auto;">
             </div>
             
             <h1 class="fade-up">The World's First AI Assistant that <span style="color: var(--accent);">actually</span> reads your property files.</h1>
