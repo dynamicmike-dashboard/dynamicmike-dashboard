@@ -125,47 +125,26 @@
             <strong>Next Steps:</strong> Please perform this initial self-setup. Once completed, your AI Dashboard will be ready for active property learning.
         </p>
 
-        <form id="onboardingForm" action="https://formspree.io/f/your-form-id" method="POST">
-            <h2>Initialize Your Account</h2>
+        <div style="text-align: center; max-width: 600px; margin: 0 auto;">
             
-            <!-- 1. Identity -->
-            <div class="form-group">
-                <label>Your Name</label>
-                <input type="text" name="user_name" placeholder="Full Name" required>
+            <div style="background: #F0F9FF; padding: 30px; border-radius: 12px; border: 1px solid #BAE6FD; text-align: left; margin-bottom: 40px;">
+                <h2 style="margin-top: 0; color: #0284C7; border-bottom: none;">🚀 Quick Start Guide</h2>
+                <ul style="margin: 0; padding-left: 20px; color: #0C4A6E; font-size: 1.1rem; line-height: 1.8;">
+                    <li style="margin-bottom: 15px;"><strong>Step 1:</strong> Click the button below to access the <strong>Agent OS Portal</strong>.</li>
+                    <li style="margin-bottom: 15px;"><strong>Step 2:</strong> Register/Login using the email you used for payment.</li>
+                    <li style="margin-bottom: 15px;"><strong>Step 3:</strong> Navigate to <strong>"Property Brain"</strong> to upload your first listing URL.</li>
+                    <li><strong>Step 4:</strong> Test your new concierge immediately in the preview window.</li>
+                </ul>
             </div>
 
-            <div class="form-group">
-                <label>Business Name</label>
-                <input type="text" name="business_name" placeholder="Agency or Team Name" required>
-            </div>
+            <a href="https://realai-estateguard.vercel.app/" class="btn-submit" style="display: inline-block; text-decoration: none; max-width: 400px; box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);">
+                Access Agent OS Portal &rarr;
+            </a>
 
-            <!-- 2. Knowledge Vault -->
-            <div class="form-group">
-                <label>The "Knowledge Vault" (Files)</label>
-                <span class="help-text">Please upload or link to any PDF floor plans, HOA documents, or Area Guides you want to use as the "Source of Truth".</span>
-                
-                <!-- NEW NOTICE -->
-                <div style="background: #FFFBEB; border-left: 4px solid #F59E0B; padding: 10px; margin-bottom: 10px; font-size: 0.9rem; color: #92400E;">
-                    <strong>IMPORTANT:</strong> Ensure each file is clearly labelled with the reference to the specific related property (e.g. "123_Main_St_Floorplan.pdf").
-                </div>
-
-                <textarea name="files" rows="3" placeholder="Paste DropBox/Google Drive links here..."></textarea>
-            </div>
-
-            <!-- 3. Quick Start -->
-            <div style="margin-top: 40px; border-top: 1px solid #E5E7EB; padding-top: 30px;">
-                <h2>Quick Start Guide</h2>
-                <div style="background: #F0F9FF; padding: 20px; border-radius: 8px; border: 1px solid #BAE6FD;">
-                    <ul style="margin: 0; padding-left: 20px; color: #0C4A6E;">
-                        <li style="margin-bottom: 10px;"><strong>Step 1:</strong> Log in to your Dashboard using the credentials you created.</li>
-                        <li style="margin-bottom: 10px;"><strong>Step 2:</strong> Navigate to the "Property Brain" tab to add new listings manually.</li>
-                        <li style="margin-bottom: 10px;"><strong>Step 3:</strong> Use the "Test Chat" feature to verify the AI's knowledge before sharing the link.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <button type="submit" id="submitBtn" class="btn-submit" style="margin-top: 30px;">Complete Setup &rarr;</button>
-        </form>
+            <p style="margin-top: 20px; font-size: 0.9rem; color: #6B7280;">
+                <i class="fas fa-lock"></i> Your account status is verified via Stripe.
+            </p>
+        </div>
     </div>
 
     <script>
