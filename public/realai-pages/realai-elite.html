@@ -101,21 +101,22 @@
 
         /* FEATURES - Screenshot 3/4 */
         .features-section {
-            padding: 100px 0;
+            padding: 80px 0; /* Reduced padding */
             background: var(--bg-light);
             text-align: center;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 60px;
+            /* Reduced minmax to ensuring 3 fit even on smaller desktops */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 20px; /* Reduced gap */
+            margin-top: 40px;
         }
 
         .feature-box {
             background: white;
-            padding: 40px;
+            padding: 30px; /* Reduced padding */
             border-radius: 16px;
             border: 1px solid #EAECF0;
             text-align: left;
@@ -125,124 +126,31 @@
         
         .feature-box:hover { transform: translateY(-5px); box-shadow: 0 12px 16px -4px rgba(16, 24, 40, 0.08); }
 
-        .f-icon { font-size: 2.5rem; margin-bottom: 20px; display: block; }
+        .f-icon { font-size: 2rem; margin-bottom: 20px; display: block; } /* Slightly smaller icon */
 
-        /* DASHBOARD PREVIEW - Screenshot 4/4 */
-        .dashboard-preview {
-            background: #101828;
-            padding: 80px 0 0;
+        /* ... (skipping down to Header) ... */
+
+        /* HEADER */
+        .hero {
+            position: relative;
+            padding: 120px 0 160px;
             text-align: center;
-            overflow: hidden;
         }
         
-        .db-img {
-            max-width: 1200px;
-            margin: 40px auto -10px; /* peeking bottom */
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            border: 4px solid #334155;
-            border-bottom: none;
-            box-shadow: 0 -20px 60px rgba(0,0,0,0.5);
-        }
+        /* Login removed */
 
-        /* STEPS - Screenshot 2 */
-        .steps-section {
-            padding: 100px 0;
-            background: var(--bg-light);
-        }
-
-        .step-row {
-            display: flex;
-            gap: 24px;
-            margin-bottom: 40px;
-            align-items: flex-start;
-            max-width: 800px;
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: var(--primary);
+            max-width: 900px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        .step-circle {
-            background: var(--accent);
-            color: white;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-
-        /* PRICING - Screenshot 1 */
-        .pricing-section {
-            padding: 100px 0;
-            background: white;
-            display: flex;
-            justify-content: center;
-        }
-
-        .pricing-card {
-            background: #101828; /* Dark Navy */
-            color: white;
-            padding: 60px 40px;
-            border-radius: 24px;
-            text-align: center;
-            max-width: 550px;
-            width: 100%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            position: relative;
-        }
-
-        .special-badge {
-            background: #10B981; /* Green */
-            color: #064E3B;
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            margin-bottom: 24px;
-            text-transform: uppercase;
-        }
-
-        .price-large { font-size: 5rem; font-weight: 800; line-height: 1; margin: 10px 0; }
-        .price-sub { font-size: 1.2rem; display: block; margin-bottom: 30px; color: #94A3B8; }
-
-        .check-list {
-            text-align: left;
-            margin: 40px auto;
-            max-width: 350px;
-            list-style: none;
-        }
-
-        .check-list li {
-            margin-bottom: 16px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            font-size: 1.05rem;
-        }
-
-        .check-list i { color: #10B981; }
-
-        .cta-btn {
-            background: #2563EB;
-            color: white;
-            width: 100%;
-            padding: 20px;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            transition:  background 0.2s;
-        }
-        .cta-btn:hover { background: #1d4ed8; }
-
-        footer { text-align: center; padding: 40px; color: #667085; font-size: 0.9rem; }
-
+    /* ... */
     </style>
 </head>
 <body>
@@ -258,13 +166,12 @@
              <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.6));"></div>
         </div>
 
-        <div class="nav-login">
-            <a href="#" class="btn btn-dark">Login</a>
-        </div>
         <div class="container">
-            <div style="width: 50px; height: 50px; background: #000; border-radius: 8px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
-                <span style="color: #D4AF37; font-weight: bold; font-size: 24px;">A</span>
+            <!-- LOGO IMAGE (Replacing 'A' Block) -->
+            <div style="margin: 0 auto 30px;">
+                <img src="/realai-pages/images/realai-logo-new.png" alt="RealAi Elite" style="height: 80px; width: auto; display: block; margin: 0 auto;">
             </div>
+            
             <h1 class="fade-up">The World's First AI Assistant that <span style="color: var(--accent);">actually</span> reads your property files.</h1>
             <p class="fade-up">It answers buyer questions, captures contact info, and pings you immediately after pre-qualifying the lead for you.</p>
         </div>
