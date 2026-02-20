@@ -1,123 +1,273 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const router = useRouter();
+  const params = useParams();
+  const siteId = params?.siteId as string;
+  
   const [search, setSearch] = useState("");
+  const [pages, setPages] = useState<string[]>([]);
+  const [posts, setPosts] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // Update this list whenever you add a new site to middleware
- const sites = [
-  { id: "breath-of-life", label: "Breath of Life", domain: "breathoflifepdc.org" },
-  { id: "inspiringspeakerspdc", label: "InspiringSpeakersPDC", domain: "inspiringspeakerspdc.com" },
-  { id: "maistermind", label: "mAIstermind", domain: "maistermind.com" },
-  { id: "pdcyes", label: "PDCYES", domain: "pdcyes.com" },
-  { id: "playaphotos", label: "Playa Photos", domain: "playa.photos" },
-  { id: "playavida", label: "PlayaVida", domain: "playavida.org" },
-  { id: "celestial-sign-design", label: "Celestial Sign", domain: "celestialsigndesign.com" },
-  { id: "chatallday", label: "Chat All Day", domain: "chatall.day" },
-  { id: "chillmasterscotland", label: "Chillmaster Scotland", domain: "chillmasterscotland.com" },
-  { id: "consciousshifts", label: "Conscious Shifts", domain: "consciousshifts.co.uk" },
-  { id: "fifeart", label: "FifeArt", domain: "fifeart.com" },
-  { id: "louisevandervelde", label: "Louise VDV", domain: "louisevandervelde.com" },
-  { id: "pranatowers", label: "PranaTowers", domain: "pranatowers.com" },
-  { id: "reallifeavengers", label: "RealLifeAvengers", domain: "reallifeavengers.com" },
-  { id: "realaicasas", label: "RealAi casa", domain: "realaicasa.com" },
-  { id: "smms", label: "SMMS", domain: "social-media-management-services.com" },
- { id: "nahuala", label: "Nahuala", domain: "nahuala.bio" },
+  const sites = [
+    { id: "breath-of-life", label: "Breath of Life", domain: "breathoflifepdc.org" },
+    { id: "inspiringspeakerspdc", label: "InspiringSpeakersPDC", domain: "inspiringspeakerspdc.com" },
+    { id: "maistermind", label: "mAIstermind", domain: "maistermind.com" },
+    { id: "pdcyes", label: "PDCYES", domain: "pdcyes.com" },
+    { id: "playaphotos", label: "Playa Photos", domain: "playa.photos" },
+    { id: "playavida", label: "PlayaVida", domain: "playavida.org" },
+    { id: "celestial-sign-design", label: "Celestial Sign", domain: "celestialsigndesign.com" },
+    { id: "chatallday", label: "Chat All Day", domain: "chatall.day" },
+    { id: "chillmasterscotland", label: "Chillmaster Scotland", domain: "chillmasterscotland.com" },
+    { id: "consciousshifts", label: "Conscious Shifts", domain: "consciousshifts.co.uk" },
+    { id: "fifeart", label: "FifeArt", domain: "fifeart.com" },
+    { id: "louisevandervelde", label: "Louise VDV", domain: "louisevandervelde.com" },
+    { id: "pranatowers", label: "PranaTowers", domain: "pranatowers.com" },
+    { id: "reallifeavengers", label: "RealLifeAvengers", domain: "reallifeavengers.com" },
+    { id: "realaicasas", label: "RealAi casa", domain: "realaicasa.com" },
+    { id: "smms", label: "SMMS", domain: "social-media-management-services.com" },
+    { id: "nahuala", label: "Nahuala", domain: "nahuala.bio" },
+  ];
 
-];
+  const currentSite = sites.find(s => s.id === siteId);
 
-  const filteredSites = sites.filter(site => 
-    site.id.toLowerCase().includes(search.toLowerCase()) || 
-    site.domain.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => {
+    if (siteId) {
+      loadFiles();
+    }
+  }, [siteId]);
 
-  const handleNewRescue = async () => {
-    const siteName = prompt("Name your new rescue folder (e.g. fife-art):");
-    if (!siteName) return;
-    const siteId = siteName.toLowerCase().replace(/\s+/g, '-');
+  const loadFiles = async () => {
+    setLoading(true);
     try {
-      const res = await fetch('/api/create-site', {
+      // Load root files
+      const rootRes = await fetch(`/api/list-files?siteId=${siteId}`);
+      const rootData = await rootRes.json();
+      setPages(rootData.files || []);
+
+      // Load posts if folder exists
+      const postsRes = await fetch(`/api/list-files?siteId=${siteId}&folder=post`);
+      const postsData = await postsRes.json();
+      setPosts(postsData.files || []);
+    } catch (err) {
+      console.error("Failed to load files", err);
+    }
+    setLoading(false);
+  };
+
+  const handleNewPost = async () => {
+    const postName = prompt("Enter post filename (e.g. pdcyes-march-2026):");
+    if (!postName) return;
+    
+    // Default template for PDCYES
+    const templatePath = siteId === 'pdcyes' ? 'pdcyes/post/pdcyes-february-2026.html' : null;
+    
+    setLoading(true);
+    try {
+      const res = await fetch('/api/create-file', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ siteName: siteId }),
+        body: JSON.stringify({ 
+          siteId, 
+          fileName: `post/${postName.replace('.html', '')}.html`,
+          templatePath
+        }),
       });
       const data = await res.json();
       if (data.success) {
-        if (onClose) onClose();
-        router.push(`/admin/dashboard/${siteId}`);
-        router.refresh();
+        await loadFiles();
+        router.push(`/admin/dashboard/${siteId}/post/${postName.replace('.html', '')}`);
+      } else {
+        alert(data.error || "Failed to create post");
       }
-    } catch (err) { alert("PC must be running 'npm run dev'"); }
+    } catch (err) {
+      alert("Error creating post");
+    }
+    setLoading(false);
   };
+
+  const handleNewPage = async () => {
+    const pageName = prompt("Enter page filename (e.g. services):");
+    if (!pageName) return;
+    
+    setLoading(true);
+    try {
+      const res = await fetch('/api/create-file', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          siteId, 
+          fileName: `${pageName.replace('.html', '')}.html`,
+          templatePath: `${siteId}/index.html` // Use homepage as template for new pages
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await loadFiles();
+        router.push(`/admin/dashboard/${siteId}/${pageName.replace('.html', '')}`);
+      } else {
+        alert(data.error || "Failed to create page");
+      }
+    } catch (err) {
+      alert("Error creating page");
+    }
+    setLoading(false);
+  };
+
+  const handleClone = async (fileName: string, isPost: boolean) => {
+    const newName = prompt(`Enter name for the clone of ${fileName}:`, `copy-${fileName}`);
+    if (!newName) return;
+
+    setLoading(true);
+    try {
+      const fullPath = isPost ? `post/${fileName}` : fileName;
+      const targetName = isPost ? `post/${newName.replace('.html', '')}.html` : `${newName.replace('.html', '')}.html`;
+      
+      const res = await fetch('/api/create-file', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          siteId, 
+          fileName: targetName,
+          templatePath: `${siteId}/${fullPath}`
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await loadFiles();
+        router.push(`/admin/dashboard/${siteId}/${targetName.replace('.html', '')}`);
+      } else {
+        alert(data.error || "Failed to clone");
+      }
+    } catch (err) {
+      alert("Error cloning");
+    }
+    setLoading(false);
+  };
+
+  if (!siteId) {
+    return (
+      <div className="w-72 bg-slate-900 border-r border-slate-800 flex flex-col h-full overflow-hidden shadow-2xl">
+        <div className="p-4 border-b border-slate-800">
+          <h2 className="text-cyan-400 font-black text-xl tracking-tighter italic uppercase">GHL Rescue</h2>
+        </div>
+        <div className="flex-1 p-4 flex flex-col items-center justify-center text-center space-y-4">
+          <p className="text-slate-500 text-xs">Select a site from the main dashboard to begin managing.</p>
+          <Link href="/" className="px-4 py-2 bg-slate-800 text-cyan-400 rounded-lg text-xs font-bold hover:bg-slate-700">🏠 Dashboard</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-72 bg-slate-900 border-r border-slate-800 flex flex-col h-full overflow-hidden shadow-2xl">
       <div className="p-4 space-y-4 border-b border-slate-800">
         <div className="flex justify-between items-center">
-          <h2 className="text-cyan-400 font-black text-xl tracking-tighter italic uppercase">GHL Rescue</h2>
+          <div>
+            <h2 className="text-cyan-400 font-black text-xl tracking-tighter italic uppercase leading-none">GHL Rescue</h2>
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">{currentSite?.label}</p>
+          </div>
           <button onClick={onClose} className="md:hidden text-slate-500">✕</button>
         </div>
 
         <Link 
           href="/" 
-          className="flex items-center gap-2 w-full p-2 bg-cyan-900/20 border border-cyan-800/50 rounded-lg text-xs font-bold text-cyan-400 hover:bg-cyan-900/40 transition-all"
+          className="flex items-center gap-2 w-full p-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-xs font-bold text-slate-400 hover:text-cyan-400 hover:bg-cyan-900/20 transition-all"
         >
-          <span>🏠</span> Main Dashboard
+          <span>🏠</span> Back to All Sites
         </Link>
-        
-        <input 
-          type="text"
-          placeholder="Search sites or domains..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-slate-950 border border-slate-800 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50"
-        />
       </div>
       
-      <nav className="flex-1 p-3 space-y-1 overflow-y-auto scrollbar-hide">
-  <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold px-3 mb-2">
-    {search ? `Results (${filteredSites.length})` : "Active Projects"}
-  </p>
-  
-  {filteredSites.map(site => (
-    <div key={site.id} className="group flex flex-col p-1 rounded-lg hover:bg-slate-800/50 transition-all border border-transparent hover:border-slate-800">
-      <div className="flex items-center justify-between px-2 py-1">
-        {/* Use site.label for the display name */}
-        <span className="text-sm font-medium text-slate-300 truncate">{site.label}</span>
-      </div>
-      
-      <div className="flex gap-1 mt-1">
-        <Link 
-          href={`/admin/dashboard/${site.id}`} // Uses the lowercase ID for the URL
-          onClick={onClose}
-          className="flex-1 text-[10px] font-bold text-center py-1.5 bg-slate-800 text-slate-400 rounded hover:bg-cyan-600 hover:text-white transition-all"
-        >
-          EDIT
-        </Link>
-        <a 
-          href={`https://${site.domain}`} 
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 text-[10px] font-bold text-center py-1.5 bg-slate-800 text-slate-400 rounded hover:bg-slate-700 hover:text-white transition-all"
-        >
-          VIEW LIVE
-        </a>
-      </div>
-    </div>
-  ))}
-</nav>
+      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        {/* PAGES SECTION */}
+        <section>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Pages</h3>
+            <span className="text-[10px] text-slate-600 font-mono">{pages.length}</span>
+          </div>
+          <div className="space-y-1">
+            {pages.map(file => {
+              const slug = file.replace('.html', '');
+              return (
+                <div key={file} className="flex items-center gap-1 group">
+                  <Link 
+                    href={`/admin/dashboard/${siteId}/${slug}`}
+                    className="flex-1 block px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-all"
+                  >
+                    {file === 'index.html' ? '🏠 Home (index)' : file}
+                  </Link>
+                  {file !== 'index.html' && (
+                    <button 
+                      onClick={() => handleClone(file, false)}
+                      className="opacity-0 group-hover:opacity-100 p-2 text-slate-600 hover:text-cyan-400 transition-all"
+                      title="Clone Page"
+                    >
+                      👯
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
-      <div className="p-4 bg-slate-900 border-t border-slate-800">
-        <button 
-          onClick={handleNewRescue}
-          className="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-slate-950 rounded-lg font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-cyan-600/20"
-        >
-          + New Rescue
-        </button>
+        {/* POSTS SECTION */}
+        <section>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Posts</h3>
+            <span className="text-[10px] text-slate-600 font-mono">{posts.length}</span>
+          </div>
+          <div className="space-y-1">
+            {posts.map(file => {
+              const slug = file.replace('.html', '');
+              return (
+                <div key={file} className="flex items-center gap-1 group">
+                  <Link 
+                    href={`/admin/dashboard/${siteId}/post/${slug}`}
+                    className="flex-1 block px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-all"
+                  >
+                    📄 {file}
+                  </Link>
+                  <button 
+                    onClick={() => handleClone(file, true)}
+                    className="opacity-0 group-hover:opacity-100 p-2 text-slate-600 hover:text-cyan-400 transition-all"
+                    title="Clone Post"
+                  >
+                    👯
+                  </button>
+                </div>
+              );
+            })}
+            
+            {posts.length === 0 && !loading && (
+              <p className="text-[10px] text-slate-600 italic px-3 py-2">No posts found in /post</p>
+            )}
+          </div>
+        </section>
+      </div>
+
+      <div className="p-4 bg-slate-900 border-t border-slate-800 space-y-2">
+        <div className="grid grid-cols-2 gap-2">
+          <button 
+            onClick={() => handleNewPage()}
+            disabled={loading}
+            className="py-2.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 rounded-lg font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50"
+          >
+            {loading ? "..." : "+ New Page"}
+          </button>
+          <button 
+            onClick={handleNewPost}
+            disabled={loading}
+            className="py-2.5 bg-cyan-600 hover:bg-cyan-500 text-slate-950 rounded-lg font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-cyan-600/20 disabled:opacity-50"
+          >
+            {loading ? "..." : "+ New Post"}
+          </button>
+        </div>
       </div>
     </div>
   );
