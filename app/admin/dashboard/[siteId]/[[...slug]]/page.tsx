@@ -191,11 +191,12 @@ export default function AdminDashboardPage(props: { params: Params }) {
 
   const handleImageUpload = async (file: File, imgElement?: HTMLImageElement) => {
     const customName = prompt("Rename image? (Leave blank for original name)", file.name.split('.')[0]);
+    const folderChoice = prompt("Save to which folder? (images or img)", "images");
     const formData = new FormData();
     formData.append('file', file);
     formData.append('siteId', siteId);
     if (customName) formData.append('customName', customName);
-    formData.append('folder', 'img'); // Default to /img/ folder
+    formData.append('folder', folderChoice || 'images'); 
 
     setLoading(true);
     try {
@@ -205,18 +206,27 @@ export default function AdminDashboardPage(props: { params: Params }) {
       });
       const data = await res.json();
       if (data.success) {
-        const finalUrl = `/content/${siteId}/img/${data.fileName}`;
-        if (imgElement) {
-          imgElement.src = finalUrl;
-        } else {
-          // Insert new image at cursor
-          const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
-          if (quill) {
-            const range = quill.getSelection();
-            quill.insertEmbed(range ? range.index : 0, 'image', finalUrl);
+        const finalUrl = `/content/${siteId}/${data.folder || folderChoice || 'images'}/${data.fileName}`;
+        
+        // Use Quill API to update if possible
+        const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
+        if (imgElement && quill) {
+          const blot = (window as any).Quill.find(imgElement);
+          if (blot) {
+            blot.replaceWith('image', finalUrl);
+            alert("Image replaced and synced!");
+          } else {
+            imgElement.src = finalUrl;
+            alert("Image uploaded! (Manual sync)");
           }
+        } else if (quill) {
+          const range = quill.getSelection();
+          quill.insertEmbed(range ? range.index : 0, 'image', finalUrl);
+          alert("Image inserted!");
+        } else if (imgElement) {
+          imgElement.src = finalUrl;
+          alert("Image uploaded!");
         }
-        alert("Image uploaded and updated!");
       } else {
         alert("Upload failed: " + data.error);
       }
@@ -234,6 +244,8 @@ export default function AdminDashboardPage(props: { params: Params }) {
       
       if (!action) return;
 
+      const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
+
       if (action === "1") {
         const input = document.createElement('input');
         input.type = 'file';
@@ -244,20 +256,27 @@ export default function AdminDashboardPage(props: { params: Params }) {
         };
         input.click();
       } else if (action === "2") {
-        // Media Library Picker
         setLoading(true);
         try {
           const res = await fetch(`/api/list-media?siteId=${siteId}`);
           const data = await res.json();
           if (data.success && data.images.length > 0) {
-            const list = data.images.map((img: any, i: number) => `${i + 1}. ${img.name}`).join('\n');
+            // Sort images so most recent or alphabetical are easier to find
+            const sorted = data.images.sort((a: any, b: any) => a.name.localeCompare(b.name));
+            const list = sorted.map((img: any, i: number) => `${i + 1}. ${img.name} (${img.folder})`).join('\n');
             const choice = prompt(`Select Image from ${siteId} library:\n\n${list}`, "1");
-            const selected = data.images[parseInt(choice || "0") - 1];
+            const selected = sorted[parseInt(choice || "0") - 1];
             if (selected) {
-              img.src = selected.url;
+              if (quill) {
+                const blot = (window as any).Quill.find(img);
+                if (blot) blot.replaceWith('image', selected.url);
+                else img.src = selected.url;
+              } else {
+                img.src = selected.url;
+              }
             }
           } else {
-            alert("No images found in your library. Use Upload instead.");
+            alert("No images found in your library.");
           }
         } catch (err) {
           alert("Error loading media library");
@@ -268,12 +287,18 @@ export default function AdminDashboardPage(props: { params: Params }) {
         if (width) {
           img.setAttribute('width', width);
           img.style.width = `${width}px`;
-          img.style.height = 'auto'; // Maintain aspect ratio
+          img.style.height = 'auto';
         }
-      } else if (action === "3") {
-        const url = prompt("Enter new image URL:", img.src);
-        if (url) img.src = url;
       } else if (action === "4") {
+        const url = prompt("Enter new image URL:", img.src);
+        if (url && quill) {
+          const blot = (window as any).Quill.find(img);
+          if (blot) blot.replaceWith('image', url);
+          else img.src = url;
+        } else if (url) {
+          img.src = url;
+        }
+      } else if (action === "5") {
         img.style.float = 'right';
         img.style.marginLeft = '2rem';
         img.style.marginBottom = '2rem';
