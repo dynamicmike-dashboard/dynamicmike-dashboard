@@ -69,6 +69,11 @@ export default function AdminDashboardPage(props: { params: Params }) {
     description: "",
     keywords: ""
   });
+  const [showMediaLibrary, setShowMediaLibrary] = useState(false);
+  const [libraryImages, setLibraryImages] = useState<any[]>([]);
+  const [librarySearch, setLibrarySearch] = useState("");
+  const [selectedImgRef, setSelectedImgRef] = useState<HTMLImageElement | null>(null);
+
 
   const fileSrc = `/content/${siteId}/${currentFile}`;
 
@@ -162,8 +167,9 @@ export default function AdminDashboardPage(props: { params: Params }) {
       }
     } catch (err) {
       alert("Network error. Check your local connection.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   // Keyboard Shortcuts via Ref to avoid stale closure issues
@@ -315,28 +321,18 @@ export default function AdminDashboardPage(props: { params: Params }) {
         try {
           const res = await fetch(`/api/list-media?siteId=${siteId}`);
           const data = await res.json();
-          if (data.success && data.images.length > 0) {
-            // Sort images so most recent or alphabetical are easier to find
-            const sorted = data.images.sort((a: any, b: any) => a.name.localeCompare(b.name));
-            const list = sorted.map((img: any, i: number) => `${i + 1}. ${img.name} (${img.folder})`).join('\n');
-            const choice = prompt(`Select Image from ${siteId} library:\n\n${list}`, "1");
-            const selected = sorted[parseInt(choice || "0") - 1];
-            if (selected) {
-              if (quill) {
-                const blot = (window as any).Quill.find(img);
-                if (blot) blot.replaceWith('image', selected.url);
-                else img.src = selected.url;
-              } else {
-                img.src = selected.url;
-              }
-            }
+          if (data.success) {
+            setLibraryImages(data.images);
+            setSelectedImgRef(img);
+            setShowMediaLibrary(true);
           } else {
-            alert("No images found in your library.");
+            alert("No images found.");
           }
         } catch (err) {
-          alert("Error loading media library");
+          alert("Error loading library.");
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       } else if (action === "3") {
         const width = prompt("Enter width (e.g. 400):", img.getAttribute('width') || img.style.width || "");
         if (width) {
@@ -378,6 +374,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
       }
     }
   };
+
 
   return (
     <div className="flex flex-col h-full bg-slate-950 text-white overflow-hidden">
@@ -443,7 +440,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
           
           {isEditing && (
             <button 
-              onClick={handleSaveWithCleanup}
+              onClick={() => handleSaveWithCleanup()}
               disabled={loading}
               className="flex-1 sm:flex-none px-6 py-2 bg-cyan-500 text-slate-950 rounded-lg text-xs font-black hover:bg-cyan-400 disabled:opacity-50 shadow-lg shadow-cyan-500/20 transition-all"
             >
@@ -648,6 +645,87 @@ export default function AdminDashboardPage(props: { params: Params }) {
           </aside>
         )}
       </div>
+
+      {/* MEDIA LIBRARY MODAL */}
+      {showMediaLibrary && (
+        <div className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 w-full max-w-4xl max-h-[80vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-800 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-black text-white uppercase tracking-tighter">Media Library</h2>
+                <p className="text-xs text-slate-500">Pick an image from your site library</p>
+              </div>
+              <div className="flex items-center gap-4">
+                <input 
+                  type="text"
+                  placeholder="Search images..."
+                  value={librarySearch}
+                  onChange={(e) => setLibrarySearch(e.target.value)}
+                  className="bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-colors w-64"
+                />
+                <button 
+                  onClick={() => setShowMediaLibrary(false)}
+                  className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
+                >
+                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {libraryImages
+                  .filter(img => !librarySearch || img.name.toLowerCase().includes(librarySearch.toLowerCase()))
+                  .map((imgData, i) => (
+                    <button 
+                      key={i}
+                      onClick={() => {
+                        if (selectedImgRef) {
+                          const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
+                          if (quill) {
+                            const blot = (window as any).Quill ? (window as any).Quill.find(selectedImgRef) : null;
+                            if (blot) blot.replaceWith('image', imgData.url);
+                            else selectedImgRef.src = imgData.url;
+                          } else {
+                            selectedImgRef.src = imgData.url;
+                          }
+                          // Force sync
+                          const editor = document.querySelector('.ql-editor');
+                          if (editor) editor.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                        setShowMediaLibrary(false);
+                      }}
+                      className="group relative aspect-square bg-slate-950 rounded-xl border border-slate-800 overflow-hidden hover:border-cyan-500/50 transition-all flex flex-col"
+                    >
+                      <div className="relative flex-1 bg-slate-800 overflow-hidden">
+                        <img 
+                          src={imgData.url} 
+                          alt={imgData.name}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                      <div className="p-2 bg-slate-900 border-t border-slate-800 text-[10px] truncate text-slate-400 group-hover:text-cyan-400">
+                        {imgData.name}
+                      </div>
+                    </button>
+                  ))}
+              </div>
+              {libraryImages.length === 0 && (
+                <div className="h-64 flex flex-col items-center justify-center text-slate-500">
+                  <svg className="w-12 h-12 mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                  <p>No images found in your library</p>
+                </div>
+              )}
+            </div>
+            
+            <div className="p-4 bg-slate-950/50 border-t border-slate-800 text-right">
+                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Showing {libraryImages.length} Assets</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
