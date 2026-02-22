@@ -74,18 +74,17 @@ export default function AdminDashboardPage(props: { params: Params }) {
   const [librarySearch, setLibrarySearch] = useState("");
   const [selectedImgRef, setSelectedImgRef] = useState<HTMLImageElement | null>(null);
 
-
   const fileSrc = `/content/${siteId}/${currentFile}`;
 
   // Helper to extract the editable portion of GHL-style HTML
   const getEditableContent = (html: string) => {
-    const match = html.match(/<div id="blogPostContent">([\s\S]*?)<\/div><div class="blog-tags">/);
+    const match = html.match(/<div[^>]*id="blogPostContent"[^>]*>([\s\S]*?)<\/div>\s*<div[^>]*class="blog-tags"[^>]*>/);
     return match ? match[1] : html;
   };
 
   // Helper to wrap the editable content back into the full HTML structure
   const wrapContent = (editable: string, fullHtml: string) => {
-    return fullHtml.replace(/(<div id="blogPostContent">)[\s\S]*?(<\/div><div class="blog-tags">)/, `$1${editable}$2`);
+    return fullHtml.replace(/(<div[^>]*id="blogPostContent"[^>]*>)[\s\S]*?(<\/div>\s*<div[^>]*class="blog-tags"[^>]*>)/, `$1${editable}$2`);
   };
 
   const parseSEO = (html: string) => {
@@ -102,19 +101,14 @@ export default function AdminDashboardPage(props: { params: Params }) {
 
   const updateHTMLWithSEO = (html: string) => {
     let updated = html;
-    // Update <title>
     updated = updated.replace(/<title>.*?<\/title>/, `<title>${seo.title}</title>`);
-    // Update meta title
     updated = updated.replace(/<meta name="title" content=".*?"/, `<meta name="title" content="${seo.title}"`);
     updated = updated.replace(/<meta property="og:title" content=".*?"/, `<meta property="og:title" content="${seo.title}"`);
-    // Update meta description
     updated = updated.replace(/<meta name="description" content=".*?"/, `<meta name="description" content="${seo.description}"`);
     updated = updated.replace(/<meta property="og:description" content=".*?"/, `<meta property="og:description" content="${seo.description}"`);
-    // Update meta keywords
     updated = updated.replace(/<meta name="keywords" content=".*?"/, `<meta name="keywords" content="${seo.keywords}"`);
     updated = updated.replace(/<meta property="og:keywords" content=".*?"/, `<meta property="og:keywords" content="${seo.keywords}"`);
     
-    // Ensure external links open in new tab
     updated = updated.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]+)"([^>]*)>/gi, (match, href, rest) => {
       if (href.startsWith('http') && !href.includes('localhost') && !href.includes('pdcyes.com') && !href.includes('realprayerbook.com')) {
         if (!rest.includes('target="_blank"')) {
@@ -138,7 +132,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
   const loadFileContent = async () => {
     setLoading(true);
     try {
-      const res = await fetch(fileSrc);
+      const res = await fetch(`${fileSrc}?t=${Date.now()}`);
       const text = await res.text();
       setCode(text);
       parseSEO(text);
@@ -159,20 +153,25 @@ export default function AdminDashboardPage(props: { params: Params }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ siteId, fileName: currentFile, code: finalCode }),
       });
-      if (res.ok) {
-        alert("Saved to F: drive and pushed to GitHub!");
+      const data = await res.json();
+      if (data.success) {
+        if (data.gitSuccess) {
+          alert("Success! Saved to F: drive and pushed to GitHub.");
+        } else {
+          alert(`Warning: Saved locally, but GitHub sync failed.\n\nError: ${data.gitLog}`);
+        }
         setIsEditing(false);
       } else {
-        alert("Save failed. Make sure 'npm run dev' is running on your PC.");
+        alert("Save failed. Make sure 'npm run dev' is running.");
       }
     } catch (err) {
-      alert("Network error. Check your local connection.");
+      alert("Network error.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Keyboard Shortcuts via Ref to avoid stale closure issues
+  // Keyboard Shortcuts
   const stateRef = { isEditing, isVisual, code, seo };
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -191,7 +190,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isEditing, isVisual]); // Simplified dependencies
+  }, [isEditing, isVisual]);
 
   const cleanGHLTags = (html: string) => {
     return html.replace(/<!--[\s\S]*?-->/g, '').trim();
@@ -204,12 +203,10 @@ export default function AdminDashboardPage(props: { params: Params }) {
     handleSave(cleaned); 
   };
 
-  // Safe Mode Switch: Sync text before toggling
   const toggleMode = (targetVisual: boolean) => {
     if (isVisual !== targetVisual) {
       const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
       if (isVisual && quill) {
-        // Sync Visual -> Code
         const currentVal = wrapContent(quill.root.innerHTML, code);
         setCode(currentVal);
       }
@@ -229,7 +226,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
       const data = await res.json();
       if (data.success) {
         setCode(data.updatedHtml);
-        alert(`Rescued ${data.count} images! Remember to click SAVE to finalize.`);
+        alert(`Rescued ${data.count} images!`);
       } else {
         alert("Media rescue failed.");
       }
@@ -239,11 +236,9 @@ export default function AdminDashboardPage(props: { params: Params }) {
     setLoading(false);
   };
 
-  const fileInputRef = useState<HTMLInputElement | null>(null)[0];
-
   const handleImageUpload = async (file: File, imgElement?: HTMLImageElement) => {
-    const customName = prompt("Rename image? (Leave blank for original name)", file.name.split('.')[0]);
-    const folderChoice = prompt("Save to which folder? (images or img)", "images");
+    const customName = prompt("Rename image?", file.name.split('.')[0]);
+    const folderChoice = prompt("Folder? (images/img)", "images");
     const formData = new FormData();
     formData.append('file', file);
     formData.append('siteId', siteId);
@@ -259,42 +254,25 @@ export default function AdminDashboardPage(props: { params: Params }) {
       const data = await res.json();
       if (data.success) {
         const finalUrl = data.url;
-        
-        // Use Quill API to update if possible
         const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
-        
         if (imgElement && quill) {
-          // Find the image blot in the editor
           const blot = (window as any).Quill ? (window as any).Quill.find(imgElement) : null;
-          if (blot) {
-            blot.replaceWith('image', finalUrl);
-            alert("Image replaced and synced!");
-          } else {
-            // Fallback for direct DOM manipulation if blot isn't found
-            imgElement.src = finalUrl;
-            alert("Image uploaded! (Local refresh may be needed)");
-          }
+          if (blot) blot.replaceWith('image', finalUrl);
+          else imgElement.src = finalUrl;
         } else if (quill) {
           const range = quill.getSelection();
           quill.insertEmbed(range ? range.index : 0, 'image', finalUrl);
-          alert("Image inserted!");
         } else if (imgElement) {
           imgElement.src = finalUrl;
-          alert("Image uploaded!");
         }
-
-        // Force a sync of the code state
         const editor = document.querySelector('.ql-editor');
-        if (editor) {
-          editor.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-      } else {
-        alert("Upload failed: " + data.error);
+        if (editor) editor.dispatchEvent(new Event('input', { bubbles: true }));
       }
     } catch (err) {
-      alert("Error uploading image");
+      alert("Upload failed.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleClick = async (e: React.MouseEvent) => {
@@ -302,7 +280,6 @@ export default function AdminDashboardPage(props: { params: Params }) {
     if (target.tagName === 'IMG') {
       const img = target as HTMLImageElement;
       const action = prompt("Image Actions:\n1. Upload & Replace\n2. Choose from Library\n3. Resize (Width in px)\n4. Replace via URL\n5. Float Right\n6. Float Left\n7. Clear Float\n8. Delete", "");
-      
       if (!action) return;
 
       const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
@@ -334,7 +311,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
           setLoading(false);
         }
       } else if (action === "3") {
-        const width = prompt("Enter width (e.g. 400):", img.getAttribute('width') || img.style.width || "");
+        const width = prompt("Enter width:", img.getAttribute('width') || img.style.width || "");
         if (width) {
           img.setAttribute('width', width);
           img.style.width = `${width}px`;
@@ -343,7 +320,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
       } else if (action === "4") {
         const url = prompt("Enter new image URL:", img.src);
         if (url && quill) {
-          const blot = (window as any).Quill.find(img);
+          const blot = (window as any).Quill ? (window as any).Quill.find(img) : null;
           if (blot) blot.replaceWith('image', url);
           else img.src = url;
         } else if (url) {
@@ -367,18 +344,13 @@ export default function AdminDashboardPage(props: { params: Params }) {
         if (confirm("Delete this image?")) img.remove();
       }
       
-      // Force Quill update
       const editor = document.querySelector('.ql-editor');
-      if (editor) {
-        editor.dispatchEvent(new Event('input', { bubbles: true }));
-      }
+      if (editor) editor.dispatchEvent(new Event('input', { bubbles: true }));
     }
   };
 
-
   return (
     <div className="flex flex-col h-full bg-slate-950 text-white overflow-hidden">
-      {/* HEADER BAR */}
       <header className="p-4 flex flex-col sm:flex-row justify-between items-center bg-slate-900 border-b border-slate-800 gap-4">
         <div className="flex items-center gap-3">
           <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.6)]"></div>
@@ -450,7 +422,6 @@ export default function AdminDashboardPage(props: { params: Params }) {
         </div>
       </header>
 
-      {/* EDITOR / IFRAME AREA */}
       <div className="flex-1 flex overflow-hidden bg-white relative">
         <div className={`flex-1 relative transition-all duration-300 ${showSEO ? 'mr-80' : ''}`}>
           {isEditing ? (
@@ -461,8 +432,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
                     theme="snow"
                     defaultValue={getEditableContent(code)}
                     onChange={(val) => {
-                      const wrapped = wrapContent(val, code);
-                      if (wrapped !== code) setCode(wrapped);
+                      setCode(prev => wrapContent(val, prev));
                     }}
                     modules={{
                       toolbar: [
@@ -476,91 +446,31 @@ export default function AdminDashboardPage(props: { params: Params }) {
                         ['blockquote', 'code-block'],
                         ['link', 'image', 'video'],
                         ['clean']
-                      ],
+                      ]
                     }}
                     className="quill-light-fix flex-1 flex flex-col overflow-hidden"
                   />
                 </div>
                 <style jsx global>{`
-                  .quill-light-fix {
-                    height: 100% !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                  }
-                  .quill-light-fix .ql-toolbar {
-                    background-color: #f8fafc !important;
-                    border: none !important;
-                    border-bottom: 1px solid #e2e8f0 !important;
-                    flex-shrink: 0 !important;
-                    z-index: 50 !important;
-                    box-shadow: 0 2px 4px rgb(0 0 0 / 0.05) !important;
-                  }
-                  .quill-light-fix .ql-container {
-                    border: none !important;
-                    flex: 1 1 auto !important;
-                    overflow: hidden !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                  }
-                  .quill-light-fix .ql-editor {
-                    color: #1e293b !important;
-                    background-color: #fff !important;
-                    flex: 1 1 auto !important;
-                    overflow-y: auto !important;
-                    font-size: 16px !important;
-                    line-height: 1.6 !important;
-                    padding: 60px !important;
-                  }
-                  .quill-light-fix .ql-editor img {
-                    max-width: 100% !important;
-                    height: auto !important;
-                    cursor: pointer !important;
-                    transition: outline 0.2s ease !important;
-                  }
-                  .quill-light-fix .ql-editor img:hover {
-                    outline: 2px solid #06b6d4 !important;
-                  }
-                  .quill-light-fix .ql-editor img:active {
-                    outline: 4px solid #06b6d4 !important;
-                  }
+                  .quill-light-fix { height: 100% !important; display: flex !important; flex-direction: column !important; }
+                  .quill-light-fix .ql-toolbar { background-color: #f8fafc !important; border: none !important; border-bottom: 1px solid #e2e8f0 !important; flex-shrink: 0 !important; z-index: 50 !important; box-shadow: 0 2px 4px rgb(0 0 0 / 0.05) !important; }
+                  .quill-light-fix .ql-container { border: none !important; flex: 1 1 auto !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; }
+                  .quill-light-fix .ql-editor { color: #1e293b !important; background-color: #fff !important; flex: 1 1 auto !important; overflow-y: auto !important; font-size: 16px !important; line-height: 1.6 !important; padding: 60px !important; }
+                  .quill-light-fix .ql-editor img { max-width: 100% !important; height: auto !important; cursor: pointer !important; transition: outline 0.2s ease !important; }
+                  .quill-light-fix .ql-editor img:hover { outline: 2px solid #06b6d4 !important; }
+                  .quill-light-fix .ql-editor img:active { outline: 4px solid #06b6d4 !important; }
                   .quill-light-fix .ql-editor img[style*="float: right"],
-                  .quill-light-fix .ql-editor img[data-wrap="right"] {
-                    float: right !important;
-                    margin-left: 2rem !important;
-                    margin-bottom: 2rem !important;
-                    display: block !important;
-                    clear: none !important;
-                  }
+                  .quill-light-fix .ql-editor img[data-wrap="right"] { float: right !important; margin-left: 2rem !important; margin-bottom: 2rem !important; display: block !important; clear: none !important; }
                   .quill-light-fix .ql-editor img[style*="float: left"],
-                  .quill-light-fix .ql-editor img[data-wrap="left"] {
-                    float: left !important;
-                    margin-right: 2rem !important;
-                    margin-bottom: 2rem !important;
-                    display: block !important;
-                    clear: none !important;
-                  }
-                  /* High-contrast fix for white text in light theme */
+                  .quill-light-fix .ql-editor img[data-wrap="left"] { float: left !important; margin-right: 2rem !important; margin-bottom: 2rem !important; display: block !important; clear: none !important; }
                   .quill-light-fix .ql-editor [style*="color: rgb(255, 255, 255)"],
                   .quill-light-fix .ql-editor [style*="color: #fff"],
-                  .quill-light-fix .ql-editor [style*="color: white"] {
-                    background-color: #1e293b !important;
-                    padding: 2px 4px !important;
-                    border-radius: 4px !important;
-                  }
-                  .quill-light-fix .ql-editor p {
-                    clear: none !important;
-                    margin-bottom: 1rem !important;
-                  }
-                  /* Alignment classes support */
+                  .quill-light-fix .ql-editor [style*="color: white"] { background-color: #1e293b !important; padding: 2px 4px !important; border-radius: 4px !important; }
+                  .quill-light-fix .ql-editor p { clear: none !important; margin-bottom: 1rem !important; }
                   .quill-light-fix .ql-align-center { text-align: center !important; }
                   .quill-light-fix .ql-align-right { text-align: right !important; }
                   .quill-light-fix .ql-align-justify { text-align: justify !important; }
-                  
-                  .quill-light-fix .ql-editor::after {
-                    content: "";
-                    display: table;
-                    clear: both;
-                  }
+                  .quill-light-fix .ql-editor::after { content: ""; display: table; clear: both; }
                 `}</style>
               </div>
             ) : (
@@ -570,25 +480,14 @@ export default function AdminDashboardPage(props: { params: Params }) {
                 defaultLanguage="html"
                 value={code}
                 onChange={(val) => setCode(val || "")}
-                options={{ 
-                  fontSize: 14, 
-                  minimap: { enabled: false },
-                  wordWrap: "on",
-                  padding: { top: 20 }
-                }}
+                options={{ fontSize: 14, minimap: { enabled: false }, wordWrap: "on", padding: { top: 20 } }}
               />
             )
           ) : (
-            <iframe 
-              src={fileSrc} 
-              className="w-full h-full border-none" 
-              title="Live Preview"
-              key={currentFile} 
-            />
+            <iframe src={fileSrc} className="w-full h-full border-none" title="Live Preview" key={currentFile} />
           )}
         </div>
 
-        {/* SEO SIDEBAR */}
         {isEditing && showSEO && (
           <aside className="absolute right-0 top-0 bottom-0 w-80 bg-slate-900 border-l border-slate-800 p-6 overflow-y-auto z-20 shadow-2xl animate-in slide-in-from-right duration-300">
             <div className="flex items-center justify-between mb-8">
@@ -601,127 +500,70 @@ export default function AdminDashboardPage(props: { params: Params }) {
             <div className="space-y-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Meta Title</label>
-                <input 
-                  type="text" 
-                  value={seo.title}
-                  onChange={(e) => setSeo({...seo, title: e.target.value})}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-colors"
-                  placeholder="Enter page title..."
-                />
+                <input type="text" value={seo.title} onChange={(e) => setSeo({...seo, title: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/50" />
               </div>
-
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Meta Description</label>
-                <textarea 
-                  rows={4}
-                  value={seo.description}
-                  onChange={(e) => setSeo({...seo, description: e.target.value})}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-colors resize-none"
-                  placeholder="Enter meta description..."
-                />
+                <textarea rows={4} value={seo.description} onChange={(e) => setSeo({...seo, description: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/50 resize-none" />
               </div>
-
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Keywords</label>
-                <input 
-                  type="text" 
-                  value={seo.keywords}
-                  onChange={(e) => setSeo({...seo, keywords: e.target.value})}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-colors"
-                  placeholder="e.g. blog, travel, marketing..."
-                />
+                <input type="text" value={seo.keywords} onChange={(e) => setSeo({...seo, keywords: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/50" />
               </div>
-
-                <div className="p-4 bg-cyan-500/5 border border-cyan-500/10 rounded-xl">
-                  <p className="text-[10px] text-cyan-400/70 leading-relaxed">
-                    <strong className="text-cyan-400 block mb-1 uppercase tracking-tighter">SEO Suggestion</strong>
-                    Based on your site profile, use keywords like: <br/>
-                    <span className="text-slate-200 mt-1 block">
-                      {siteId.replace(/-/g, ', ')}, {currentFile.replace('.html', '').replace(/-/g, ', ')}
-                    </span>
-                  </p>
-                </div>
+              <div className="p-4 bg-cyan-500/5 border border-cyan-500/10 rounded-xl">
+                <p className="text-[10px] text-cyan-400/70 leading-relaxed">
+                  <strong className="text-cyan-400 block mb-1 uppercase tracking-tighter">SEO Suggestion</strong>
+                  {siteId.replace(/-/g, ', ')}, {currentFile.replace('.html', '').replace(/-/g, ', ')}
+                </p>
               </div>
+            </div>
           </aside>
         )}
       </div>
 
-      {/* MEDIA LIBRARY MODAL */}
       {showMediaLibrary && (
         <div className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-4xl max-h-[80vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-slate-900 border border-slate-800 w-full max-w-4xl max-h-[80vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
             <div className="p-6 border-b border-slate-800 flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-black text-white uppercase tracking-tighter">Media Library</h2>
                 <p className="text-xs text-slate-500">Pick an image from your site library</p>
               </div>
               <div className="flex items-center gap-4">
-                <input 
-                  type="text"
-                  placeholder="Search images..."
-                  value={librarySearch}
-                  onChange={(e) => setLibrarySearch(e.target.value)}
-                  className="bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-colors w-64"
-                />
-                <button 
-                  onClick={() => setShowMediaLibrary(false)}
-                  className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
-                >
-                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="6 18L18 6M6 6l12 12"></path></svg>
+                <input type="text" placeholder="Search images..." value={librarySearch} onChange={(e) => setLibrarySearch(e.target.value)} className="bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 w-64" />
+                <button onClick={() => setShowMediaLibrary(false)} className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="6 18L18 6M6 6l12 12"></path></svg>
                 </button>
               </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-6">
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {libraryImages
-                  .filter(img => !librarySearch || img.name.toLowerCase().includes(librarySearch.toLowerCase()))
-                  .map((imgData, i) => (
-                    <button 
-                      key={i}
-                      onClick={() => {
-                        if (selectedImgRef) {
-                          const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
-                          if (quill) {
-                            const blot = (window as any).Quill ? (window as any).Quill.find(selectedImgRef) : null;
-                            if (blot) blot.replaceWith('image', imgData.url);
-                            else selectedImgRef.src = imgData.url;
-                          } else {
-                            selectedImgRef.src = imgData.url;
-                          }
-                          // Force sync
-                          const editor = document.querySelector('.ql-editor');
-                          if (editor) editor.dispatchEvent(new Event('input', { bubbles: true }));
-                        }
-                        setShowMediaLibrary(false);
-                      }}
-                      className="group relative aspect-square bg-slate-950 rounded-xl border border-slate-800 overflow-hidden hover:border-cyan-500/50 transition-all flex flex-col"
-                    >
-                      <div className="relative flex-1 bg-slate-800 overflow-hidden">
-                        <img 
-                          src={imgData.url} 
-                          alt={imgData.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                      <div className="p-2 bg-slate-900 border-t border-slate-800 text-[10px] truncate text-slate-400 group-hover:text-cyan-400">
-                        {imgData.name}
-                      </div>
-                    </button>
-                  ))}
+                {libraryImages.filter(img => !librarySearch || img.name.toLowerCase().includes(librarySearch.toLowerCase())).map((imgData, i) => (
+                  <button key={i} onClick={() => {
+                    if (selectedImgRef) {
+                      const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
+                      if (quill) {
+                        const blot = (window as any).Quill ? (window as any).Quill.find(selectedImgRef) : null;
+                        if (blot) blot.replaceWith('image', imgData.url);
+                        else selectedImgRef.src = imgData.url;
+                      } else { selectedImgRef.src = imgData.url; }
+                      const editor = document.querySelector('.ql-editor');
+                      if (editor) editor.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                    setShowMediaLibrary(false);
+                  }} className="group relative aspect-square bg-slate-950 rounded-xl border border-slate-800 overflow-hidden hover:border-cyan-500/50 flex flex-col">
+                    <div className="relative flex-1 bg-slate-800 overflow-hidden">
+                      <img src={imgData.url} alt={imgData.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+                      <div className="absolute inset-0 bg-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <div className="p-2 bg-slate-900 border-t border-slate-800 text-[10px] truncate text-slate-400 group-hover:text-cyan-400">{imgData.name}</div>
+                  </button>
+                ))}
               </div>
-              {libraryImages.length === 0 && (
-                <div className="h-64 flex flex-col items-center justify-center text-slate-500">
-                  <svg className="w-12 h-12 mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                  <p>No images found in your library</p>
-                </div>
-              )}
             </div>
-            
             <div className="p-4 bg-slate-950/50 border-t border-slate-800 text-right">
-                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Showing {libraryImages.length} Assets</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Showing {libraryImages.length} Assets</p>
             </div>
           </div>
         </div>

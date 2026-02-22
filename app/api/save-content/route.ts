@@ -18,22 +18,32 @@ export async function POST(request: Request) {
     fs.writeFileSync(filePath, code, 'utf8');
 
     // 3. Automated Git Workflow (Runs ONLY when you are working on your PC)
+    let gitLog = "Git sync skipped (not in development)";
+    let gitSuccess = true;
+
     if (process.env.NODE_ENV === 'development') {
       try {
-        // This is the same as you typing it in Git Bash manually
         await execPromise('git add .');
-        await execPromise(`git commit -m "Admin Update: ${siteId} - ${fileName}"`);
+        try {
+          await execPromise(`git commit -m "Admin Update: ${siteId} - ${fileName}"`);
+        } catch (commitErr) {
+          // If there are no changes, commit might fail. We still try to push.
+          console.log("No changes to commit or commit failed.");
+        }
         await execPromise('git push origin main');
-        console.log(`Successfully pushed updates for ${siteId} to GitHub.`);
-      } catch (gitError) {
-        // If Git fails (e.g., no internet), the file is still saved on your F: drive
-        console.error("Local save worked, but Git Auto-Push failed:", gitError);
+        gitLog = "Pushed to GitHub successfully.";
+      } catch (gitError: any) {
+        gitSuccess = false;
+        gitLog = gitError.message || "Git Push failed";
+        console.error("Git Auto-Push failed:", gitLog);
       }
     }
 
     return NextResponse.json({ 
       success: true, 
-      message: "Saved to F: drive and pushed to GitHub" 
+      gitSuccess,
+      gitLog,
+      message: gitSuccess ? "Saved and Pushed!" : "Saved locally, but Git Push failed."
     });
   } catch (error) {
     console.error("System Error:", error);
