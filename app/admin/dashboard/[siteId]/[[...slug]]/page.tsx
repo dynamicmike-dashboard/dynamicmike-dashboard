@@ -144,9 +144,10 @@ export default function AdminDashboardPage(props: { params: Params }) {
     setLoading(false);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (contentToSave?: string) => {
     setLoading(true);
-    const finalCode = updateHTMLWithSEO(code);
+    const finalContent = contentToSave || code;
+    const finalCode = updateHTMLWithSEO(finalContent);
     try {
       const res = await fetch('/api/save-content', {
         method: 'POST',
@@ -170,21 +171,31 @@ export default function AdminDashboardPage(props: { params: Params }) {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        if (isEditing) handleSave();
+        if (isEditing) {
+          // If in visual mode, get text from the editor directly to be safe
+          const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
+          if (isVisual && quill) {
+            const currentVal = wrapContent(quill.root.innerHTML, code);
+            handleSaveWithCleanup(currentVal);
+          } else {
+            handleSaveWithCleanup();
+          }
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isEditing, code, seo]); // Re-bind when state used in save changes
+  }, [isEditing, isVisual, code, seo]); 
 
   const cleanGHLTags = (html: string) => {
     return html.replace(/<!--[\s\S]*?-->/g, '').trim();
   };
 
-  const handleSaveWithCleanup = () => {
-    const cleaned = cleanGHLTags(code);
-    setCode(cleaned);
-    handleSave();
+  const handleSaveWithCleanup = (contentOverride?: string) => {
+    const targetContent = contentOverride || code;
+    const cleaned = cleanGHLTags(targetContent);
+    setCode(cleaned); // Still update local state
+    handleSave(cleaned); // Pass directly to avoid race conditions with state update
   };
 
   const handleMediaRescue = async () => {
@@ -437,10 +448,12 @@ export default function AdminDashboardPage(props: { params: Params }) {
               <div className="h-full px-4 py-8 max-w-4xl mx-auto shadow-inner bg-slate-300 min-h-screen overflow-hidden">
                 <div className="bg-white border border-slate-300 shadow-xl rounded-xl h-full flex flex-col overflow-hidden" onClick={handleClick}>
                   <ReactQuill 
-                    key={`${currentFile}-${isVisual}`}
                     theme="snow"
-                    value={getEditableContent(code)}
-                    onChange={(val) => setCode(wrapContent(val, code))}
+                    defaultValue={getEditableContent(code)}
+                    onChange={(val) => {
+                      const wrapped = wrapContent(val, code);
+                      if (wrapped !== code) setCode(wrapped);
+                    }}
                     modules={{
                       toolbar: [
                         [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
