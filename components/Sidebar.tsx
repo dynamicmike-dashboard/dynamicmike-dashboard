@@ -95,6 +95,9 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
     const pageName = prompt("Enter page filename (e.g. services):");
     if (!pageName) return;
     
+    // Find best template (index.html or something specific like BreathofLifePDC.html)
+    const bestTemplate = pages.find(p => p.toLowerCase().includes('index') || p.toLowerCase().includes(siteId.toLowerCase())) || pages[0];
+
     setLoading(true);
     try {
       const res = await fetch('/api/create-file', {
@@ -103,7 +106,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         body: JSON.stringify({ 
           siteId, 
           fileName: `${pageName.replace('.html', '')}.html`,
-          templatePath: `${siteId}/index.html` // Use homepage as template for new pages
+          templatePath: bestTemplate ? `${siteId}/${bestTemplate}` : null
         }),
       });
       const data = await res.json();
@@ -181,6 +184,25 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         >
           <span>🏠</span> Back to All Sites
         </Link>
+
+        {/* SEARCH BAR */}
+        <div className="relative">
+          <input 
+            type="text"
+            placeholder="Search pages..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-[10px] text-slate-300 focus:outline-none focus:border-cyan-500/50 transition-all"
+          />
+          {search && (
+            <button 
+              onClick={() => setSearch("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-600 hover:text-white text-xs"
+            >
+              ✕
+            </button>
+          )}
+        </div>
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
@@ -191,7 +213,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
             <span className="text-[10px] text-slate-600 font-mono">{pages.length}</span>
           </div>
           <div className="space-y-1">
-            {pages.map(file => {
+            {pages.filter(p => !search || p.toLowerCase().includes(search.toLowerCase())).map(file => {
               const slug = file.replace('.html', '');
               return (
                 <div key={file} className="flex items-center gap-1 group">
@@ -223,7 +245,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
             <span className="text-[10px] text-slate-600 font-mono">{posts.length}</span>
           </div>
           <div className="space-y-1">
-            {posts.map(file => {
+            {posts.filter(p => !search || p.toLowerCase().includes(search.toLowerCase())).map(file => {
               const slug = file.replace('.html', '');
               return (
                 <div key={file} className="flex items-center gap-1 group">

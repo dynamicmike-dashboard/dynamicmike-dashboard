@@ -303,16 +303,16 @@ export default function AdminDashboardPage(props: { params: Params }) {
         img.style.marginLeft = '2rem';
         img.style.marginBottom = '2rem';
         img.setAttribute('data-wrap', 'right');
-      } else if (action === "5") {
+      } else if (action === "6") {
         img.style.float = 'left';
         img.style.marginRight = '2rem';
         img.style.marginBottom = '2rem';
         img.setAttribute('data-wrap', 'left');
-      } else if (action === "6") {
+      } else if (action === "7") {
         img.style.float = 'none';
         img.style.margin = '0 auto';
         img.removeAttribute('data-wrap');
-      } else if (action === "7") {
+      } else if (action === "8") {
         if (confirm("Delete this image?")) img.remove();
       }
       
@@ -578,15 +578,16 @@ export default function AdminDashboardPage(props: { params: Params }) {
                 />
               </div>
 
-              <div className="pt-6 border-t border-slate-800/50">
                 <div className="p-4 bg-cyan-500/5 border border-cyan-500/10 rounded-xl">
                   <p className="text-[10px] text-cyan-400/70 leading-relaxed">
-                    <strong className="text-cyan-400 block mb-1 uppercase tracking-tighter">Pro Tip</strong>
-                    Changes here automatically update the underlying HTML when you click <strong>SAVE & PUSH</strong>.
+                    <strong className="text-cyan-400 block mb-1 uppercase tracking-tighter">SEO Suggestion</strong>
+                    Based on your site profile, use keywords like: <br/>
+                    <span className="text-slate-200 mt-1 block">
+                      {siteId.replace(/-/g, ', ')}, {currentFile.replace('.html', '').replace(/-/g, ', ')}
+                    </span>
                   </p>
                 </div>
               </div>
-            </div>
           </aside>
         )}
       </div>

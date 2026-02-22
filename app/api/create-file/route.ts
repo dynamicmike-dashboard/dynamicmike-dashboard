@@ -28,16 +28,45 @@ export async function POST(request: Request) {
     }
 
     // 3. Copy from template or create empty
+    let content = '<!DOCTYPE html><html><head><title>New Page</title></head><body><h1>New Page</h1></body></html>';
+    
     if (templatePath) {
       const sourcePath = path.join(process.cwd(), 'public', 'content', templatePath);
       if (fs.existsSync(sourcePath)) {
-        fs.copyFileSync(sourcePath, targetPath);
-      } else {
-        fs.writeFileSync(targetPath, '<!DOCTYPE html><html><body><h1>New Post</h1></body></html>', 'utf8');
+        content = fs.readFileSync(sourcePath, 'utf8');
       }
-    } else {
-      fs.writeFileSync(targetPath, '<!DOCTYPE html><html><body><h1>New Post</h1></body></html>', 'utf8');
     }
+
+    // 4. Inject Baseline SEO if it's a new or templated file
+    const siteName = siteId.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const pageTitle = fileName.replace('.html', '').split('/').pop()?.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || "New Page";
+    
+    const baselineSEO = {
+      title: `${pageTitle} | ${siteName}`,
+      description: `Learn more about ${pageTitle} at ${siteName}. Dedicated to providing the best information and services.`,
+      keywords: `${siteId.replace(/-/g, ', ')}, ${pageTitle.toLowerCase()}, blog, resources`
+    };
+
+    // Replace or inject <title>
+    if (content.includes('<title>')) {
+      content = content.replace(/<title>.*?<\/title>/, `<title>${baselineSEO.title}</title>`);
+    } else {
+      content = content.replace('</head>', `<title>${baselineSEO.title}</title></head>`);
+    }
+
+    // Replace or inject Meta Tags
+    const metaTags = `
+    <meta name="description" content="${baselineSEO.description}">
+    <meta name="keywords" content="${baselineSEO.keywords}">
+    <meta property="og:title" content="${baselineSEO.title}">
+    <meta property="og:description" content="${baselineSEO.description}">
+    `;
+
+    if (content.includes('</head>')) {
+      content = content.replace('</head>', `${metaTags}\n</head>`);
+    }
+
+    fs.writeFileSync(targetPath, content, 'utf8');
 
     // 4. Git Auto-Push (Development only)
     if (process.env.NODE_ENV === 'development') {
