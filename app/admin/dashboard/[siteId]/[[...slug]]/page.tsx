@@ -166,16 +166,16 @@ export default function AdminDashboardPage(props: { params: Params }) {
     setLoading(false);
   };
 
-  // Keyboard Shortcuts
+  // Keyboard Shortcuts via Ref to avoid stale closure issues
+  const stateRef = { isEditing, isVisual, code, seo };
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        if (isEditing) {
-          // If in visual mode, get text from the editor directly to be safe
+        if (stateRef.isEditing) {
           const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
-          if (isVisual && quill) {
-            const currentVal = wrapContent(quill.root.innerHTML, code);
+          if (stateRef.isVisual && quill) {
+            const currentVal = wrapContent(quill.root.innerHTML, stateRef.code);
             handleSaveWithCleanup(currentVal);
           } else {
             handleSaveWithCleanup();
@@ -185,7 +185,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isEditing, isVisual, code, seo]); 
+  }, [isEditing, isVisual]); // Simplified dependencies
 
   const cleanGHLTags = (html: string) => {
     return html.replace(/<!--[\s\S]*?-->/g, '').trim();
@@ -194,8 +194,21 @@ export default function AdminDashboardPage(props: { params: Params }) {
   const handleSaveWithCleanup = (contentOverride?: string) => {
     const targetContent = contentOverride || code;
     const cleaned = cleanGHLTags(targetContent);
-    setCode(cleaned); // Still update local state
-    handleSave(cleaned); // Pass directly to avoid race conditions with state update
+    setCode(cleaned); 
+    handleSave(cleaned); 
+  };
+
+  // Safe Mode Switch: Sync text before toggling
+  const toggleMode = (targetVisual: boolean) => {
+    if (isVisual !== targetVisual) {
+      const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
+      if (isVisual && quill) {
+        // Sync Visual -> Code
+        const currentVal = wrapContent(quill.root.innerHTML, code);
+        setCode(currentVal);
+      }
+      setIsVisual(targetVisual);
+    }
   };
 
   const handleMediaRescue = async () => {
@@ -383,13 +396,13 @@ export default function AdminDashboardPage(props: { params: Params }) {
             <>
               <div className="flex bg-slate-800 rounded-lg p-1 mr-2 border border-slate-700">
                 <button 
-                  onClick={() => setIsVisual(true)}
+                  onClick={() => toggleMode(true)}
                   className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${isVisual ? 'bg-cyan-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'}`}
                 >
                   VISUAL
                 </button>
                 <button 
-                  onClick={() => setIsVisual(false)}
+                  onClick={() => toggleMode(false)}
                   className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${!isVisual ? 'bg-cyan-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'}`}
                 >
                   SOURCE
@@ -460,9 +473,9 @@ export default function AdminDashboardPage(props: { params: Params }) {
                         [{ 'size': ['small', false, 'large', 'huge'] }],
                         ['bold', 'italic', 'underline', 'strike'],
                         [{ 'color': [] }, { 'background': [] }],
-                        [{ 'script': 'sub'}, { 'script': 'super' }],
+                        [{ 'align': [] }],
                         [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        [{ 'indent': '-1'}, { 'indent': '+1' }, { 'align': [] }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
                         ['blockquote', 'code-block'],
                         ['link', 'image', 'video'],
                         ['clean']
