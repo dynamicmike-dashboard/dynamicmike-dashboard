@@ -43,12 +43,13 @@ export async function POST(request: Request) {
       }
     }
 
-    const publicUrl = `/${folder}/${fileName}`; // Middleware handles siteId prefixing usually, or use absolute
+    const publicUrl = `/content/${siteId}/${folder}/${fileName}`;
     
     return NextResponse.json({ 
       success: true, 
       url: publicUrl,
       fileName,
+      folder,
       path: targetPath
     });
   } catch (error) {

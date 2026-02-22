@@ -165,6 +165,28 @@ export default function AdminDashboardPage(props: { params: Params }) {
     setLoading(false);
   };
 
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (isEditing) handleSave();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isEditing, code, seo]); // Re-bind when state used in save changes
+
+  const cleanGHLTags = (html: string) => {
+    return html.replace(/<!--[\s\S]*?-->/g, '').trim();
+  };
+
+  const handleSaveWithCleanup = () => {
+    const cleaned = cleanGHLTags(code);
+    setCode(cleaned);
+    handleSave();
+  };
+
   const handleMediaRescue = async () => {
     if (!code) return;
     setLoading(true);
@@ -206,18 +228,21 @@ export default function AdminDashboardPage(props: { params: Params }) {
       });
       const data = await res.json();
       if (data.success) {
-        const finalUrl = `/content/${siteId}/${data.folder || folderChoice || 'images'}/${data.fileName}`;
+        const finalUrl = data.url;
         
         // Use Quill API to update if possible
         const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
+        
         if (imgElement && quill) {
-          const blot = (window as any).Quill.find(imgElement);
+          // Find the image blot in the editor
+          const blot = (window as any).Quill ? (window as any).Quill.find(imgElement) : null;
           if (blot) {
             blot.replaceWith('image', finalUrl);
             alert("Image replaced and synced!");
           } else {
+            // Fallback for direct DOM manipulation if blot isn't found
             imgElement.src = finalUrl;
-            alert("Image uploaded! (Manual sync)");
+            alert("Image uploaded! (Local refresh may be needed)");
           }
         } else if (quill) {
           const range = quill.getSelection();
@@ -226,6 +251,12 @@ export default function AdminDashboardPage(props: { params: Params }) {
         } else if (imgElement) {
           imgElement.src = finalUrl;
           alert("Image uploaded!");
+        }
+
+        // Force a sync of the code state
+        const editor = document.querySelector('.ql-editor');
+        if (editor) {
+          editor.dispatchEvent(new Event('input', { bubbles: true }));
         }
       } else {
         alert("Upload failed: " + data.error);
@@ -388,7 +419,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
           
           {isEditing && (
             <button 
-              onClick={handleSave}
+              onClick={handleSaveWithCleanup}
               disabled={loading}
               className="flex-1 sm:flex-none px-6 py-2 bg-cyan-500 text-slate-950 rounded-lg text-xs font-black hover:bg-cyan-400 disabled:opacity-50 shadow-lg shadow-cyan-500/20 transition-all"
             >

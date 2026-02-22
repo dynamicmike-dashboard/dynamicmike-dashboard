@@ -31,5 +31,8 @@ export async function GET(request: Request) {
     }
   }
 
+  // Sort all images alphabetically by name
+  allImages.sort((a, b) => a.name.localeCompare(b.name));
+
   return NextResponse.json({ success: true, images: allImages });
 }
