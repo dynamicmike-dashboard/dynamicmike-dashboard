@@ -67,7 +67,8 @@ export default function AdminDashboardPage(props: { params: Params }) {
   const [seo, setSeo] = useState({
     title: "",
     description: "",
-    keywords: ""
+    keywords: "",
+    image: ""
   });
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [libraryImages, setLibraryImages] = useState<any[]>([]);
@@ -94,11 +95,13 @@ export default function AdminDashboardPage(props: { params: Params }) {
     const titleMatch = html.match(/<title>(.*?)<\/title>/);
     const descMatch = html.match(/<meta name="description" content="([\s\S]*?)"/);
     const keywordsMatch = html.match(/<meta name="keywords" content="(.*?)"/);
+    const imageMatch = html.match(/<meta property="og:image" content="(.*?)"/);
 
     setSeo({
       title: titleMatch ? titleMatch[1] : "",
       description: descMatch ? descMatch[1].trim() : "",
-      keywords: keywordsMatch ? keywordsMatch[1] : ""
+      keywords: keywordsMatch ? keywordsMatch[1] : "",
+      image: imageMatch ? imageMatch[1] : ""
     });
   };
 
@@ -112,6 +115,16 @@ export default function AdminDashboardPage(props: { params: Params }) {
     updated = updated.replace(/<meta name="keywords" content=".*?"/, `<meta name="keywords" content="${seo.keywords}"`);
     updated = updated.replace(/<meta property="og:keywords" content=".*?"/, `<meta property="og:keywords" content="${seo.keywords}"`);
     
+    // Update Meta Images
+    updated = updated.replace(/<meta name="image" content=".*?"/, `<meta name="image" content="${seo.image}"`);
+    updated = updated.replace(/<meta property="og:image" content=".*?"/, `<meta property="og:image" content="${seo.image}"`);
+
+    // Update Hero Picture Sources
+    updated = updated.replace(/(<div[^>]*class="blog-cover-image-container"[^>]*>[\s\S]*?<picture[^>]*>)([\s\S]*?)(<\/picture>)/, (match, open, inner, close) => {
+      let newInner = inner.replace(/srcset=".*?"/g, `srcset="${seo.image}"`);
+      newInner = newInner.replace(/src=".*?"/g, `src="${seo.image}"`);
+      return `${open}${newInner}${close}`;
+    });
     updated = updated.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]+)"([^>]*)>/gi, (match, href, rest) => {
       if (href.startsWith('http') && !href.includes('localhost') && !href.includes('pdcyes.com') && !href.includes('realprayerbook.com')) {
         if (!rest.includes('target="_blank"')) {
@@ -573,6 +586,69 @@ export default function AdminDashboardPage(props: { params: Params }) {
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Keywords</label>
                 <input type="text" value={seo.keywords} onChange={(e) => setSeo({...seo, keywords: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/50" />
               </div>
+
+              <div className="space-y-4">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Featured Image</label>
+                <div className="relative aspect-video bg-slate-950 rounded-xl overflow-hidden border border-slate-800 group">
+                  {seo.image ? (
+                    <img src={seo.image} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-600 text-[10px] font-bold">NO IMAGE</div>
+                  )}
+                  <div className="absolute inset-0 bg-slate-900/80 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-2">
+                    <button 
+                      onClick={async () => {
+                        setLoading(true);
+                        try {
+                          const res = await fetch(`/api/list-media?siteId=${siteId}`);
+                          const data = await res.json();
+                          if (data.success) {
+                            setLibraryImages(data.images);
+                            // Set a special ref indicator to tell library where to save
+                            setSelectedImgRef(null); 
+                            // We hack the click handler slightly or add a special state
+                            // For simplicity, let's just make the library callback smart
+                            (window as any).__onImageSelect = (url: string) => setSeo(prev => ({...prev, image: url}));
+                            setShowMediaLibrary(true);
+                          }
+                        } finally { setLoading(false); }
+                      }}
+                      className="px-3 py-1.5 bg-cyan-500 text-slate-950 text-[10px] font-black rounded-lg hover:bg-cyan-400"
+                    >
+                      CHOOSE
+                    </button>
+                    <button 
+                      onClick={() => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.onchange = (e) => {
+                          const file = (e.target as HTMLInputElement).files?.[0];
+                          if (file) {
+                            // Specialized upload that updates SEO state
+                            const customName = prompt("Rename image?", file.name.split('.')[0]);
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            formData.append('siteId', siteId);
+                            if (customName) formData.append('customName', customName);
+                            formData.append('folder', 'images');
+                            setLoading(true);
+                            fetch('/api/upload-media', { method: 'POST', body: formData })
+                              .then(r => r.json())
+                              .then(d => { if (d.success) setSeo(prev => ({...prev, image: d.url})); })
+                              .finally(() => setLoading(false));
+                          }
+                        };
+                        input.click();
+                      }}
+                      className="px-3 py-1.5 bg-slate-800 text-white text-[10px] font-black rounded-lg hover:bg-slate-700"
+                    >
+                      UPLOAD
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <div className="p-4 bg-cyan-500/5 border border-cyan-500/10 rounded-xl">
                 <p className="text-[10px] text-cyan-400/70 leading-relaxed">
                   <strong className="text-cyan-400 block mb-1 uppercase tracking-tighter">SEO Suggestion</strong>
@@ -613,6 +689,9 @@ export default function AdminDashboardPage(props: { params: Params }) {
                       } else { selectedImgRef.src = imgData.url; }
                       const editor = document.querySelector('.ql-editor');
                       if (editor) editor.dispatchEvent(new Event('input', { bubbles: true }));
+                    } else if ((window as any).__onImageSelect) {
+                      (window as any).__onImageSelect(imgData.url);
+                      (window as any).__onImageSelect = null;
                     }
                     setShowMediaLibrary(false);
                   }} className="group relative aspect-square bg-slate-950 rounded-xl border border-slate-800 overflow-hidden hover:border-cyan-500/50 flex flex-col">
