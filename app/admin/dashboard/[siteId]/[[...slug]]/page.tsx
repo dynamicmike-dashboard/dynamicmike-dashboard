@@ -73,6 +73,8 @@ export default function AdminDashboardPage(props: { params: Params }) {
   const [libraryImages, setLibraryImages] = useState<any[]>([]);
   const [librarySearch, setLibrarySearch] = useState("");
   const [selectedImgRef, setSelectedImgRef] = useState<HTMLImageElement | null>(null);
+  const [editorKey, setEditorKey] = useState(0); // For forcing ReactQuill remount
+  const [gitStatus, setGitStatus] = useState<{ success: boolean; log: string } | null>(null);
 
   const fileSrc = `/content/${siteId}/${currentFile}`;
 
@@ -136,7 +138,9 @@ export default function AdminDashboardPage(props: { params: Params }) {
       const text = await res.text();
       setCode(text);
       parseSEO(text);
+      setEditorKey(prev => prev + 1);
       setIsEditing(true);
+      setGitStatus(null);
     } catch (err) { 
       alert("Failed to load file."); 
     }
@@ -155,10 +159,11 @@ export default function AdminDashboardPage(props: { params: Params }) {
       });
       const data = await res.json();
       if (data.success) {
+        setGitStatus({ success: data.gitSuccess, log: data.gitLog });
         if (data.gitSuccess) {
-          alert("Success! Saved to F: drive and pushed to GitHub.");
+          // Success case
         } else {
-          alert(`Warning: Saved locally, but GitHub sync failed.\n\nError: ${data.gitLog}`);
+          // Failure case is handled by the UI banner now
         }
         setIsEditing(false);
       } else {
@@ -166,6 +171,29 @@ export default function AdminDashboardPage(props: { params: Params }) {
       }
     } catch (err) {
       alert("Network error.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePush = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/save-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ siteId, fileName: currentFile, code }),
+      });
+      const data = await res.json();
+      setGitStatus({ success: data.gitSuccess, log: data.gitLog });
+      if (data.gitSuccess) {
+        alert("GitHub Sync Successful!");
+        setGitStatus(null);
+      } else {
+        alert(`Push failed again: ${data.gitLog}`);
+      }
+    } catch (err) {
+      alert("Network error while pushing.");
     } finally {
       setLoading(false);
     }
@@ -399,6 +427,16 @@ export default function AdminDashboardPage(props: { params: Params }) {
             </>
           )}
           
+          {!isEditing && gitStatus && !gitStatus.success && (
+            <button 
+              onClick={handlePush}
+              disabled={loading}
+              className="px-3 py-2 bg-amber-500 text-slate-950 text-[10px] font-black rounded-lg hover:bg-amber-400 transition-all flex items-center gap-2 animate-pulse"
+            >
+              ⚠️ RETRY PUSH TO GITHUB
+            </button>
+          )}
+
           <button 
             onClick={isEditing ? () => setIsEditing(false) : loadFileContent}
             className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold transition-all border ${
@@ -407,7 +445,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
                 : 'bg-cyan-600/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-600 hover:text-white'
             }`}
           >
-            {isEditing ? "Back to Preview" : "Edit HTML"}
+            {isEditing ? "Cancel Edit" : "Edit HTML"}
           </button>
           
           {isEditing && (
@@ -429,6 +467,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
               <div className="h-full px-4 py-8 max-w-4xl mx-auto shadow-inner bg-slate-300 min-h-screen overflow-hidden">
                 <div className="bg-white border border-slate-300 shadow-xl rounded-xl h-full flex flex-col overflow-hidden" onClick={handleClick}>
                   <ReactQuill 
+                    key={editorKey}
                     theme="snow"
                     defaultValue={getEditableContent(code)}
                     onChange={(val) => {
