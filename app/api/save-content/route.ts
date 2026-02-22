@@ -9,7 +9,7 @@ const execPromise = promisify(exec);
 
 export async function POST(request: Request) {
   try {
-    const { siteId, fileName, code } = await request.json();
+    const { siteId, fileName, code, syncEnabled } = await request.json();
 
     // 1. Define the exact path to your F: drive folder
     const filePath = path.join(process.cwd(), 'public', 'content', siteId, fileName);
@@ -17,11 +17,11 @@ export async function POST(request: Request) {
     // 2. Save the file locally so your F: drive is always the 'Master Copy'
     fs.writeFileSync(filePath, code, 'utf8');
 
-    // 3. Automated Git Workflow (Runs ONLY when you are working on your PC)
-    let gitLog = "Git sync skipped (not in development)";
+    // 3. Automated Git Workflow (Runs ONLY when you are working on your PC and sync is on)
+    let gitLog = "Git sync disabled via 'Local Only' toggle";
     let gitSuccess = true;
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' && syncEnabled !== false) {
       try {
         await execPromise('git add .');
         try {

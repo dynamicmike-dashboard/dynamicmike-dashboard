@@ -73,8 +73,9 @@ export default function AdminDashboardPage(props: { params: Params }) {
   const [libraryImages, setLibraryImages] = useState<any[]>([]);
   const [librarySearch, setLibrarySearch] = useState("");
   const [selectedImgRef, setSelectedImgRef] = useState<HTMLImageElement | null>(null);
-  const [editorKey, setEditorKey] = useState(0); // For forcing ReactQuill remount
+  const [editorKey, setEditorKey] = useState(0); 
   const [gitStatus, setGitStatus] = useState<{ success: boolean; log: string } | null>(null);
+  const [syncEnabled, setSyncEnabled] = useState(true);
 
   const fileSrc = `/content/${siteId}/${currentFile}`;
 
@@ -155,7 +156,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
       const res = await fetch('/api/save-content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ siteId, fileName: currentFile, code: finalCode }),
+        body: JSON.stringify({ siteId, fileName: currentFile, code: finalCode, syncEnabled }),
       });
       const data = await res.json();
       if (data.success) {
@@ -384,11 +385,33 @@ export default function AdminDashboardPage(props: { params: Params }) {
           <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.6)]"></div>
           <div>
             <h1 className="text-sm font-black text-slate-200 capitalize tracking-tight">{siteId.replace(/-/g, ' ')}</h1>
-            <p className="text-[10px] text-slate-500 font-mono italic">{currentFile}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-[10px] text-slate-500 font-mono italic">{currentFile}</p>
+              <a 
+                href={`/view/${siteId}/${currentFile.replace('.html', '')}`} 
+                target="_blank" 
+                className="text-[10px] text-cyan-500 hover:text-cyan-400 font-bold underline decoration-cyan-500/30"
+              >
+                View Local
+              </a>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-2 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700/50">
+            <span className={`text-[10px] font-bold tracking-tighter ${syncEnabled ? 'text-cyan-400' : 'text-slate-500'}`}>
+              {syncEnabled ? "CLOUD SYNC ON" : "LOCAL ONLY"}
+            </span>
+            <button 
+              onClick={() => setSyncEnabled(!syncEnabled)}
+              className={`w-8 h-4 rounded-full relative transition-all ${syncEnabled ? 'bg-cyan-500' : 'bg-slate-600'}`}
+            >
+              <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all ${syncEnabled ? 'right-0.5' : 'left-0.5'}`} />
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
           {isEditing && (
             <>
               <div className="flex bg-slate-800 rounded-lg p-1 mr-2 border border-slate-700">
@@ -458,7 +481,8 @@ export default function AdminDashboardPage(props: { params: Params }) {
             </button>
           )}
         </div>
-      </header>
+      </div>
+    </header>
 
       <div className="flex-1 flex overflow-hidden bg-white relative">
         <div className={`flex-1 relative transition-all duration-300 ${showSEO ? 'mr-80' : ''}`}>
