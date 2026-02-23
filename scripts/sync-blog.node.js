@@ -101,34 +101,7 @@ function generateNewsHtml(posts) {
     </div>
 </div>`).join('\n');
 
-    // Protection script: saves our listing and restores it after GHL hydration overwrites it
-    const protectionScript = `<script>
-(function() {
-  var savedHtml = ${JSON.stringify(listingHtml)};
-  function getWrapper() {
-    return document.querySelector('.blog-post-wrapper');
-  }
-  function restoreListing() {
-    var wrapper = getWrapper();
-    if (wrapper && !wrapper.querySelector('a[href*="/post/"]')) {
-      wrapper.innerHTML = savedHtml;
-    }
-  }
-  document.addEventListener('DOMContentLoaded', function() {
-    var wrapper = getWrapper();
-    if (!wrapper) return;
-    var observer = new MutationObserver(function() {
-      restoreListing();
-    });
-    observer.observe(wrapper, { childList: true, subtree: false });
-    // Also restore after a short delay as a fallback
-    setTimeout(restoreListing, 500);
-    setTimeout(restoreListing, 1500);
-  });
-})();
-<\/script>`;
-
-    return listingHtml + '\n' + protectionScript;
+    return listingHtml;
 }
 
 
@@ -154,38 +127,87 @@ function generateIndexHtml(posts) {
     </div>
 </div>`).join('\n');
 
-    // Protection script: saves our listing and restores it after GHL hydration overwrites it
-    const protectionScript = `<script>
-(function() {
-  var savedHtml = ${JSON.stringify(listingHtml)};
-  function getWrapper() {
-    return document.querySelector('.blog-row');
-  }
-  function restoreListing() {
-    var wrapper = getWrapper();
-    if (wrapper && !wrapper.querySelector('a[href*="/post/"]')) {
-      wrapper.innerHTML = savedHtml;
-    }
-  }
-  document.addEventListener('DOMContentLoaded', function() {
-    var wrapper = getWrapper();
-    if (!wrapper) return;
-    var observer = new MutationObserver(function() {
-      restoreListing();
-    });
-    observer.observe(wrapper, { childList: true, subtree: false });
-    // Also restore after short delays as a fallback
-    setTimeout(restoreListing, 500);
-    setTimeout(restoreListing, 1500);
-  });
-})();
-<\/script>`;
-
-    return listingHtml + '\n' + protectionScript;
+    return listingHtml;
 }
 
 
-function updateFile(filePath, newContent) {
+/**
+ * Generates a fetch interceptor script for the <head> of GHL pages.
+ * It intercepts blog API calls from GHL/Nuxt and injects any posts
+ * that are missing (e.g. future-dated posts). This prevents the hydration
+ * flash where GHL's JS overwrites our static listing.
+ */
+function generateFetchInterceptor(posts) {
+    // Build minimal post objects matching GHL API response format
+    const extraPosts = posts.map(post => ({
+        _id: 'static-' + post.url.split('/').pop(),
+        title: post.title,
+        description: post.description,
+        urlSlug: post.url.split('/').pop(),
+        imageUrl: post.image,
+        imageAltText: post.title,
+        publishedAt: new Date(post.date).toISOString(),
+        updatedAt: new Date(post.date).toISOString(),
+        scheduledAt: null,
+        readTimeInMinutes: 3,
+        type: 'manual',
+        categories: [],
+        tags: [],
+        content: null,
+        author: { name: post.author || 'DynamicMike' },
+        canonicalLink: post.url
+    }));
+
+    // Slugs we always want to ensure appear first
+    const requiredSlugs = posts.map(p => p.url.split('/').pop());
+
+    return `<script>
+(function() {
+  var extraPosts = ${JSON.stringify(extraPosts)};
+  var requiredSlugs = ${JSON.stringify(requiredSlugs)};
+  var _origFetch = window.fetch;
+  window.fetch = function(url, opts) {
+    var p = _origFetch.apply(this, arguments);
+    // Only intercept GHL blog API calls
+    if (typeof url === 'string' && url.indexOf('leadconnectorhq.com') !== -1 && url.indexOf('blog') !== -1) {
+      return p.then(function(resp) {
+        var cloned = resp.clone();
+        return cloned.json().then(function(data) {
+          var posts = (data && (data.data || data.posts || data.blogPosts)) || null;
+          if (Array.isArray(posts)) {
+            // Find slugs already in the response
+            var existingSlugs = posts.map(function(p) { return p.urlSlug; });
+            // Prepend any missing required posts
+            var toAdd = extraPosts.filter(function(ep) {
+              return requiredSlugs.indexOf(ep.urlSlug) !== -1 &&
+                     existingSlugs.indexOf(ep.urlSlug) === -1;
+            });
+            if (toAdd.length > 0) {
+              if (data.data) data.data = toAdd.concat(data.data);
+              else if (data.posts) data.posts = toAdd.concat(data.posts);
+              else if (data.blogPosts) data.blogPosts = toAdd.concat(data.blogPosts);
+              var newBody = JSON.stringify(data);
+              return new Response(newBody, {
+                status: resp.status,
+                statusText: resp.statusText,
+                headers: resp.headers
+              });
+            }
+          }
+          // No modification needed — return original
+          return resp;
+        }).catch(function() { return resp; });
+      });
+    }
+    return p;
+  };
+})();
+<\/script>`;
+}
+
+const FETCH_INTERCEPTOR_ANCHOR = '<script type="module" src="https://stcdn.leadconnectorhq.com';
+
+function updateFile(filePath, newContent, interceptorScript) {
     if (!fs.existsSync(filePath)) return;
     let content = fs.readFileSync(filePath, 'utf8');
     const startIndex = content.indexOf(ANCHOR_START);
@@ -194,12 +216,40 @@ function updateFile(filePath, newContent) {
     if (startIndex !== -1 && endIndex !== -1) {
         const prefix = content.substring(0, startIndex + ANCHOR_START.length);
         const suffix = content.substring(endIndex);
-        const updatedContent = prefix + "\n" + newContent + "\n" + suffix;
-        fs.writeFileSync(filePath, updatedContent);
-        console.log(`Updated ${path.basename(filePath)}`);
+        content = prefix + "\n" + newContent + "\n" + suffix;
     } else {
-        console.warn(`Anchors not found in ${path.basename(filePath)}`);
+        console.warn(`Listing anchors not found in ${path.basename(filePath)}`);
     }
+
+    // Inject/replace fetch interceptor in <head> before GHL's module script
+    if (interceptorScript) {
+        const INTERCEPTOR_START = '<!-- FETCH_INTERCEPTOR_START -->';
+        const INTERCEPTOR_END = '<!-- FETCH_INTERCEPTOR_END -->';
+        const iStart = content.indexOf(INTERCEPTOR_START);
+        const iEnd = content.indexOf(INTERCEPTOR_END);
+
+        if (iStart !== -1 && iEnd !== -1) {
+            // Replace existing interceptor
+            content = content.substring(0, iStart + INTERCEPTOR_START.length)
+                + '\n' + interceptorScript + '\n'
+                + content.substring(iEnd);
+            console.log(`Updated interceptor in ${path.basename(filePath)}`);
+        } else {
+            // First time: inject before GHL's script tag
+            const ghlScriptIdx = content.indexOf(FETCH_INTERCEPTOR_ANCHOR);
+            if (ghlScriptIdx !== -1) {
+                content = content.substring(0, ghlScriptIdx)
+                    + INTERCEPTOR_START + '\n' + interceptorScript + '\n' + INTERCEPTOR_END + '\n'
+                    + content.substring(ghlScriptIdx);
+                console.log(`Injected interceptor into ${path.basename(filePath)}`);
+            } else {
+                console.warn(`Could not find GHL script tag in ${path.basename(filePath)}`);
+            }
+        }
+    }
+
+    fs.writeFileSync(filePath, content);
+    console.log(`Updated ${path.basename(filePath)}`);
 }
 
 function sync() {
@@ -217,13 +267,16 @@ function sync() {
             return extractMetadata(html, filePath, site);
         }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
+        // Generate fetch interceptor for this site's posts
+        const interceptorScript = generateFetchInterceptor(posts);
+
         // Update News Page
         const newsListingHtml = generateNewsHtml(posts);
-        updateFile(site.newsFile, newsListingHtml);
+        updateFile(site.newsFile, newsListingHtml, interceptorScript);
 
         // Update Index Page
         const indexListingHtml = generateIndexHtml(posts);
-        updateFile(site.indexFile, indexListingHtml);
+        updateFile(site.indexFile, indexListingHtml, interceptorScript);
     });
 }
 
