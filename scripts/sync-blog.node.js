@@ -64,7 +64,7 @@ function extractMetadata(html, filePath, site) {
 }
 
 function generateNewsHtml(posts) {
-    return posts.map(post => `
+    const listingHtml = posts.map(post => `
 <div class="blog-box">
     <a href="${post.url}">
         <div class="blog-image-standard-wrapper">
@@ -100,10 +100,40 @@ function generateNewsHtml(posts) {
         </div>
     </div>
 </div>`).join('\n');
+
+    // Protection script: saves our listing and restores it after GHL hydration overwrites it
+    const protectionScript = `<script>
+(function() {
+  var savedHtml = ${JSON.stringify(listingHtml)};
+  function getWrapper() {
+    return document.querySelector('.blog-post-wrapper');
+  }
+  function restoreListing() {
+    var wrapper = getWrapper();
+    if (wrapper && !wrapper.querySelector('a[href*="/post/"]')) {
+      wrapper.innerHTML = savedHtml;
+    }
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    var wrapper = getWrapper();
+    if (!wrapper) return;
+    var observer = new MutationObserver(function() {
+      restoreListing();
+    });
+    observer.observe(wrapper, { childList: true, subtree: false });
+    // Also restore after a short delay as a fallback
+    setTimeout(restoreListing, 500);
+    setTimeout(restoreListing, 1500);
+  });
+})();
+<\/script>`;
+
+    return listingHtml + '\n' + protectionScript;
 }
 
+
 function generateIndexHtml(posts) {
-    return posts.map(post => `
+    const listingHtml = posts.map(post => `
 <div class="blog-item blog-column">
     <div class="blog-column-container">
         <div>
@@ -123,7 +153,37 @@ function generateIndexHtml(posts) {
         </div>
     </div>
 </div>`).join('\n');
+
+    // Protection script: saves our listing and restores it after GHL hydration overwrites it
+    const protectionScript = `<script>
+(function() {
+  var savedHtml = ${JSON.stringify(listingHtml)};
+  function getWrapper() {
+    return document.querySelector('.blog-row');
+  }
+  function restoreListing() {
+    var wrapper = getWrapper();
+    if (wrapper && !wrapper.querySelector('a[href*="/post/"]')) {
+      wrapper.innerHTML = savedHtml;
+    }
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    var wrapper = getWrapper();
+    if (!wrapper) return;
+    var observer = new MutationObserver(function() {
+      restoreListing();
+    });
+    observer.observe(wrapper, { childList: true, subtree: false });
+    // Also restore after short delays as a fallback
+    setTimeout(restoreListing, 500);
+    setTimeout(restoreListing, 1500);
+  });
+})();
+<\/script>`;
+
+    return listingHtml + '\n' + protectionScript;
 }
+
 
 function updateFile(filePath, newContent) {
     if (!fs.existsSync(filePath)) return;

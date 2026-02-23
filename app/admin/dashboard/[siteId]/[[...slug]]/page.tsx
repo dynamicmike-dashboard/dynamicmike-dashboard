@@ -126,7 +126,14 @@ export default function AdminDashboardPage(props: { params: Params }) {
       return `${open}${newInner}${close}`;
     });
     updated = updated.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]+)"([^>]*)>/gi, (match, href, rest) => {
-      if (href.startsWith('http') && !href.includes('localhost') && !href.includes('pdcyes.com') && !href.includes('realprayerbook.com')) {
+      // Improved multi-site link detection:
+      // An external link is absolute (starts with http) and NOT to the current siteId or known local domains.
+      const isInternal = href.startsWith('/') || 
+                        href.startsWith('#') || 
+                        href.includes('localhost') || 
+                        (siteId && href.includes(siteId.replace(/-/g, ''))); // matches siteId with or without hyphens
+      
+      if (href.startsWith('http') && !isInternal) {
         if (!rest.includes('target="_blank"')) {
           return `<a href="${href}" target="_blank" rel="noopener noreferrer"${rest}>`;
         }
@@ -163,7 +170,18 @@ export default function AdminDashboardPage(props: { params: Params }) {
 
   const handleSave = async (contentToSave?: string) => {
     setLoading(true);
-    const finalContent = contentToSave || code;
+    let finalContent = contentToSave || code;
+    
+    // Convert Quill's class-based alignment to inline styles for universal support
+    finalContent = finalContent.replace(/class="ql-align-center"/g, 'style="text-align: center;"');
+    finalContent = finalContent.replace(/class="ql-align-right"/g, 'style="text-align: right;"');
+    finalContent = finalContent.replace(/class="ql-align-justify"/g, 'style="text-align: justify;"');
+
+    // Prevent word splitting: ensures words wrap properly instead of breaking mid-word
+    if (!finalContent.includes('word-break: normal')) {
+      finalContent = `<div style="word-break: normal; overflow-wrap: break-word; text-wrap: pretty;">${finalContent}</div>`;
+    }
+
     const finalCode = updateHTMLWithSEO(finalContent);
     try {
       const res = await fetch('/api/save-content', {
@@ -531,7 +549,18 @@ export default function AdminDashboardPage(props: { params: Params }) {
                   .quill-light-fix { height: 100% !important; display: flex !important; flex-direction: column !important; }
                   .quill-light-fix .ql-toolbar { background-color: #f8fafc !important; border: none !important; border-bottom: 1px solid #e2e8f0 !important; flex-shrink: 0 !important; z-index: 50 !important; box-shadow: 0 2px 4px rgb(0 0 0 / 0.05) !important; }
                   .quill-light-fix .ql-container { border: none !important; flex: 1 1 auto !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; }
-                  .quill-light-fix .ql-editor { color: #1e293b !important; background-color: #fff !important; flex: 1 1 auto !important; overflow-y: auto !important; font-size: 16px !important; line-height: 1.6 !important; padding: 60px !important; }
+                  .quill-light-fix .ql-editor { 
+                    color: #1e293b !important; 
+                    background-color: #fff !important; 
+                    flex: 1 1 auto !important; 
+                    overflow-y: auto !important; 
+                    font-size: 16px !important; 
+                    line-height: 1.6 !important; 
+                    padding: 60px !important; 
+                    word-break: normal !important;
+                    overflow-wrap: break-word !important;
+                    text-wrap: pretty !important;
+                  }
                   .quill-light-fix .ql-editor img { max-width: 100% !important; height: auto !important; cursor: pointer !important; transition: outline 0.2s ease !important; }
                   .quill-light-fix .ql-editor img:hover { outline: 2px solid #06b6d4 !important; }
                   .quill-light-fix .ql-editor img:active { outline: 4px solid #06b6d4 !important; }
