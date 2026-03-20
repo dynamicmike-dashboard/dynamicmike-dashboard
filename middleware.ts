@@ -1,14 +1,37 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+/**
+ * EMERGENCY KILL SWITCH
+ * Set this to 'true' if the site is under attack or hitting Vercel limits too fast.
+ * When enabled, all mapped sites will show a maintenance message instead of loading.
+ */
+const EMERGENCY_MAINTENANCE_MODE = false;
+
 export function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const hostname = request.headers.get('host') || "";
   const path = url.pathname.toLowerCase();
 
-  // 1. Dashboard Entry Points (Vanity URLs)
+  // 1. Kill Switch Handling
+  if (EMERGENCY_MAINTENANCE_MODE) {
+    // Only apply to public domains, keep /admin accessible for fixes
+    const isAdminPath = path.startsWith('/admin') || path.startsWith('/api') || path.startsWith('/_next');
+    if (!isAdminPath) {
+       return new NextResponse(
+        `<html><body style="background:#020617;color:#94a3b8;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+          <div style="text-align:center;padding:2rem;border:1px solid #1e293b;border-radius:1rem;background:#0f172a;">
+            <h1 style="color:#22d3ee;margin-bottom:0.5rem;">System Optimization</h1>
+            <p>This site is currently undergoing a planned maintenance update. Please check back shortly.</p>
+          </div>
+        </body></html>`,
+        { status: 503, headers: { 'Content-Type': 'text/html' } }
+      );
+    }
+  }
+
+  // 2. Dashboard Entry Points (Vanity URLs)
   if (path === '/realai-dashboard' || path === '/realai-dashboard/') {
-    // Rewrite to the static file in the new folder location
     return NextResponse.rewrite(new URL('/realai-elite/app.html', request.url));
   }
 
@@ -16,18 +39,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(new URL('/realai-pages/realai-elite-dashboard.html', request.url));
   }
 
-  // 2. Special Domain Routing (Split Worlds Strategy)
-  
-  // A. EstateGuard Premium Domain(s) -> Direct to Landing Page
-  // Covers: realiai.casa, realaicasa.com
+  // 3. Special Domain Routing (Split Worlds Strategy)
   if (hostname.includes('realiai.casa') || hostname.includes('realaicasa.com') || hostname.includes('realai.casa')) {
      if (path === '/' || path === '/index.html') {
          return NextResponse.rewrite(new URL('/realai-pages/realai-estateguard.html', request.url));
      }
   }
 
-  // B. Maistermind Elite Path -> Direct to Elite Landing Page
-  // Allows maistermind.com/realai-elite to show the Elite offer
   if (hostname.includes('maistermind.com')) {
       if (path === '/realai-elite' || path === '/realai-elite/') {
            return NextResponse.rewrite(new URL('/realai-pages/realai-elite.html', request.url));
@@ -37,7 +55,7 @@ export function middleware(request: NextRequest) {
       }
   }
 
-  // Your verified domain mapping
+  // 4. Multi-Site Mapping logic
   const domainMap: Record<string, string> = {
     "breathoflifepdc.org": "breath-of-life",
     "celestialsigndesign.com": "celestial-sign-design",
@@ -53,26 +71,36 @@ export function middleware(request: NextRequest) {
     "playa.photos": "playaphotos",
     "playavida.org": "playavida",
     "pranatowers.com": "pranatowers",
-    "realaicasa.com": "realaicasas", // Kept for other paths, but root is hijacked above
+    "realaicasa.com": "realaicasas", 
     "reallifeavengers.com": "reallifeavengers",
     "social-media-management-services.com": "smms",
   };
 
-  // Handle both 'domain.com' and 'www.domain.com'
   const pureHost = hostname.replace('www.', '');
   const folderName = domainMap[pureHost];
 
   if (folderName) {
-    // Rewrite internal path to /view/[folderName]
-    // The user stays on their custom domain in the browser bar
-    return NextResponse.rewrite(new URL(`/view/${folderName}${url.pathname}`, request.url));
+    // OPTIMIZATION: Bypass /view SSR page and rewrite directly to the static /content folder.
+    // This stops usage of Serverless Function Invocations (Invocations limit).
+    
+    let targetPath = url.pathname;
+    
+    // Auto-append .html for clean URLs (like /news -> /news.html)
+    // but ONLY if the path doesn't already have an extension.
+    if (!targetPath.includes('.') && !targetPath.endsWith('/')) {
+        targetPath += '.html';
+    } else if (targetPath.endsWith('/')) {
+        targetPath += 'index.html';
+    }
+    
+    return NextResponse.rewrite(new URL(`/content/${folderName}${targetPath}`, request.url));
   }
 
   return NextResponse.next();
 }
 
-// Ensure the middleware only runs on page requests, not images/assets
 export const config = {
   // Broad exclusion for static-like paths and explicit exclusions for our static features
-  matcher: ['/((?!api|_next/static|_next/image|content|favicon.ico|realai-elite/|realai-pages/|probe-test\\.txt).*)'],
-};
+  // Added regex to exclude ALL files with extensions from triggering middleware if possible.
+  matcher: ['/((?!api|_next/static|_next/image|content|favicon\\.ico|.*\\.(?:js|css|png|jpg|jpeg|gif|svg|webp|woff2?|ico|txt)$|realai-elite/|realai-pages/|probe-test\\.txt).*)'],
+};

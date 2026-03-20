@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getAgentConfig, saveAgentConfig } from '@/lib/storage';
 
+export const revalidate = 3600; // Cache for 1 hour at the edge
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const agentId = searchParams.get('agentId');
