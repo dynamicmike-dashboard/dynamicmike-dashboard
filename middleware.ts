@@ -100,7 +100,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Broad exclusion for static-like paths and explicit exclusions for our static features
-  // Added regex to exclude ALL files with extensions from triggering middleware if possible.
-  matcher: ['/((?!api|_next/static|_next/image|content|favicon\\.ico|.*\\.(?:js|css|png|jpg|jpeg|gif|svg|webp|woff2?|ico|txt)$|realai-elite/|realai-pages/|probe-test\\.txt).*)'],
-};
+  // Broad exclusion for internal Next.js paths and the master content folder.
+  // We MUST allow all other paths (including assets like .js, .png) so the domain mapping works.
+  matcher: ['/((?!api|_next/static|_next/image|content|favicon\\.ico|realai-elite/|realai-pages/|probe-test\\.txt).*)'],
+};
+
