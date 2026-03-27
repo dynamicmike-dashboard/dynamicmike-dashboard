@@ -14,6 +14,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const [posts, setPosts] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeSiteId, setActiveSiteId] = useState("");
+  const [debugInfo, setDebugInfo] = useState<any>(null);
 
   const sites = [
     { id: "breath-of-life", label: "Breath of Life", domain: "breathoflifepdc.org" },
@@ -54,6 +55,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
       const rootRes = await fetch(`/api/list-files?siteId=${sid}&t=${ts}`);
       const rootData = await rootRes.json();
       setPages(rootData.files || []);
+      if (rootData.debug) setDebugInfo(rootData.debug);
 
       // Load posts if folder exists
       const postsRes = await fetch(`/api/list-files?siteId=${sid}&folder=post&t=${ts}`);
@@ -223,9 +225,13 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         {/* PAGES SECTION */}
         <section>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Pages</h3>
-            <span className="text-[10px] text-slate-600 font-mono">{pages.length}</span>
+            <h3 className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Pages [{pages.length}]</h3>
           </div>
+          {pages.length === 0 && debugInfo && (
+            <div className="p-2 mb-2 bg-red-900/20 border border-red-500/20 rounded text-[9px] text-red-300 font-mono break-all">
+              DEBUG: path not found: {debugInfo.dirPath}
+            </div>
+          )}
           <div className="space-y-1">
             {pages.filter(p => !search || p.toLowerCase().includes(search.toLowerCase())).map(file => {
               const slug = file.replace('.html', '');

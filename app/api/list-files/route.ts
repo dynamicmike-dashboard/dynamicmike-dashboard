@@ -17,8 +17,15 @@ export async function GET(request: Request) {
   
   try {
     if (!fs.existsSync(dirPath)) {
-       console.warn(`[API] Directory does not exist: ${dirPath}`);
-       return NextResponse.json({ files: [], folders: [] });
+       return NextResponse.json({ 
+         files: [], 
+         folders: [], 
+         debug: { 
+           dirPath, 
+           exists: false,
+           cwd: process.cwd()
+         } 
+       });
     }
 
     const entries = fs.readdirSync(dirPath, { withFileTypes: true });
@@ -26,15 +33,19 @@ export async function GET(request: Request) {
     const files = entries
       .filter(entry => entry.isFile() && entry.name.endsWith('.html'))
       .map(entry => entry.name)
-      .sort((a, b) => b.localeCompare(a)); // Sort descending to put newest posts at top
+      .sort((a, b) => b.localeCompare(a));
       
     const folders = entries
       .filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
       .map(entry => entry.name);
 
-    return NextResponse.json({ files, folders });
-  } catch (err) {
-    console.error(`[API] Error reading ${dirPath}:`, err);
-    return NextResponse.json({ files: [], folders: [] });
+    return NextResponse.json({ files, folders, debug: { dirPath, exists: true, cwd: process.cwd() } });
+  } catch (err: any) {
+    return NextResponse.json({ 
+      files: [], 
+      folders: [], 
+      error: err.message,
+      debug: { dirPath, cwd: process.cwd() }
+    });
   }
 }
