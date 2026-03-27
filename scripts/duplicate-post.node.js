@@ -62,6 +62,7 @@ content = content.replace(/srcset="(.*?)March(.*?)"/gi, (match, p1, p2) => {
 // This is a naive replace for high-level textual changes
 content = content.replace(/March 2026/g, 'April 2026');
 content = content.replace(/1st March/g, '5th April'); // Assuming first Sunday of April 2026
+content = content.replace(/March 1, 2026/g, 'April 5, 2026'); // Meta date
 
 fs.writeFileSync(targetPath, content);
 console.log(`Successfully duplicated post to: ${targetPath}`);

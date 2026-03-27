@@ -140,12 +140,11 @@ function generateIndexHtml(posts) {
 function generateFetchInterceptor(posts) {
     const now = new Date();
 
-    // Only inject posts that are future-dated (GHL API won't return them yet)
-    // Past posts are already in GHL's system and returned by the API normally
-    const futurePosts = posts.filter(post => new Date(post.date) > now);
+    // Inject posts that might be missing from the GHL API (manually added to file system)
+    const localPosts = posts;
 
     // Build minimal post objects matching GHL API response format
-    const extraPosts = futurePosts.map(post => ({
+    const extraPosts = localPosts.map(post => ({
         _id: 'static-' + post.url.split('/').pop(),
         title: post.title,
         description: post.description,
@@ -169,8 +168,8 @@ function generateFetchInterceptor(posts) {
         return `<script>/* No future posts to inject */<\/script>`;
     }
 
-    // Slugs for future posts we need to inject
-    const requiredSlugs = futurePosts.map(p => p.url.split('/').pop());
+    // Slugs for posts we need to inject
+    const requiredSlugs = localPosts.map(p => p.url.split('/').pop());
 
 
     return `<script>
