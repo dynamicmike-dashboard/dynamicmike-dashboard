@@ -44,14 +44,15 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
 
   const loadFiles = async () => {
     setLoading(true);
+    const ts = Date.now();
     try {
       // Load root files
-      const rootRes = await fetch(`/api/list-files?siteId=${siteId}`);
+      const rootRes = await fetch(`/api/list-files?siteId=${siteId}&t=${ts}`);
       const rootData = await rootRes.json();
       setPages(rootData.files || []);
 
       // Load posts if folder exists
-      const postsRes = await fetch(`/api/list-files?siteId=${siteId}&folder=post`);
+      const postsRes = await fetch(`/api/list-files?siteId=${siteId}&folder=post&t=${ts}`);
       const postsData = await postsRes.json();
       setPosts(postsData.files || []);
     } catch (err) {
@@ -173,7 +174,16 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         <div className="flex justify-between items-center">
           <div>
             <h2 className="text-cyan-400 font-black text-xl tracking-tighter italic uppercase leading-none">GHL Rescue</h2>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">{currentSite?.label}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{currentSite?.label}</p>
+              <button 
+                onClick={loadFiles}
+                className="text-[8px] text-cyan-500/50 hover:text-cyan-400 font-mono transition-all"
+                title="Refresh Sidebar"
+              >
+                [REFRESH]
+              </button>
+            </div>
           </div>
           <button onClick={onClose} className="md:hidden text-slate-500">✕</button>
         </div>

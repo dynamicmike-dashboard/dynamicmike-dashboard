@@ -4,19 +4,28 @@ import path from 'path';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const siteId = searchParams.get('siteId');
+  const siteIdInput = searchParams.get('siteId');
   const folder = searchParams.get('folder') || '';
 
-  if (!siteId) return NextResponse.json({ files: [], folders: [] });
+  if (!siteIdInput) return NextResponse.json({ files: [], folders: [] });
 
+  const siteId = siteIdInput.toLowerCase();
   const dirPath = path.join(process.cwd(), 'public', 'content', siteId, folder);
   
+  console.log(`[API] Listing files in: ${dirPath}`);
+  
   try {
+    if (!fs.existsSync(dirPath)) {
+       console.warn(`[API] Directory does not exist: ${dirPath}`);
+       return NextResponse.json({ files: [], folders: [] });
+    }
+
     const entries = fs.readdirSync(dirPath, { withFileTypes: true });
     
     const files = entries
       .filter(entry => entry.isFile() && entry.name.endsWith('.html'))
-      .map(entry => entry.name);
+      .map(entry => entry.name)
+      .sort((a, b) => b.localeCompare(a)); // Sort descending to put newest posts at top
       
     const folders = entries
       .filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
@@ -24,6 +33,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ files, folders });
   } catch (err) {
+    console.error(`[API] Error reading ${dirPath}:`, err);
     return NextResponse.json({ files: [], folders: [] });
   }
 }
