@@ -34,6 +34,13 @@ const nextConfig = {
     '*': [
       'node_modules/@swc/core-linux-x64-gnu',
       'node_modules/@swc/core-linux-x64-musl',
+      'public/content/**/*.png',
+      'public/content/**/*.jpg',
+      'public/content/**/*.jpeg',
+      'public/content/**/*.webp',
+      'public/content/**/*.gif',
+      'public/content/**/*.mp4',
+      'public/content/**/*.pdf',
     ],
   },
   experimental: {

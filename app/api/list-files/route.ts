@@ -10,11 +10,31 @@ export async function GET(request: Request) {
   if (!siteIdInput) return NextResponse.json({ files: [], folders: [] });
 
   const siteId = siteIdInput.toLowerCase();
-  const baseContentDir = path.resolve(process.cwd(), 'public', 'content');
-  const dirPath = path.join(baseContentDir, siteId, folder);
   
-  console.log(`[API] Listing files in: ${dirPath}`);
+  // Try multiple base directory resolutions for different environments (local vs Vercel)
+  const possibleBases = [
+    path.resolve(process.cwd(), 'public', 'content'),
+    path.resolve(process.cwd(), '.next', 'server', 'public', 'content'),
+    path.resolve(process.cwd(), '..', 'public', 'content'),
+  ];
   
+  let dirPath = "";
+  let exists = false;
+  
+  for (const base of possibleBases) {
+    const candidate = path.join(base, siteId, folder);
+    if (fs.existsSync(candidate)) {
+      dirPath = candidate;
+      exists = true;
+      break;
+    }
+  }
+
+  // Final fallback (local dev)
+  if (!exists) {
+    dirPath = path.join(process.cwd(), 'public', 'content', siteId, folder);
+  }
+
   try {
     if (!fs.existsSync(dirPath)) {
        return NextResponse.json({ 
@@ -23,7 +43,9 @@ export async function GET(request: Request) {
          debug: { 
            dirPath, 
            exists: false,
-           cwd: process.cwd()
+           cwd: process.cwd(),
+           basesTested: possibleBases,
+           cwdListing: fs.readdirSync(process.cwd())
          } 
        });
     }
