@@ -10,7 +10,8 @@ export async function GET(request: Request) {
   if (!siteIdInput) return NextResponse.json({ files: [], folders: [] });
 
   const siteId = siteIdInput.toLowerCase();
-  const dirPath = path.join(process.cwd(), 'public', 'content', siteId, folder);
+  const baseContentDir = path.resolve(process.cwd(), 'public', 'content');
+  const dirPath = path.join(baseContentDir, siteId, folder);
   
   console.log(`[API] Listing files in: ${dirPath}`);
   

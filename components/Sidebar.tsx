@@ -13,6 +13,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const [pages, setPages] = useState<string[]>([]);
   const [posts, setPosts] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [activeSiteId, setActiveSiteId] = useState("");
 
   const sites = [
     { id: "breath-of-life", label: "Breath of Life", domain: "breathoflifepdc.org" },
@@ -38,21 +39,24 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
 
   useEffect(() => {
     if (siteId) {
-      loadFiles();
+      const sid = (siteId as string).toLowerCase();
+      setActiveSiteId(sid);
+      loadFiles(sid);
     }
   }, [siteId]);
 
-  const loadFiles = async () => {
+  const loadFiles = async (sid = activeSiteId) => {
+    if (!sid) return;
     setLoading(true);
     const ts = Date.now();
     try {
       // Load root files
-      const rootRes = await fetch(`/api/list-files?siteId=${siteId}&t=${ts}`);
+      const rootRes = await fetch(`/api/list-files?siteId=${sid}&t=${ts}`);
       const rootData = await rootRes.json();
       setPages(rootData.files || []);
 
       // Load posts if folder exists
-      const postsRes = await fetch(`/api/list-files?siteId=${siteId}&folder=post&t=${ts}`);
+      const postsRes = await fetch(`/api/list-files?siteId=${sid}&folder=post&t=${ts}`);
       const postsData = await postsRes.json();
       setPosts(postsData.files || []);
     } catch (err) {
@@ -177,7 +181,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
             <div className="flex items-center gap-2 mt-1">
               <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{currentSite?.label}</p>
               <button 
-                onClick={loadFiles}
+                onClick={() => loadFiles()}
                 className="text-[8px] text-cyan-500/50 hover:text-cyan-400 font-mono transition-all"
                 title="Refresh Sidebar"
               >
