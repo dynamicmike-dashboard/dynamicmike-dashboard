@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-// Using eval to bypass Next.js static analysis and prevent tracing of the public/content folder
-const fs = eval('require("fs")');
-const path = eval('require("path")');
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const fs = require('fs');
+const path = require('path');
 import axios from 'axios';
 
 export async function POST(request: Request) {
