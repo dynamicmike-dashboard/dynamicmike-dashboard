@@ -97,34 +97,42 @@ export default function AdminDashboardPage(props: { params: Params }) {
     const keywordsMatch = html.match(/<meta name="keywords" content="(.*?)"/);
     const imageMatch = html.match(/<meta property="og:image" content="(.*?)"/);
 
+    let finalImage = imageMatch ? imageMatch[1] : "";
+    if (finalImage.includes('placeholder.png') || finalImage.includes('_preview')) {
+      // Don't treat GHL placeholders as a real featured image
+      finalImage = "";
+    }
+
     setSeo({
       title: titleMatch ? titleMatch[1] : "",
       description: descMatch ? descMatch[1].trim() : "",
       keywords: keywordsMatch ? keywordsMatch[1] : "",
-      image: imageMatch ? imageMatch[1] : ""
+      image: finalImage
     });
   };
 
   const updateHTMLWithSEO = (html: string) => {
     let updated = html;
-    updated = updated.replace(/<title>.*?<\/title>/, `<title>${seo.title}</title>`);
-    updated = updated.replace(/<meta name="title" content=".*?"/, `<meta name="title" content="${seo.title}"`);
-    updated = updated.replace(/<meta property="og:title" content=".*?"/, `<meta property="og:title" content="${seo.title}"`);
-    updated = updated.replace(/<meta name="description" content=".*?"/, `<meta name="description" content="${seo.description}"`);
-    updated = updated.replace(/<meta property="og:description" content=".*?"/, `<meta property="og:description" content="${seo.description}"`);
-    updated = updated.replace(/<meta name="keywords" content=".*?"/, `<meta name="keywords" content="${seo.keywords}"`);
-    updated = updated.replace(/<meta property="og:keywords" content=".*?"/, `<meta property="og:keywords" content="${seo.keywords}"`);
-    
     // Update Meta Images
-    updated = updated.replace(/<meta name="image" content=".*?"/, `<meta name="image" content="${seo.image}"`);
-    updated = updated.replace(/<meta property="og:image" content=".*?"/, `<meta property="og:image" content="${seo.image}"`);
+    if (seo.image) {
+      updated = updated.replace(/<meta name="image" content=".*?"\s*\/?>/gi, `<meta name="image" content="${seo.image}" />`);
+      updated = updated.replace(/<meta property="og:image" content=".*?"\s*\/?>/gi, `<meta property="og:image" content="${seo.image}" />`);
 
-    // Update Hero Picture Sources
-    updated = updated.replace(/(<div[^>]*class="blog-cover-image-container"[^>]*>[\s\S]*?<picture[^>]*>)([\s\S]*?)(<\/picture>)/, (match, open, inner, close) => {
-      let newInner = inner.replace(/srcset=".*?"/g, `srcset="${seo.image}"`);
-      newInner = newInner.replace(/src=".*?"/g, `src="${seo.image}"`);
-      return `${open}${newInner}${close}`;
-    });
+      // Update Hero Picture Sources (only if we have a new image)
+      updated = updated.replace(/(<div[^>]*class="blog-cover-image-container"[^>]*>[\s\S]*?<picture[^>]*>)([\s\S]*?)(<\/picture>)/gi, (match, open, inner, close) => {
+        let newInner = inner.replace(/srcset=".*?"/g, `srcset="${seo.image}"`);
+        newInner = newInner.replace(/src=".*?"/g, `src="${seo.image}"`);
+        return `${open}${newInner}${close}`;
+      });
+    }
+
+    updated = updated.replace(/<title>.*?<\/title>/gi, `<title>${seo.title}</title>`);
+    updated = updated.replace(/<meta name="title" content=".*?"\s*\/?>/gi, `<meta name="title" content="${seo.title}" />`);
+    updated = updated.replace(/<meta property="og:title" content=".*?"\s*\/?>/gi, `<meta property="og:title" content="${seo.title}" />`);
+    updated = updated.replace(/<meta name="description" content=".*?"\s*\/?>/gi, `<meta name="description" content="${seo.description}" />`);
+    updated = updated.replace(/<meta property="og:description" content=".*?"\s*\/?>/gi, `<meta property="og:description" content="${seo.description}" />`);
+    updated = updated.replace(/<meta name="keywords" content=".*?"\s*\/?>/gi, `<meta name="keywords" content="${seo.keywords}" />`);
+    updated = updated.replace(/<meta property="og:keywords" content=".*?"\s*\/?>/gi, `<meta property="og:keywords" content="${seo.keywords}" />`);
     updated = updated.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]+)"([^>]*)>/gi, (match, href, rest) => {
       // Improved multi-site link detection:
       // An external link is absolute (starts with http) and NOT to the current siteId or known local domains.
@@ -313,7 +321,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
       });
       const data = await res.json();
       if (data.success) {
-        const finalUrl = data.url;
+        const finalUrl = `${data.url}?t=${Date.now()}`;
         const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
         if (quill) {
           if (imgElement) {
@@ -516,6 +524,26 @@ export default function AdminDashboardPage(props: { params: Params }) {
         </div>
       </div>
     </header>
+    
+    {/* Global Status Banner */}
+    {(loading || gitStatus) && (
+      <div className={`px-6 py-2 flex items-center justify-between text-[10px] font-black tracking-widest uppercase transition-all ${
+        loading ? 'bg-cyan-500 text-slate-950 animate-pulse' : 
+        gitStatus?.success ? 'bg-emerald-500 text-slate-950' : 'bg-amber-500 text-slate-950'
+      }`}>
+        <div className="flex items-center gap-3">
+          <div className={`w-2 h-2 rounded-full bg-white ${loading ? 'animate-bounce' : ''}`}></div>
+          <span>
+            {loading ? "System processing: Saving changes & syncing..." : 
+             gitStatus?.success ? "✨ Changes saved and synced to GitHub successfully!" : 
+             `⚠️ Saved locally, but GitHub Sync failed: ${gitStatus?.log}`}
+          </span>
+        </div>
+        {gitStatus && (
+          <button onClick={() => setGitStatus(null)} className="hover:opacity-70">DISMISS</button>
+        )}
+      </div>
+    )}
 
       <div className="flex-1 flex overflow-hidden bg-white relative">
         <div className={`flex-1 relative transition-all duration-300 ${showSEO ? 'mr-80' : ''}`}>
@@ -714,11 +742,12 @@ export default function AdminDashboardPage(props: { params: Params }) {
                     if (selectedImgRef) {
                       const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
                       if (quill) {
-                        selectedImgRef.src = imgData.url;
+                        const bustUrl = `${imgData.url}?t=${Date.now()}`;
+                        selectedImgRef.src = bustUrl;
                         quill.update('user');
                         setCode(prev => wrapContent(quill.root.innerHTML, prev));
                       } else {
-                        selectedImgRef.src = imgData.url;
+                        selectedImgRef.src = `${imgData.url}?t=${Date.now()}`;
                       }
                     } else if ((window as any).__onImageSelect) {
                       (window as any).__onImageSelect(imgData.url);
