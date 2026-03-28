@@ -22,7 +22,8 @@ export async function GET(request: Request) {
           .map((entry: any) => ({
             name: entry.name,
             url: `/content/${siteId}/${folder}/${entry.name}`,
-            folder
+            folder,
+            mtime: fs.statSync(path.join(dirPath, entry.name)).mtimeMs
           }));
         allImages = [...allImages, ...images];
       } catch (err) {
@@ -32,7 +33,8 @@ export async function GET(request: Request) {
   }
 
   // Sort all images alphabetically by name
-  allImages.sort((a, b) => a.name.localeCompare(b.name));
+  // Sort all images by most recent first
+  allImages.sort((a, b) => b.mtime - a.mtime);
 
   return NextResponse.json({ success: true, images: allImages });
 }

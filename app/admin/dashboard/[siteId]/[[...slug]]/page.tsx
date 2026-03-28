@@ -113,11 +113,28 @@ export default function AdminDashboardPage(props: { params: Params }) {
 
   const updateHTMLWithSEO = (html: string) => {
     let updated = html;
-    // Update Meta Images
-    if (seo.image) {
-      updated = updated.replace(/<meta name="image" content=".*?"\s*\/?>/gi, `<meta name="image" content="${seo.image}" />`);
-      updated = updated.replace(/<meta property="og:image" content=".*?"\s*\/?>/gi, `<meta property="og:image" content="${seo.image}" />`);
 
+    // Improved attribute-agnostic meta tag updates (with injection if missing)
+    const updateMeta = (name: string, content: string, attrName: string = 'name') => {
+      const regex = new RegExp(`<meta[^>]*${attrName}="${name}"[^>]*>`, 'gi');
+      if (updated.match(regex)) {
+        updated = updated.replace(regex, `<meta ${attrName}="${name}" content="${content}" />`);
+      } else if (updated.includes('</head>')) {
+        updated = updated.replace('</head>', `  <meta ${attrName}="${name}" content="${content}" />\n</head>`);
+      }
+    };
+
+    updateMeta('title', seo.title);
+    updateMeta('og:title', seo.title, 'property');
+    updateMeta('description', seo.description);
+    updateMeta('og:description', seo.description, 'property');
+    updateMeta('keywords', seo.keywords);
+    updateMeta('og:keywords', seo.keywords, 'property');
+    
+    if (seo.image) {
+      updateMeta('image', seo.image);
+      updateMeta('og:image', seo.image, 'property');
+      
       // Update Hero Picture Sources (only if we have a new image)
       updated = updated.replace(/(<div[^>]*class="blog-cover-image-container"[^>]*>[\s\S]*?<picture[^>]*>)([\s\S]*?)(<\/picture>)/gi, (match, open, inner, close) => {
         let newInner = inner.replace(/srcset=".*?"/g, `srcset="${seo.image}"`);
@@ -127,12 +144,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
     }
 
     updated = updated.replace(/<title>.*?<\/title>/gi, `<title>${seo.title}</title>`);
-    updated = updated.replace(/<meta name="title" content=".*?"\s*\/?>/gi, `<meta name="title" content="${seo.title}" />`);
-    updated = updated.replace(/<meta property="og:title" content=".*?"\s*\/?>/gi, `<meta property="og:title" content="${seo.title}" />`);
-    updated = updated.replace(/<meta name="description" content=".*?"\s*\/?>/gi, `<meta name="description" content="${seo.description}" />`);
-    updated = updated.replace(/<meta property="og:description" content=".*?"\s*\/?>/gi, `<meta property="og:description" content="${seo.description}" />`);
-    updated = updated.replace(/<meta name="keywords" content=".*?"\s*\/?>/gi, `<meta name="keywords" content="${seo.keywords}" />`);
-    updated = updated.replace(/<meta property="og:keywords" content=".*?"\s*\/?>/gi, `<meta property="og:keywords" content="${seo.keywords}" />`);
+
     updated = updated.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]+)"([^>]*)>/gi, (match, href, rest) => {
       // Improved multi-site link detection:
       // An external link is absolute (starts with http) and NOT to the current siteId or known local domains.
@@ -730,52 +742,94 @@ export default function AdminDashboardPage(props: { params: Params }) {
       </div>
 
       {showMediaLibrary && (
-        <div className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-4xl max-h-[80vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-            <div className="p-6 border-b border-slate-800 flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-black text-white uppercase tracking-tighter">Media Library</h2>
-                <p className="text-xs text-slate-500">Pick an image from your site library</p>
+        <div className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-0 sm:p-8">
+          <div className="bg-slate-900 border border-slate-800 w-full h-full sm:max-w-6xl sm:max-h-[90vh] sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            {/* Library Header */}
+            <div className="p-6 border-b border-slate-800 bg-slate-900/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-center sm:text-left">
+                <h2 className="text-xl font-black text-white uppercase tracking-tighter">Media Assets</h2>
+                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">{libraryImages.length} items found for {siteId}</p>
               </div>
-              <div className="flex items-center gap-4">
-                <input type="text" placeholder="Search images..." value={librarySearch} onChange={(e) => setLibrarySearch(e.target.value)} className="bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-slate-300 focus:outline-none focus:border-cyan-500/50 w-64" />
-                <button onClick={() => setShowMediaLibrary(false)} className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="6 18L18 6M6 6l12 12"></path></svg>
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <input 
+                  type="text" 
+                  placeholder="Filter by filename..." 
+                  value={librarySearch} 
+                  autoFocus
+                  onChange={(e) => setLibrarySearch(e.target.value)} 
+                  className="flex-1 sm:w-80 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-cyan-100 focus:outline-none focus:border-cyan-500/50 shadow-inner" 
+                />
+                <button 
+                  onClick={() => setShowMediaLibrary(false)} 
+                  className="bg-slate-800 hover:bg-red-500/20 hover:text-red-400 p-2.5 rounded-xl text-slate-400 transition-all border border-slate-700"
+                  title="Close Library"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {libraryImages.filter(img => !librarySearch || img.name.toLowerCase().includes(librarySearch.toLowerCase())).map((imgData, i) => (
-                  <button key={i} onClick={() => {
-                    if (selectedImgRef) {
-                      const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
-                      if (quill) {
-                        const bustUrl = `${imgData.url}?t=${Date.now()}`;
-                        selectedImgRef.src = bustUrl;
-                        quill.update('user');
-                        setCode(prev => wrapContent(quill.root.innerHTML, prev));
-                      } else {
-                        selectedImgRef.src = `${imgData.url}?t=${Date.now()}`;
-                      }
-                    } else if ((window as any).__onImageSelect) {
-                      (window as any).__onImageSelect(imgData.url);
-                      (window as any).__onImageSelect = null;
-                    }
-                    setShowMediaLibrary(false);
-                  }} className="group relative aspect-square bg-slate-950 rounded-xl border border-slate-800 overflow-hidden hover:border-cyan-500/50 flex flex-col">
-                    <div className="relative flex-1 bg-slate-800 overflow-hidden">
-                      <img src={imgData.url} alt={imgData.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
-                      <div className="absolute inset-0 bg-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            {/* Library Grid */}
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-950/20">
+              {libraryImages.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-slate-600 space-y-4">
+                  <div className="w-16 h-16 border-4 border-slate-800 border-t-cyan-500 rounded-full animate-spin"></div>
+                  <p className="font-black uppercase tracking-widest">Loading assets...</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                  {libraryImages
+                    .filter(img => !librarySearch || img.name.toLowerCase().includes(librarySearch.toLowerCase()))
+                    .map((imgData, i) => (
+                    <div key={i} className="group relative aspect-square bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden hover:border-cyan-500/50 transition-all flex flex-col shadow-xl">
+                      <div className="relative flex-1 bg-slate-800 overflow-hidden">
+                        <img 
+                          src={`${imgData.url}?t=${Date.now()}`} 
+                          alt={imgData.name} 
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                          loading="lazy" 
+                        />
+                        <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 gap-2">
+                          <button 
+                            onClick={() => {
+                              const bustUrl = `${imgData.url}?t=${Date.now()}`;
+                              if (selectedImgRef) {
+                                const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
+                                if (quill) {
+                                  selectedImgRef.src = bustUrl;
+                                  quill.update('user');
+                                  setCode(prev => wrapContent(quill.root.innerHTML, prev));
+                                } else {
+                                  selectedImgRef.src = bustUrl;
+                                }
+                              } else if ((window as any).__onImageSelect) {
+                                (window as any).__onImageSelect(bustUrl);
+                                (window as any).__onImageSelect = null;
+                              }
+                              setShowMediaLibrary(false);
+                            }}
+                            className="w-full py-2 bg-cyan-500 text-slate-950 text-[10px] font-black rounded-lg hover:bg-cyan-400 transform translate-y-2 group-hover:translate-y-0 transition-all uppercase tracking-tighter"
+                          >
+                            Select Image
+                          </button>
+                        </div>
+                      </div>
+                      <div className="p-2.5 bg-slate-900/80 border-t border-slate-800 text-[9px] truncate text-slate-500 font-mono text-center">
+                        {imgData.name}
+                      </div>
                     </div>
-                    <div className="p-2 bg-slate-900 border-t border-slate-800 text-[10px] truncate text-slate-400 group-hover:text-cyan-400">{imgData.name}</div>
-                  </button>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <div className="p-4 bg-slate-950/50 border-t border-slate-800 text-right">
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Showing {libraryImages.length} Assets</p>
+            
+            <div className="p-4 bg-slate-900 border-t border-slate-800 text-center sm:text-right">
+              <button 
+                onClick={() => setShowMediaLibrary(false)}
+                className="text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-widest px-4 py-2"
+              >
+                Cancel and return to editor
+              </button>
             </div>
           </div>
         </div>
