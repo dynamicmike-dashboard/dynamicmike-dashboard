@@ -315,18 +315,20 @@ export default function AdminDashboardPage(props: { params: Params }) {
       if (data.success) {
         const finalUrl = data.url;
         const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
-        if (imgElement && quill) {
-          const blot = (window as any).Quill ? (window as any).Quill.find(imgElement) : null;
-          if (blot) blot.replaceWith('image', finalUrl);
-          else imgElement.src = finalUrl;
-        } else if (quill) {
-          const range = quill.getSelection();
-          quill.insertEmbed(range ? range.index : 0, 'image', finalUrl);
+        if (quill) {
+          if (imgElement) {
+             imgElement.src = finalUrl;
+             // Force Quill to recognize the change to the DOM element it manages
+             quill.update('user');
+          } else {
+            const range = quill.getSelection();
+            quill.insertEmbed(range ? range.index : 0, 'image', finalUrl);
+          }
+          // Sync back to our parent state
+          setCode(prev => wrapContent(quill.root.innerHTML, prev));
         } else if (imgElement) {
           imgElement.src = finalUrl;
         }
-        const editor = document.querySelector('.ql-editor');
-        if (editor) editor.dispatchEvent(new Event('input', { bubbles: true }));
       }
     } catch (err) {
       alert("Upload failed.");
@@ -712,12 +714,12 @@ export default function AdminDashboardPage(props: { params: Params }) {
                     if (selectedImgRef) {
                       const quill = (document.querySelector('.quill-light-fix .ql-editor') as any)?.__quill;
                       if (quill) {
-                        const blot = (window as any).Quill ? (window as any).Quill.find(selectedImgRef) : null;
-                        if (blot) blot.replaceWith('image', imgData.url);
-                        else selectedImgRef.src = imgData.url;
-                      } else { selectedImgRef.src = imgData.url; }
-                      const editor = document.querySelector('.ql-editor');
-                      if (editor) editor.dispatchEvent(new Event('input', { bubbles: true }));
+                        selectedImgRef.src = imgData.url;
+                        quill.update('user');
+                        setCode(prev => wrapContent(quill.root.innerHTML, prev));
+                      } else {
+                        selectedImgRef.src = imgData.url;
+                      }
                     } else if ((window as any).__onImageSelect) {
                       (window as any).__onImageSelect(imgData.url);
                       (window as any).__onImageSelect = null;
