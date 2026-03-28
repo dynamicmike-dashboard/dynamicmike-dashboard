@@ -19,8 +19,8 @@ export async function GET(request: Request) {
       try {
         const entries = fs.readdirSync(dirPath, { withFileTypes: true });
         const images = entries
-          .filter(entry => entry.isFile() && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(entry.name))
-          .map(entry => ({
+          .filter((entry: any) => entry.isFile() && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(entry.name))
+          .map((entry: any) => ({
             name: entry.name,
             url: `/content/${siteId}/${folder}/${entry.name}`,
             folder

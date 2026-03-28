@@ -54,13 +54,13 @@ export async function GET(request: Request) {
     const entries = fs.readdirSync(dirPath, { withFileTypes: true });
     
     const files = entries
-      .filter(entry => entry.isFile() && entry.name.endsWith('.html'))
-      .map(entry => entry.name)
-      .sort((a, b) => b.localeCompare(a));
+      .filter((entry: any) => entry.isFile() && entry.name.endsWith('.html'))
+      .map((entry: any) => entry.name)
+      .sort((a: any, b: any) => b.localeCompare(a));
       
     const folders = entries
-      .filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
-      .map(entry => entry.name);
+      .filter((entry: any) => entry.isDirectory() && !entry.name.startsWith('.'))
+      .map((entry: any) => entry.name);
 
     return NextResponse.json({ files, folders, debug: { dirPath, exists: true, cwd: process.cwd() } });
   } catch (err: any) {
