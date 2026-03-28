@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: 'standalone', // REMOVED: Suspected of causing Vercel to skip copying public assets for static serving
+  output: 'standalone',
   
   // Force static priority by rewriting to self
   async rewrites() {
@@ -25,25 +25,29 @@ const nextConfig = {
         source: '/probe-test.txt',
         destination: '/probe-test.txt',
       },
-      // 5. Existing rewrites (if any needed)
     ];
   },
 
   // Next.js 15 root-level property for slimming down the build
+  // We exclude ALL media from the serverless function trace to stay under 250MB.
+  // The files will still be served statically by Vercel from the public folder.
   outputFileTracingExcludes: {
     '*': [
       'node_modules/@swc/core-linux-x64-gnu',
       'node_modules/@swc/core-linux-x64-musl',
-      'public/**/*.png',
-      'public/**/*.jpg',
-      'public/**/*.jpeg',
-      'public/**/*.webp',
-      'public/**/*.gif',
-      'public/**/*.mp4',
-      'public/**/*.pdf',
-      'public/**/*.zip',
-      'public/**/*.mov',
-      'public/**/*.avi',
+      'node_modules/sharp/**/*', // Sharp is in devDeps but just in case
+      'public/content/**/*.png',
+      'public/content/**/*.jpg',
+      'public/content/**/*.jpeg',
+      'public/content/**/*.webp',
+      'public/content/**/*.gif',
+      'public/content/**/*.mp4',
+      'public/content/**/*.mov',
+      'public/content/**/*.avi',
+      'public/content/**/*.pdf',
+      'public/content/**/*.zip',
+      'public/realai-elite-assets/**/*', // Massive 359MB folder
+      'public/realai-elite-legacy/**/*',
     ],
   },
   experimental: {
