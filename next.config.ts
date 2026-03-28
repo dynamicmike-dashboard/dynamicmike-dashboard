@@ -32,7 +32,7 @@ const nextConfig = {
   // We exclude ALL media from the serverless function trace to stay under 250MB.
   // The files will still be served statically by Vercel from the public folder.
   outputFileTracingExcludes: {
-    '*': [
+    '**/*': [
       'node_modules/@swc/core-linux-x64-gnu',
       'node_modules/@swc/core-linux-x64-musl',
       'node_modules/sharp/**/*', // Sharp is in devDeps but just in case

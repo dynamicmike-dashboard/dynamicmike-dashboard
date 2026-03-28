@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+// Using eval to bypass Next.js static analysis and prevent tracing of the public/content folder
+const fs = eval('require("fs")');
+const path = eval('require("path")');
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
