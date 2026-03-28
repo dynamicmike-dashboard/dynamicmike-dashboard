@@ -75,7 +75,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
   const [librarySearch, setLibrarySearch] = useState("");
   const [selectedImgRef, setSelectedImgRef] = useState<HTMLImageElement | null>(null);
   const [editorKey, setEditorKey] = useState(0); 
-  const [gitStatus, setGitStatus] = useState<{ success: boolean; log: string } | null>(null);
+  const [gitStatus, setGitStatus] = useState<{ success: boolean; log: string; debug?: any } | null>(null);
   const [syncEnabled, setSyncEnabled] = useState(true);
 
   const fileSrc = `/content/${siteId}/${currentFile}`;
@@ -199,7 +199,7 @@ export default function AdminDashboardPage(props: { params: Params }) {
       });
       const data = await res.json();
       if (data.success) {
-        setGitStatus({ success: data.gitSuccess, log: data.gitLog });
+        setGitStatus({ success: data.gitSuccess, log: data.gitLog, debug: data.debug });
         if (data.gitSuccess) {
           // Success case
         } else {
@@ -535,8 +535,18 @@ export default function AdminDashboardPage(props: { params: Params }) {
           <div className={`w-2 h-2 rounded-full bg-white ${loading ? 'animate-bounce' : ''}`}></div>
           <span>
             {loading ? "System processing: Saving changes & syncing..." : 
-             gitStatus?.success ? "✨ Changes saved and synced to GitHub successfully!" : 
-             `⚠️ Saved locally, but GitHub Sync failed: ${gitStatus?.log}`}
+             gitStatus?.success ? (
+               <div className="flex flex-col">
+                 <span>✨ Changes saved and synced to GitHub successfully!</span>
+                 {gitStatus.debug && (
+                   <span className="text-[8px] opacity-70 font-mono mt-0.5">
+                     Path: {gitStatus.debug.filePath} | CWD: {gitStatus.debug.cwd}
+                   </span>
+                 )}
+               </div>
+             ) : (
+               <span>⚠️ Saved locally, but GitHub Sync failed: {gitStatus?.log}</span>
+             )}
           </span>
         </div>
         {gitStatus && (

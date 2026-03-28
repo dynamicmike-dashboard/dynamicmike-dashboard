@@ -50,7 +50,8 @@ export async function POST(request: Request) {
       url: publicUrl,
       fileName,
       folder,
-      path: targetPath
+      path: targetPath,
+      debug: { targetPath, cwd: process.cwd() }
     });
   } catch (error) {
     console.error("Upload Failure:", error);

@@ -43,7 +43,8 @@ export async function POST(request: Request) {
       success: true, 
       gitSuccess,
       gitLog,
-      message: gitSuccess ? "Saved and Pushed!" : "Saved locally, but Git Push failed."
+      message: gitSuccess ? "Saved and Pushed!" : "Saved locally, but Git Push failed.",
+      debug: { filePath, cwd: process.cwd() }
     });
   } catch (error) {
     console.error("System Error:", error);
