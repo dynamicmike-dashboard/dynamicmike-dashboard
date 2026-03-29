@@ -9,10 +9,17 @@ const execPromise = promisify(exec);
 
 export async function POST(request: Request) {
   try {
-    const { siteId, fileName, code, syncEnabled } = await request.json();
+    const { siteId: siteIdRaw, fileName, code, syncEnabled } = await request.json();
+    const siteId = siteIdRaw?.toLowerCase();
 
     // 1. Define the exact path to your F: drive folder
     const filePath = path.join(process.cwd(), 'public', 'content', siteId, fileName);
+    
+    // Ensure the directory exists before writing (Fixes "No such file or directory" errors)
+    const dirPath = path.dirname(filePath);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
 
     // 2. Save the file locally so your F: drive is always the 'Master Copy'
     fs.writeFileSync(filePath, code, 'utf8');
@@ -44,10 +51,14 @@ export async function POST(request: Request) {
       gitSuccess,
       gitLog,
       message: gitSuccess ? "Saved and Pushed!" : "Saved locally, but Git Push failed.",
-      debug: { filePath, cwd: process.cwd() }
+      debug: { filePath, cwd: process.cwd(), dirExists: fs.existsSync(dirPath) }
     });
-  } catch (error) {
-    console.error("System Error:", error);
-    return NextResponse.json({ success: false, error: "Critical Save Failure" }, { status: 500 });
+  } catch (error: any) {
+    console.error("System Error during save:", error);
+    return NextResponse.json({ 
+      success: false, 
+      error: error.message || "Critical Save Failure",
+      details: error.stack
+    }, { status: 500 });
   }
 }

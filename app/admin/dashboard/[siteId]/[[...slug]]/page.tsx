@@ -131,17 +131,30 @@ export default function AdminDashboardPage(props: { params: Params }) {
     updateMeta('keywords', seo.keywords);
     updateMeta('og:keywords', seo.keywords, 'property');
     
-    if (seo.image) {
-      updateMeta('image', seo.image);
-      updateMeta('og:image', seo.image, 'property');
-      
-      // Update Hero Picture Sources (only if we have a new image)
-      updated = updated.replace(/(<div[^>]*class="blog-cover-image-container"[^>]*>[\s\S]*?<picture[^>]*>)([\s\S]*?)(<\/picture>)/gi, (match, open, inner, close) => {
-        let newInner = inner.replace(/srcset=".*?"/g, `srcset="${seo.image}"`);
-        newInner = newInner.replace(/src=".*?"/g, `src="${seo.image}"`);
-        return `${open}${newInner}${close}`;
-      });
-    }
+      if (seo.image) {
+        updateMeta('image', seo.image);
+        updateMeta('og:image', seo.image, 'property');
+        updateMeta('twitter:image', seo.image);
+        
+        // 📸 AGGRESSIVE HERO HUNT:
+        // 1. Target picture tags within cover containers
+        updated = updated.replace(/(<div[^>]*class="[^"]*blog-cover-image-container[^"]*"[^>]*>[\s\S]*?<picture[^>]*>)([\s\S]*?)(<\/picture>)/gi, (match, open, inner, close) => {
+          let newInner = inner.replace(/srcset=".*?"/g, `srcset="${seo.image}"`);
+          newInner = newInner.replace(/src=".*?"/g, `src="${seo.image}"`);
+          return `${open}${newInner}${close}`;
+        });
+
+        // 2. Target standalone header images that might not be in a picture tag
+        updated = updated.replace(/(<img[^>]*class="[^"]*(?:header-image|blog-content-blog-image)[^"]*"[^>]*src=")([^"]*)("[^>]*>)/gi, (match, open, src, close) => {
+          return `${open}${seo.image}${close}`;
+        });
+        
+        // 3. Fallback: Catch any large header-like images if the above fail
+        if (!updated.includes(seo.image)) {
+           // Only replace if we find something that looks like a main banner
+           updated = updated.replace(/(<img[^>]*id="[^"]*header[^"]*"[^>]*src=")([^"]*)("[^>]*>)/gi, `$1${seo.image}$3`);
+        }
+      }
 
     updated = updated.replace(/<title>.*?<\/title>/gi, `<title>${seo.title}</title>`);
 
@@ -202,7 +215,15 @@ export default function AdminDashboardPage(props: { params: Params }) {
       finalContent = `<div style="word-break: normal; overflow-wrap: break-word; text-wrap: pretty;">${finalContent}</div>`;
     }
 
+    // Safety: Prevent users from trying to save to their F: drive from the Live Vercel site
+    if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1')) {
+      alert("⚠️ SAVE BLOCKED: You are on the LIVE Vercel site. \n\nTo save changes to your F: drive and sync to GitHub, you MUST use the local dashboard at http://localhost:3000.\n\nChanges made here will not persist locally.");
+      setLoading(false);
+      return;
+    }
+
     const finalCode = updateHTMLWithSEO(finalContent);
+
     try {
       const res = await fetch('/api/save-content', {
         method: 'POST',
@@ -219,10 +240,10 @@ export default function AdminDashboardPage(props: { params: Params }) {
         }
         setIsEditing(false);
       } else {
-        alert("Save failed. Make sure 'npm run dev' is running.");
+        alert(`Save failed: ${data.error || "Unknown Error"}. Make sure 'npm run dev' is running.`);
       }
-    } catch (err) {
-      alert("Network error.");
+    } catch (err: any) {
+      alert(`Network error: ${err.message || "Failed to connect to server"}`);
     } finally {
       setLoading(false);
     }
@@ -277,7 +298,16 @@ export default function AdminDashboardPage(props: { params: Params }) {
   };
 
   const handleSaveWithCleanup = (contentOverride?: string) => {
-    const targetContent = contentOverride || code;
+    // Force a pull from the editor DOM if in visual mode to ensure we have the latest pixels
+    let latestContent = contentOverride;
+    if (!latestContent && isVisual) {
+       const quillEditor = document.querySelector('.quill-light-fix .ql-editor');
+       if (quillEditor) {
+         latestContent = wrapContent(quillEditor.innerHTML, code);
+       }
+    }
+
+    const targetContent = latestContent || code;
     const cleaned = cleanGHLTags(targetContent);
     setCode(cleaned); 
     handleSave(cleaned); 
