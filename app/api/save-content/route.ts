@@ -4,100 +4,135 @@ import path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 
-// This allows us to wait for the Git commands to finish before telling you "Saved!"
 const execPromise = promisify(exec);
+const GITHUB_API_URL = 'https://api.github.com/repos';
+
+// Helper: Sync Metadata to Home Page (index.html)
+async function syncHomePageIndex(siteId: string, fileName: string, code: string) {
+    try {
+        if (!fileName.startsWith('post/')) return "";
+        
+        const indexPath = path.join(process.cwd(), 'public', 'content', siteId, 'index.html');
+        if (!fs.existsSync(indexPath)) return "";
+
+        const urlSlug = fileName.replace('post/', '').replace('.html', '');
+        let indexContent = fs.readFileSync(indexPath, 'utf8');
+
+        // Extract metadata from the new code
+        const titleMatch = code.match(/<title>(.*?)<\/title>/);
+        const descMatch = code.match(/<meta name="description" content="(.*?)"/);
+        const imageMatch = code.match(/<meta property="og:image" content="(.*?)"/);
+
+        const title = titleMatch ? titleMatch[1] : "";
+        const desc = descMatch ? descMatch[1] : "";
+        const image = imageMatch ? imageMatch[1] : "";
+
+        // 1. Update the JSON interceptor
+        const postRegex = new RegExp(`(\\{[^}]*"urlSlug":"${urlSlug}"[^}]*\\})`, 'g');
+        indexContent = indexContent.replace(postRegex, (match) => {
+            let updated = match;
+            if (title) updated = updated.replace(/"title":".*?"/, `"title":"${JSON.stringify(title).slice(1,-1)}"`);
+            if (desc) updated = updated.replace(/"description":".*?"/, `"description":"${JSON.stringify(desc).slice(1,-1)}"`);
+            if (image) updated = updated.replace(/"imageUrl":".*?"/, `"imageUrl":"${image}"`);
+            return updated;
+        });
+
+        // 2. Update hardcoded HTML image tags (using slug as alt anchor)
+        const displaySlug = urlSlug.replace(/-/g, ' ');
+        const imgTagRegex = new RegExp(`(<img[^>]*alt="[^"]*${displaySlug}[^"]*"[^>]*src=")([^"]*)("[^>]*>)`, 'gi');
+        indexContent = indexContent.replace(imgTagRegex, `$1${image}$3`);
+
+        fs.writeFileSync(indexPath, indexContent);
+        return " + Home Page Synced!";
+    } catch (err) {
+        console.error("Index Sync Error:", err);
+        return " ! Index Sync Failed";
+    }
+}
+
+// Helper: Push directly to GitHub via API (Option A)
+async function saveToGitHub(siteId: string, fileName: string, code: string, message: string) {
+    const token = process.env.GITHUB_TOKEN;
+    const owner = process.env.REPO_OWNER || 'dynamicmike-dashboard';
+    const repo = process.env.REPO_NAME || 'dynamicmike-dashboard';
+    
+    if (!token) return { success: false, log: "GitHub token not configured" };
+
+    try {
+        const filePath = `public/content/${siteId}/${fileName}`;
+        const url = `${GITHUB_API_URL}/${owner}/${repo}/contents/${filePath}`;
+
+        // Get current SHA
+        const getRes = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
+        let sha = "";
+        if (getRes.ok) {
+            const data = await getRes.json();
+            sha = data.sha;
+        }
+
+        // Commit via API
+        const putRes = await fetch(url, {
+            method: 'PUT',
+            headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: message,
+                content: Buffer.from(code).toString('base64'),
+                sha: sha
+            })
+        });
+
+        return { success: putRes.ok, log: putRes.ok ? "✓ Cloud Sync OK" : "Cloud Sync Failed" };
+    } catch (e: any) {
+        return { success: false, log: `Cloud Error: ${e.message}` };
+    }
+}
 
 export async function POST(request: Request) {
   try {
-    const { siteId: siteIdRaw, fileName, code, syncEnabled } = await request.json();
-    const siteId = siteIdRaw?.toLowerCase();
+    const { siteId, fileName, code, syncEnabled } = await request.json();
+    const normalizedSiteId = siteId?.toLowerCase();
 
-    // 1. Define the exact path to your F: drive folder
-    const filePath = path.join(process.cwd(), 'public', 'content', siteId, fileName);
-    
-    // Ensure the directory exists before writing (Fixes "No such file or directory" errors)
+    // 1. Local Path Resolution
+    const filePath = path.join(process.cwd(), 'public', 'content', normalizedSiteId, fileName);
     const dirPath = path.dirname(filePath);
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
-    }
+    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
 
-    // 2. Save the file locally so your F: drive is always the 'Master Copy'
-    fs.writeFileSync(filePath, code, 'utf8');
+    // 2. Local Save
+    let localSuccess = true;
+    try { fs.writeFileSync(filePath, code, 'utf8'); } catch (e) { localSuccess = false; }
 
-    // 🕒 INDEX SYNC: Auto-update the Home Page (index.html) entry for this post
-    if (fileName.startsWith('post/')) {
-        try {
-            const indexPath = path.join(process.cwd(), 'public', 'content', siteId, 'index.html');
-            if (fs.existsSync(indexPath)) {
-                const urlSlug = fileName.replace('post/', '').replace('.html', '');
-                let indexContent = fs.readFileSync(indexPath, 'utf8');
+    // 3. Home Page Sync
+    const indexLog = await syncHomePageIndex(normalizedSiteId, fileName, code);
 
-                // Extract metadata from the new code
-                const titleMatch = code.match(/<title>(.*?)<\/title>/);
-                const descMatch = code.match(/<meta name="description" content="(.*?)"/);
-                const imageMatch = code.match(/<meta property="og:image" content="(.*?)"/);
-
-                const title = titleMatch ? titleMatch[1] : "";
-                const desc = descMatch ? descMatch[1] : "";
-                const image = imageMatch ? imageMatch[1] : "";
-
-                // 1. Update the JSON Interceptor (extraPosts)
-                const postRegex = new RegExp(`(\\{[^}]*"urlSlug":"${urlSlug}"[^}]*\\})`, 'g');
-                indexContent = indexContent.replace(postRegex, (match) => {
-                    let updated = match;
-                    if (title) updated = updated.replace(/"title":".*?"/, `"title":"${JSON.stringify(title).slice(1,-1)}"`);
-                    if (desc) updated = updated.replace(/"description":".*?"/, `"description":"${JSON.stringify(desc).slice(1,-1)}"`);
-                    if (image) updated = updated.replace(/"imageUrl":".*?"/, `"imageUrl":"${image}"`);
-                    return updated;
-                });
-
-                // 2. Update Hardcoded Body Images (by alt text or link)
-                const imgTagRegex = new RegExp(`(<img[^>]*alt="[^"]*${urlSlug.replace(/-/g, ' ')}[^"]*"[^>]*src=")([^"]*)("[^>]*>)`, 'gi');
-                indexContent = indexContent.replace(imgTagRegex, `$1${image}$3`);
-
-                fs.writeFileSync(indexPath, indexContent);
-                // Note: gitLog is defined below, so we will handle the concatenation there
-            }
-        } catch (syncErr) {
-            console.error("Index Sync failed:", syncErr);
-        }
-    }
-
-    // 3. Automated Git Workflow (Runs ONLY when you are working on your PC and sync is on)
-    let gitLog = "Git sync disabled via 'Local Only' toggle";
+    // 4. Cloud / Git Sync
+    let gitLog = "Sync Off";
     let gitSuccess = true;
 
-    if (process.env.NODE_ENV === 'development' && syncEnabled !== false) {
-      try {
-        await execPromise('git add .');
-        try {
-          await execPromise(`git commit -m "Admin Update: ${siteId} - ${fileName}"`);
-        } catch (commitErr) {
-          // If there are no changes, commit might fail. We still try to push.
-          console.log("No changes to commit or commit failed.");
+    if (syncEnabled) {
+        // Option A: Direct API Push
+        const cloudResult = await saveToGitHub(normalizedSiteId, fileName, code, `Update ${normalizedSiteId}/${fileName}`);
+        gitLog = cloudResult.log + indexLog;
+        gitSuccess = cloudResult.success;
+
+        // Option B: Local Git CLI (Backup)
+        if (process.env.NODE_ENV === 'development') {
+            try {
+                await execPromise('git add .');
+                await execPromise(`git commit -m "Dashboard Save: ${normalizedSiteId}/${fileName}"`).catch(() => {});
+                await execPromise('git push origin main').catch(() => {});
+                gitLog += " (Git pushed)";
+            } catch (p) {}
         }
-        await execPromise('git push origin main');
-        gitLog = "Pushed to GitHub successfully.";
-      } catch (gitError: any) {
-        gitSuccess = false;
-        gitLog = gitError.message || "Git Push failed";
-        console.error("Git Auto-Push failed:", gitLog);
-      }
     }
 
     return NextResponse.json({ 
-      success: true, 
+      success: localSuccess || gitSuccess, 
       gitSuccess,
       gitLog,
-      message: gitSuccess ? "Saved and Pushed!" : "Saved locally, but Git Push failed.",
-      debug: { filePath, cwd: process.cwd(), dirExists: fs.existsSync(dirPath) }
+      message: localSuccess ? "Saved successfully!" : "Saved to Cloud only",
+      debug: { filePath }
     });
   } catch (error: any) {
-    console.error("System Error during save:", error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error.message || "Critical Save Failure",
-      details: error.stack
-    }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
