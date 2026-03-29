@@ -24,6 +24,45 @@ export async function POST(request: Request) {
     // 2. Save the file locally so your F: drive is always the 'Master Copy'
     fs.writeFileSync(filePath, code, 'utf8');
 
+    // 🕒 INDEX SYNC: Auto-update the Home Page (index.html) entry for this post
+    if (fileName.startsWith('post/')) {
+        try {
+            const indexPath = path.join(process.cwd(), 'public', 'content', siteId, 'index.html');
+            if (fs.existsSync(indexPath)) {
+                const urlSlug = fileName.replace('post/', '').replace('.html', '');
+                let indexContent = fs.readFileSync(indexPath, 'utf8');
+
+                // Extract metadata from the new code
+                const titleMatch = code.match(/<title>(.*?)<\/title>/);
+                const descMatch = code.match(/<meta name="description" content="(.*?)"/);
+                const imageMatch = code.match(/<meta property="og:image" content="(.*?)"/);
+
+                const title = titleMatch ? titleMatch[1] : "";
+                const desc = descMatch ? descMatch[1] : "";
+                const image = imageMatch ? imageMatch[1] : "";
+
+                // 1. Update the JSON Interceptor (extraPosts)
+                const postRegex = new RegExp(`(\\{[^}]*"urlSlug":"${urlSlug}"[^}]*\\})`, 'g');
+                indexContent = indexContent.replace(postRegex, (match) => {
+                    let updated = match;
+                    if (title) updated = updated.replace(/"title":".*?"/, `"title":"${JSON.stringify(title).slice(1,-1)}"`);
+                    if (desc) updated = updated.replace(/"description":".*?"/, `"description":"${JSON.stringify(desc).slice(1,-1)}"`);
+                    if (image) updated = updated.replace(/"imageUrl":".*?"/, `"imageUrl":"${image}"`);
+                    return updated;
+                });
+
+                // 2. Update Hardcoded Body Images (by alt text or link)
+                const imgTagRegex = new RegExp(`(<img[^>]*alt="[^"]*${urlSlug.replace(/-/g, ' ')}[^"]*"[^>]*src=")([^"]*)("[^>]*>)`, 'gi');
+                indexContent = indexContent.replace(imgTagRegex, `$1${image}$3`);
+
+                fs.writeFileSync(indexPath, indexContent);
+                // Note: gitLog is defined below, so we will handle the concatenation there
+            }
+        } catch (syncErr) {
+            console.error("Index Sync failed:", syncErr);
+        }
+    }
+
     // 3. Automated Git Workflow (Runs ONLY when you are working on your PC and sync is on)
     let gitLog = "Git sync disabled via 'Local Only' toggle";
     let gitSuccess = true;
