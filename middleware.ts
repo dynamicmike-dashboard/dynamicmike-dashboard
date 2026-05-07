@@ -108,6 +108,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   // Broad exclusion for internal Next.js paths and the master content folder.
   // We MUST allow all other paths (including assets like .js, .png) so the domain mapping works.
-  matcher: ['/((?!api|_next/static|_next/image|content|favicon\\.ico|realai-elite/|realai-pages/|probe-test\\.txt).*)'],
+  matcher: ['/((?!_next/static|_next/image|content|favicon\\.ico).*)'],
 };
 
