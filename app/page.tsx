@@ -10,6 +10,7 @@ export default function Home() {
   const sites = [
     { id: "breath-of-life", label: "Breath of Life", domain: "breathoflifepdc.org" },
     { id: "inspiringspeakerspdc", label: "InspiringSpeakersPDC", domain: "inspiringspeakerspdc.com" },
+    { id: "inspiringspeakerspdc/agenda", label: "TM Agenda", domain: "agenda.inspiringspeakerspdc.com" },
     { id: "maistermind", label: "mAIstermind", domain: "maistermind.com" },
     { id: "pdcyes", label: "PDCYES", domain: "pdcyes.com" },
     { id: "playaphotos", label: "Playa Photos", domain: "playa.photos" },

@@ -77,7 +77,7 @@ export function middleware(request: NextRequest) {
     "social-media-management-services.com": "smms",
   };
 
-  const pureHost = hostname.replace('www.', '');
+  const pureHost = hostname.split(':')[0].replace('www.', '').toLowerCase();
   const folderName = domainMap[pureHost];
 
   if (folderName) {
