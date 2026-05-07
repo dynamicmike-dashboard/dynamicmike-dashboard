@@ -6,10 +6,12 @@ export default function LanguageSwitcher() {
   const pathname = usePathname(); // e.g., "/en/about"
 
   const toggleLanguage = (newLocale: string) => {
-    // Replace the first segment of the path (the locale)
+    if (!pathname) return;
     const segments = pathname.split('/');
-    segments[1] = newLocale; 
-    router.push(segments.join('/'));
+    if (segments.length > 1) {
+      segments[1] = newLocale; 
+      router.push(segments.join('/'));
+    }
   };
 
   return (
