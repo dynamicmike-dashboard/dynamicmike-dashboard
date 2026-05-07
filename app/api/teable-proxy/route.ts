@@ -9,7 +9,8 @@ export async function POST(request: Request) {
   try {
     const { path, method, body } = await request.json();
     
-    const apiKey = process.env.TEABLE_API_KEY;
+    // Support both prefixed and non-prefixed keys
+    const apiKey = process.env.TEABLE_API_KEY || process.env.VITE_TEABLE_API_KEY;
     if (!apiKey) return NextResponse.json({ error: "Teable Key Missing in Environment" }, { status: 500 });
 
     const tryRequest = async (baseUrl: string) => {
@@ -26,7 +27,6 @@ export async function POST(request: Request) {
 
     let response = await tryRequest(TEABLE_API_URLS[0]);
     
-    // Fallback to .ai domain if .io is down
     if (!response.ok && (response.status === 404 || response.status === 502 || response.status === 0)) {
       response = await tryRequest(TEABLE_API_URLS[1]);
     }

@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     const { prompt, systemInstruction, provider = 'openai' } = await request.json();
 
     if (provider === 'openai') {
-      const apiKey = process.env.OPENAI_API_KEY;
+      const apiKey = process.env.OPENAI_API_KEY || process.env.VITE_OPENAI_API_KEY;
       if (!apiKey) return NextResponse.json({ error: "OpenAI Key Missing in Environment" }, { status: 500 });
 
       const openai = new OpenAI({ apiKey });
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       });
       return NextResponse.json({ text: response.choices[0].message.content });
     } else {
-      const apiKey = process.env.GEMINI_API_KEY;
+      const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
       if (!apiKey) return NextResponse.json({ error: "Gemini Key Missing in Environment" }, { status: 500 });
 
       const genAI = new GoogleGenerativeAI(apiKey);
