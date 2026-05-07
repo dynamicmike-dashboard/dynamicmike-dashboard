@@ -12,6 +12,11 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const hostname = request.headers.get('host') || "";
   const path = url.pathname.toLowerCase();
+  
+  // 0. API Bypass (Crucial for subdomains)
+  if (path.startsWith('/api')) {
+    return NextResponse.next();
+  }
 
   // 1. Kill Switch Handling
   if (EMERGENCY_MAINTENANCE_MODE) {
