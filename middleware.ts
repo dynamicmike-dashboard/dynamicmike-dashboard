@@ -13,13 +13,40 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || "";
   const path = url.pathname.toLowerCase();
   
-  // 0. API Internal Tunnel (Bypass CORS for subdomains)
-  if (path.startsWith('/api')) {
-    if (hostname !== 'dynamicmike.com') {
-      const apiUrl = new URL(request.nextUrl.pathname + request.nextUrl.search, 'https://dynamicmike.com');
-      return NextResponse.rewrite(apiUrl);
+  // 0. API Edge Proxy (Total CORS Bypass)
+  if (path.startsWith('/api/teable-proxy')) {
+    // Return a response that tells the browser it's okay to talk to us
+    if (request.method === 'OPTIONS') {
+      return new NextResponse(null, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Access-Control-Max-Age': '86400',
+        }
+      });
     }
-    return NextResponse.next();
+    // We rewrite to the internal API route which now has a "CORS Amnesty"
+    const apiUrl = new URL(request.nextUrl.pathname + request.nextUrl.search, 'https://dynamicmike.com');
+    const response = NextResponse.rewrite(apiUrl);
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    return response;
+  }
+
+  if (path.startsWith('/api/ai-proxy')) {
+    if (request.method === 'OPTIONS') {
+      return new NextResponse(null, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        }
+      });
+    }
+    const apiUrl = new URL(request.nextUrl.pathname + request.nextUrl.search, 'https://dynamicmike.com');
+    const response = NextResponse.rewrite(apiUrl);
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    return response;
   }
 
   // 1. Kill Switch Handling
