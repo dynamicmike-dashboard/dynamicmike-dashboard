@@ -13,9 +13,18 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || "";
   const path = url.pathname.toLowerCase();
   
-  // 0. API Bypass (Crucial for subdomains)
+  // 0. API Bypass & CORS Injection
   if (path.startsWith('/api')) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    const origin = request.headers.get('origin') || '*';
+    
+    response.headers.set('Access-Control-Allow-Origin', origin);
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    response.headers.set('Access-Control-Allow-Credentials', 'true');
+    response.headers.set('Access-Control-Max-Age', '86400');
+    
+    return response;
   }
 
   // 1. Kill Switch Handling
