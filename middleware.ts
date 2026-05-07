@@ -13,10 +13,13 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || "";
   const path = url.pathname.toLowerCase();
   
-  // 0. API Internal Tunnel (Bypass CORS entirely)
+  // 0. API Internal Tunnel (Bypass CORS for subdomains)
   if (path.startsWith('/api')) {
-    const apiUrl = new URL(request.nextUrl.pathname + request.nextUrl.search, 'https://dynamicmike.com');
-    return NextResponse.rewrite(apiUrl);
+    if (hostname !== 'dynamicmike.com') {
+      const apiUrl = new URL(request.nextUrl.pathname + request.nextUrl.search, 'https://dynamicmike.com');
+      return NextResponse.rewrite(apiUrl);
+    }
+    return NextResponse.next();
   }
 
   // 1. Kill Switch Handling
