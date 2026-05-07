@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+// @ts-ignore
 import Cors from 'cors';
 
 // Initializing the cors middleware

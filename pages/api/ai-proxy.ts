@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+// @ts-ignore
 import Cors from 'cors';
 
 // Initializing the cors middleware
