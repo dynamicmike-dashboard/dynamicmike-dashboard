@@ -29,11 +29,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await runMiddleware(req, res, cors);
 
   try {
-    const { path, method, body } = req.body;
+    const { path, method, body } = req.body || {};
     const apiKey = process.env.TEABLE_API_KEY || process.env.VITE_TEABLE_API_KEY;
 
     if (!apiKey) {
+      console.error("Teable Proxy: API Key Missing");
       return res.status(500).json({ error: "Teable Key Missing" });
+    }
+
+    if (!path) {
+      console.error("Teable Proxy: Path Missing in request body", req.body);
+      return res.status(400).json({ error: "Path Missing", receivedBody: req.body });
     }
 
     const tryRequest = async (url: string) => {
