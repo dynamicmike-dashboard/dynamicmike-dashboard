@@ -53,15 +53,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     };
 
-    // Aligned with user's local logic: use api.teable.io with /v1 prefix
-    const targetPath = path.startsWith('/v1') ? path : `/v1${path}`;
-    const url = `https://api.teable.io${targetPath}`;
+    // The host api.teable.io does not resolve. Using app.teable.ai which is confirmed working.
+    const url = `https://app.teable.ai/api${path}`;
     
     let response = await tryRequest(url);
     
-    // Failover to .ai if .io fails with 404 or 500
+    // Failover to .io just in case, but .ai is the primary
     if (!response.ok && (response.status === 404 || response.status >= 500)) {
-      response = await tryRequest(`https://app.teable.ai/api${path}`);
+      response = await tryRequest(`https://api.teable.io/v1${path}`);
     }
 
     // Handle non-JSON or empty responses
