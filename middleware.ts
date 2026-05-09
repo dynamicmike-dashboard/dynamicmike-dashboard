@@ -15,7 +15,6 @@ export function middleware(request: NextRequest) {
   
   // 0. API Edge Proxy (Total CORS Bypass)
   if (path.startsWith('/api/teable-proxy')) {
-    // Return a response that tells the browser it's okay to talk to us
     if (request.method === 'OPTIONS') {
       return new NextResponse(null, {
         headers: {
@@ -26,11 +25,9 @@ export function middleware(request: NextRequest) {
         }
       });
     }
-    // We rewrite to the internal API route which now has a "CORS Amnesty"
-    const apiUrl = new URL(request.nextUrl.pathname + request.nextUrl.search, 'https://dynamicmike.com');
-    const response = NextResponse.rewrite(apiUrl);
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    return response;
+    // STOP: Do NOT rewrite to an absolute URL if we are already on the project.
+    // Just let it pass through to the local API handler.
+    return NextResponse.next();
   }
 
   if (path.startsWith('/api/ai-proxy')) {
@@ -43,10 +40,7 @@ export function middleware(request: NextRequest) {
         }
       });
     }
-    const apiUrl = new URL(request.nextUrl.pathname + request.nextUrl.search, 'https://dynamicmike.com');
-    const response = NextResponse.rewrite(apiUrl);
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    return response;
+    return NextResponse.next();
   }
 
   // 1. Kill Switch Handling
