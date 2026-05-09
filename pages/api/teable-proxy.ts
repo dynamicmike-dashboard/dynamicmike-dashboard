@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import axios from 'axios';
 // @ts-ignore
 import Cors from 'cors';
 
@@ -19,11 +20,6 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) 
   });
 }
 
-const TEABLE_API_URLS = [
-  'https://app.teable.io/api',
-  'https://app.teable.ai/api'
-];
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Run the middleware
   await runMiddleware(req, res, cors);
@@ -38,42 +34,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (!path) {
-      console.error("Teable Proxy: Path Missing in request body", req.body);
       return res.status(400).json({ error: "Path Missing", receivedBody: req.body });
     }
 
-    const tryRequest = async (url: string) => {
-      return fetch(url, {
-        method,
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: (method !== 'GET' && method !== 'DELETE' && body) ? JSON.stringify(body) : undefined,
-      });
-    };
-
-    // The host api.teable.io does not resolve. Using app.teable.ai which is confirmed working.
-    const url = `https://app.teable.ai/api${path}`;
+    const teableUrl = `https://app.teable.ai/api${path}`;
     
-    let response = await tryRequest(url);
-    
-    // Failover to .io just in case, but .ai is the primary
-    if (!response.ok && (response.status === 404 || response.status >= 500)) {
-      response = await tryRequest(`https://api.teable.io/v1${path}`);
-    }
+    console.log(`Proxying ${method} to ${teableUrl}`);
 
-    // Handle non-JSON or empty responses
-    const contentType = response.headers.get('content-type');
-    if (response.status === 204 || !contentType || !contentType.includes('application/json')) {
-      const text = await response.text();
-      return res.status(response.status).send(text);
-    }
+    const response = await axios({
+      url: teableUrl,
+      method: method as any,
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      data: (method !== 'GET' && method !== 'DELETE') ? body : undefined,
+      validateStatus: () => true, // Don't throw on error statuses
+    });
 
-    const data = await response.json();
-    return res.status(response.status).json(data);
+    return res.status(response.status).json(response.data);
   } catch (error: any) {
-    console.error("Teable Proxy Error:", error);
-    return res.status(500).json({ error: error.message });
+    console.error("Teable Proxy Error:", error.message);
+    return res.status(500).json({ error: error.message, stack: error.stack });
   }
 }
