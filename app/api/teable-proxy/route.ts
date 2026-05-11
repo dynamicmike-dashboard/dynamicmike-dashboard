@@ -25,8 +25,11 @@ export async function POST(req: Request) {
     }
 
     // Rewrite path to include base ID if it's a table operation and base ID is missing
+    // We only do this for "write" operations (PATCH, POST, DELETE) to fix the save failures
+    // while keeping GET requests stable as they were previously working.
     let targetPath = path;
-    if (BASE_ID && path.startsWith('/table/') && !path.startsWith(`/base/${BASE_ID}`)) {
+    const isWriteOp = ['PATCH', 'POST', 'DELETE', 'PUT'].includes(method.toUpperCase());
+    if (BASE_ID && isWriteOp && path.startsWith('/table/') && !path.startsWith(`/base/${BASE_ID}`)) {
       targetPath = `/base/${BASE_ID}${path}`;
     }
 
