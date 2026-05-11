@@ -17,7 +17,8 @@ export async function POST(req: Request) {
     const { path, method, body: payload } = body;
     
     const API_KEY = process.env.VITE_TEABLE_API_KEY;
-    const BASE_ID = process.env.VITE_TEABLE_BASE_ID;
+    // Hardcoded fallback to ensure production stability while environment variables propagate
+    const BASE_ID = process.env.VITE_TEABLE_BASE_ID || "bseWyzvKpnowhtg44Aj";
 
     if (!API_KEY) {
       console.error('Missing Teable API Key in Multisite Environment');
