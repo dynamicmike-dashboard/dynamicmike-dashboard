@@ -25,19 +25,27 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Database configuration missing' }, { status: 500 });
     }
 
-    // Switch back to the proven app.teable.ai endpoint using standard paths
-    const url = `https://app.teable.ai/api${path}`;
-    
-    console.log(`Proxying ${method} to ${url}`);
+    const tryRequest = async (baseUrl: string) => {
+      const url = `${baseUrl}/api${path}`;
+      console.log(`Proxying ${method} to ${url}`);
+      
+      return fetch(url, {
+        method,
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: (method !== 'GET' && method !== 'DELETE' && payload) ? JSON.stringify(payload) : undefined,
+      });
+    };
 
-    const response = await fetch(url, {
-      method,
-      headers: {
-        'Authorization': `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: (method !== 'GET' && method !== 'DELETE' && payload) ? JSON.stringify(payload) : undefined,
-    });
+    let response = await tryRequest('https://app.teable.ai');
+    
+    // If 404 or server error, try the legacy/alternative endpoint
+    if (!response.ok && (response.status === 404 || response.status >= 500)) {
+      console.log(`Fallback: app.teable.ai returned ${response.status}, trying api.teable.io/v1`);
+      response = await tryRequest('https://api.teable.io/v1');
+    }
 
     const responseText = await response.text();
     let data;
