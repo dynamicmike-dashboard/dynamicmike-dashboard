@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { path, method, body: payload } = req.body;
     
     const API_KEY = process.env.VITE_TEABLE_API_KEY;
-    const BASE_ID = process.env.VITE_TEABLE_BASE_ID || "bseWyzvKpnowhtg44Aj";
+    const BASE_ID = process.env.VITE_TEABLE_BASE_ID || "bseh6jGRNi3tcO1Dvw0";
 
     if (!API_KEY) {
       return res.status(500).json({ error: 'Database configuration missing' });
