@@ -65,7 +65,7 @@ export async function POST(req: Request) {
       console.error(`Teable API Error (${response.status}) for ${url}:`, responseText);
       return NextResponse.json({
         error: 'Teable API Error',
-        details: { ...data, apiKeyPrefix: API_KEY.substring(0, 10) },
+        details: data,
         status: response.status
       }, { status: response.status, headers });
     }
