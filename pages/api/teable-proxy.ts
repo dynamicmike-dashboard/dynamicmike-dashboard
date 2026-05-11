@@ -25,8 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { path, method, body: payload } = req.body;
     
-    // FORCED: Using the new verified key exclusively to bypass stale Vercel dashboard variables
-    const API_KEY = "teable_acccY85FhoJcGhif2Ie_Db86CELH6FVnpl32GMbq3w04lfC+ypY8HlncsH/ro1E=";
+    const API_KEY = process.env.VITE_TEABLE_API_KEY;
     const BASE_ID = process.env.VITE_TEABLE_BASE_ID || "bseh6jGRNi3tcO1Dvw0";
 
     if (!API_KEY) {
