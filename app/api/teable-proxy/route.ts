@@ -62,10 +62,10 @@ export async function POST(req: Request) {
     };
 
     if (!response.ok) {
-      console.error(`Teable API Error (${response.status}) for ${url}:`, responseText);
+      console.error(`Teable API Error (${response.status}) for ${path}:`, responseText);
       return NextResponse.json({
         error: 'Teable API Error',
-        details: data,
+        details: { ...data, apiKeyPrefix: API_KEY.substring(0, 10) },
         status: response.status
       }, { status: response.status, headers });
     }
