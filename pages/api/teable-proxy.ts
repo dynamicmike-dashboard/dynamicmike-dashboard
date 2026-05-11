@@ -1,6 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+export const config = {
+  api: {
+    bodyParser: true,
+  },
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Log incoming request for deep debugging
+  console.log(`[proxy] ${req.method} request received for path: ${req.body?.path}`);
+  if (req.method !== 'GET') {
+    console.log(`[proxy] Body snippet:`, JSON.stringify(req.body).slice(0, 200));
+  }
+
   // Add CORS headers for the subdomain
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
