@@ -17,14 +17,21 @@ export async function POST(req: Request) {
     const { path, method, body: payload } = body;
     
     const API_KEY = process.env.VITE_TEABLE_API_KEY;
+    const BASE_ID = process.env.VITE_TEABLE_BASE_ID;
 
     if (!API_KEY) {
       console.error('Missing Teable API Key in Multisite Environment');
       return NextResponse.json({ error: 'Database configuration missing' }, { status: 500 });
     }
 
+    // Rewrite path to include base ID if it's a table operation and base ID is missing
+    let targetPath = path;
+    if (BASE_ID && path.startsWith('/table/') && !path.startsWith(`/base/${BASE_ID}`)) {
+      targetPath = `/base/${BASE_ID}${path}`;
+    }
+
     // Switch back to the proven app.teable.ai endpoint
-    const url = `https://app.teable.ai/api${path}`;
+    const url = `https://app.teable.ai/api${targetPath}`;
 
     
     console.log(`Proxying ${method} to ${url}`);
@@ -38,7 +45,13 @@ export async function POST(req: Request) {
       body: (method !== 'GET' && method !== 'DELETE' && payload) ? JSON.stringify(payload) : undefined,
     });
 
-    const data = await response.json();
+    const responseText = await response.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (e) {
+      data = { raw: responseText };
+    }
     
     const headers = {
       'Access-Control-Allow-Origin': '*',
@@ -47,7 +60,7 @@ export async function POST(req: Request) {
     };
 
     if (!response.ok) {
-      console.error(`Teable API Error (${response.status}):`, JSON.stringify(data));
+      console.error(`Teable API Error (${response.status}) for ${url}:`, responseText);
       return NextResponse.json({
         error: 'Teable API Error',
         details: data,
