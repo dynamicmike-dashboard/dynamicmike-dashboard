@@ -25,18 +25,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Database configuration missing' }, { status: 500 });
     }
 
-    // Rewrite path to include base ID if it's a table operation and base ID is missing
-    // We only do this for "write" operations (PATCH, POST, DELETE) to fix the save failures
-    // while keeping GET requests stable as they were previously working.
-    let targetPath = path;
-    const isWriteOp = ['PATCH', 'POST', 'DELETE', 'PUT'].includes(method.toUpperCase());
-    if (BASE_ID && isWriteOp && path.startsWith('/table/') && !path.startsWith(`/base/${BASE_ID}`)) {
-      targetPath = `/base/${BASE_ID}${path}`;
-    }
-
-    // Switch back to the proven app.teable.ai endpoint
-    const url = `https://app.teable.ai/api${targetPath}`;
-
+    // Switch back to the proven app.teable.ai endpoint using standard paths
+    const url = `https://app.teable.ai/api${path}`;
     
     console.log(`Proxying ${method} to ${url}`);
 
