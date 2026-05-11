@@ -16,7 +16,6 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { path, method, body: payload } = body;
     
-    // Use the same API key logic from the source repo
     const API_KEY = process.env.VITE_TEABLE_API_KEY;
 
     if (!API_KEY) {
@@ -24,8 +23,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Database configuration missing' }, { status: 500 });
     }
 
-    const targetPath = path.startsWith('/v1') ? path : `/v1${path}`;
-    const url = `https://api.teable.io${targetPath}`;
+    // Switch back to the proven app.teable.ai endpoint
+    const url = `https://app.teable.ai/api${path}`;
+
     
     console.log(`Proxying ${method} to ${url}`);
 
