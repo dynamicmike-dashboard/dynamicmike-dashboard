@@ -32,11 +32,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: 'Database configuration missing' });
     }
 
-    const tryRequest = async (baseUrl: string) => {
-      const url = `${baseUrl}/api${path}`;
+    const tryRequest = async () => {
+      const targetUrl = `https://app.teable.ai/api${path}`;
       const hasBody = method !== 'GET' && method !== 'DELETE' && payload;
       
-      console.log(`Proxying ${method} to ${url} (Body: ${!!hasBody})`);
+      console.log(`Proxying ${method} to ${targetUrl} (Body: ${!!hasBody})`);
       
       const headers: any = {
         'Authorization': `Bearer ${API_KEY}`,
@@ -48,20 +48,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         headers['Content-Type'] = 'application/json';
       }
       
-      return fetch(url, {
+      return fetch(targetUrl, {
         method,
         headers,
         body: hasBody ? JSON.stringify(payload) : undefined,
-        signal: AbortSignal.timeout(15000) // 15s timeout
+        signal: AbortSignal.timeout(15000)
       });
     };
 
-    // Try the dedicated API endpoint first for better stability
-    let response = await tryRequest('https://api.teable.io');
-    
-    if (!response.ok && (response.status === 404 || response.status >= 500)) {
-      response = await tryRequest('https://app.teable.ai');
-    }
+    let response = await tryRequest();
 
     const responseText = await response.text();
     let data;
