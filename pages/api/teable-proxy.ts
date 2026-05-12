@@ -34,15 +34,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const tryRequest = async (baseUrl: string) => {
       const url = `${baseUrl}/api${path}`;
-      console.log(`Proxying ${method} to ${url}`);
+      const hasBody = method !== 'GET' && method !== 'DELETE' && payload;
+      
+      console.log(`Proxying ${method} to ${url} (Body: ${!!hasBody})`);
+      
+      const headers: any = {
+        'Authorization': `Bearer ${API_KEY}`,
+      };
+      
+      if (hasBody) {
+        headers['Content-Type'] = 'application/json';
+      }
       
       return fetch(url, {
         method,
-        headers: {
-          'Authorization': `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: (method !== 'GET' && method !== 'DELETE' && payload) ? JSON.stringify(payload) : undefined,
+        headers,
+        body: hasBody ? JSON.stringify(payload) : undefined,
       });
     };
 
