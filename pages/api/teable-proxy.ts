@@ -40,6 +40,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       
       const headers: any = {
         'Authorization': `Bearer ${API_KEY}`,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/json'
       };
       
       if (hasBody) {
@@ -50,13 +52,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         method,
         headers,
         body: hasBody ? JSON.stringify(payload) : undefined,
+        signal: AbortSignal.timeout(15000) // 15s timeout
       });
     };
 
-    let response = await tryRequest('https://app.teable.ai');
+    // Try the dedicated API endpoint first for better stability
+    let response = await tryRequest('https://api.teable.io');
     
     if (!response.ok && (response.status === 404 || response.status >= 500)) {
-      response = await tryRequest('https://api.teable.io/v1');
+      response = await tryRequest('https://app.teable.ai');
     }
 
     const responseText = await response.text();
