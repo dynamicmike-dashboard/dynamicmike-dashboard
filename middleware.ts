@@ -94,6 +94,7 @@ export function middleware(request: NextRequest) {
     "consciousshifts.co.uk": "consciousshifts",
     "fifeart.com": "fifeart",
     "agenda.inspiringspeakerspdc.com": "inspiringspeakerspdc/agenda",
+    "live.inspiringspeakerspdc.com": "inspiringspeakerspdc/agenda",
     "inspiringspeakerspdc.com": "inspiringspeakerspdc",
     "louisevandervelde.com": "louisevandervelde",
     "maistermind.com": "maistermind",
