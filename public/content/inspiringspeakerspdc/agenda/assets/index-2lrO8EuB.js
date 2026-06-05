@@ -233,12 +233,14 @@ Title: [Data or TBD]"
 
 **TIME CALCULATION & DISPLAY:**
 - Start Time: 19:00.
+- Every single agenda item MUST have a calculated start time string in the "time" field (format "HH:MM"). Do NOT leave the "time" field empty for any item.
+- To calculate the start time of the next item, add the duration of the current item to its start time.
 - Speaker Intros (TM introduces speaker #1, etc.): Use "1 min".
-- "Toastmaster Introduces TableTopic Master": Use empty duration ("").
-- "Toastmaster Introduces General Evaluator": Use empty duration ("").
-- "Club President adjourns meeting": Use empty duration ("").
+- "Toastmaster Introduces TableTopic Master": Use empty duration ("") but calculate its start time based on the previous item.
+- "Toastmaster Introduces General Evaluator": Use empty duration ("") but calculate its start time based on the previous item.
+- "Club President adjourns meeting": Use empty duration ("") but calculate its start time based on the previous item.
 - Duration ranges (4-6, 2-3) MUST be written as text in the duration field.
-- Use the MAX value (6, 3) for the time math.
+- Use the MAX value (6, 3) for the time math to calculate the start time of the next item.
 
 **PERFECT EXAMPLE OF OUTPUT:**
 - Segment: "1ST SPEECH EVALUATOR REPORT" | Duration: "2-3 min" | Assigned: "Benjamin Cruz"
