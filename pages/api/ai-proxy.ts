@@ -25,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { prompt, systemInstruction, provider = 'gemini' } = req.body;
   const providersToTry = provider === 'openai' ? ['openai', 'gemini'] : ['gemini', 'openai'];
+  const errors: Record<string, any> = {};
   let lastError: any = null;
 
   for (const currentProvider of providersToTry) {
@@ -62,12 +63,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     } catch (error: any) {
       console.warn(`[AI Proxy] ${currentProvider} failed:`, error.message);
+      errors[currentProvider] = error;
       lastError = error;
     }
   }
 
-  console.error("[AI Proxy] All providers failed. Last error:", lastError?.message);
   const geminiKeyToCheck = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || "";
   const keyInfo = geminiKeyToCheck ? `Key preview: ${geminiKeyToCheck.substring(0, 8)}...${geminiKeyToCheck.substring(geminiKeyToCheck.length - 4)}` : "Key missing";
-  return res.status(500).json({ error: `All AI providers failed. Gemini ${keyInfo}. Last error: ${lastError?.message}` });
+  
+  // Format all accumulated errors
+  const errorDetails = Object.entries(errors).map(([p, err]) => `[${p}]: ${(err as any).message}`).join(' | ');
+  
+  return res.status(500).json({ error: `All AI providers failed. Gemini ${keyInfo}. Errors: ${errorDetails}` });
 }
