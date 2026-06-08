@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         console.log("[AI Proxy] Attempting Gemini...");
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", systemInstruction });
         const result = await model.generateContent(prompt);
         const text = result.response.text();
         if (!text) throw new Error("Gemini returned empty response");
