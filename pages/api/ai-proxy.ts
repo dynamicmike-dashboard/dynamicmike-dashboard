@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
         if (!apiKey) throw new Error("Gemini API key missing in environment");
 
-        console.log("[AI Proxy] Attempting Gemini...");
+        console.log(`[AI Proxy] Attempting Gemini with key preview: ${apiKey.substring(0, 8)}...${apiKey.substring(apiKey.length - 4)}`);
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", systemInstruction });
         const result = await model.generateContent(prompt);
@@ -67,5 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   console.error("[AI Proxy] All providers failed. Last error:", lastError?.message);
-  return res.status(500).json({ error: `All AI providers failed. Last error: ${lastError?.message}` });
+  const geminiKeyToCheck = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || "";
+  const keyInfo = geminiKeyToCheck ? `Key preview: ${geminiKeyToCheck.substring(0, 8)}...${geminiKeyToCheck.substring(geminiKeyToCheck.length - 4)}` : "Key missing";
+  return res.status(500).json({ error: `All AI providers failed. Gemini ${keyInfo}. Last error: ${lastError?.message}` });
 }
