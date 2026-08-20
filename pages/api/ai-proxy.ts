@@ -23,8 +23,8 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) 
 // Retry with exponential backoff
 async function retryWithBackoff<T>(
   fn: () => Promise<T>,
-  maxRetries: number = 3,
-  baseDelay: number = 1000
+  maxRetries: number = 2,
+  baseDelay: number = 500
 ): Promise<T> {
   let lastError: any;
   
@@ -41,7 +41,7 @@ async function retryWithBackoff<T>(
                           error.message?.toLowerCase().includes('capacity');
       
       if (attempt < maxRetries && isRetryable) {
-        const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
+        const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 500;
         console.log(`[AI Proxy] Retryable error on attempt ${attempt + 1}/${maxRetries + 1}, waiting ${Math.round(delay)}ms:`, error.message);
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;
@@ -55,6 +55,27 @@ async function retryWithBackoff<T>(
   throw lastError;
 }
 
+// Try multiple models for a provider
+async function tryModels<T>(
+  models: string[],
+  attemptFn: (model: string) => Promise<T>
+): Promise<T> {
+  let lastError: any;
+  
+  for (const model of models) {
+    try {
+      console.log(`[AI Proxy] Trying model: ${model}`);
+      return await attemptFn(model);
+    } catch (error: any) {
+      console.warn(`[AI Proxy] Model ${model} failed:`, error.message);
+      lastError = error;
+      // Continue to next model
+    }
+  }
+  
+  throw lastError;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await runMiddleware(req, res, cors);
 
@@ -62,23 +83,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const providersToTry = provider === 'openai' ? ['openai', 'gemini'] : ['gemini', 'openai'];
   const errors: Record<string, any> = {};
 
+  // Model fallbacks per provider (ordered by preference)
+  const modelFallbacks: Record<string, string[]> = {
+    openai: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo'],
+    gemini: ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro']
+  };
+
   for (const currentProvider of providersToTry) {
     try {
       if (currentProvider === 'openai') {
         const apiKey = process.env.OPENAI_API_KEY || process.env.VITE_OPENAI_API_KEY;
         if (!apiKey) throw new Error("OpenAI API key missing in environment");
         
-        console.log("[AI Proxy] Attempting OpenAI...");
+        console.log("[AI Proxy] Attempting OpenAI with model fallbacks...");
         const openai = new OpenAI({ apiKey });
         
-        const response = await retryWithBackoff(async () => {
-          return await openai.chat.completions.create({
-            model: "gpt-4o",
-            messages: [
-              { role: "system", content: systemInstruction },
-              { role: "user", content: prompt }
-            ],
-            response_format: { type: "json_object" }
+        const response = await tryModels(modelFallbacks.openai, async (model) => {
+          return await retryWithBackoff(async () => {
+            return await openai.chat.completions.create({
+              model,
+              messages: [
+                { role: "system", content: systemInstruction },
+                { role: "user", content: prompt }
+              ],
+              response_format: { type: "json_object" }
+            });
           });
         });
         
@@ -92,10 +121,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         console.log(`[AI Proxy] Attempting Gemini with key preview: ${apiKey.substring(0, 8)}...${apiKey.substring(apiKey.length - 4)}`);
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction });
         
-        const result = await retryWithBackoff(async () => {
-          return await model.generateContent(prompt);
+        const result = await tryModels(modelFallbacks.gemini, async (model) => {
+          const geminiModel = genAI.getGenerativeModel({ model, systemInstruction });
+          return await retryWithBackoff(async () => {
+            return await geminiModel.generateContent(prompt);
+          });
         });
         
         const text = result.response.text();
@@ -125,9 +156,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     err.message?.toLowerCase().includes('capacity')
   );
   
-  const errorMessage = isCapacityError 
-    ? `AI capacity reached. All providers are currently overloaded. Please wait a moment and try again.`
-    : `All AI providers failed. Gemini ${keyInfo}. Errors: ${errorDetails}`;
+  const isNetworkError = Object.values(errors).some((err: any) => 
+    err.message?.toLowerCase().includes('fetch') ||
+    err.message?.toLowerCase().includes('network') ||
+    err.message?.toLowerCase().includes('timeout') ||
+    err.message?.toLowerCase().includes('econnreset') ||
+    err.message?.toLowerCase().includes('etimedout')
+  );
   
-  return res.status(isCapacityError ? 503 : 500).json({ error: errorMessage, isCapacityError });
+  let errorMessage: string;
+  let statusCode: number;
+  
+  if (isCapacityError) {
+    errorMessage = `AI capacity reached. All providers/models are currently overloaded. Please wait a moment and try again.`;
+    statusCode = 503;
+  } else if (isNetworkError) {
+    errorMessage = `Network error connecting to AI providers. Please check your connection and try again. Errors: ${errorDetails}`;
+    statusCode = 502;
+  } else {
+    errorMessage = `All AI providers failed. Gemini ${keyInfo}. Errors: ${errorDetails}`;
+    statusCode = 500;
+  }
+  
+  return res.status(statusCode).json({ error: errorMessage, isCapacityError, isNetworkError });
 }
