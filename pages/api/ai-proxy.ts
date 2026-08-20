@@ -76,11 +76,56 @@ async function tryModels<T>(
   throw lastError;
 }
 
+// Try OpenRouter (OpenAI-compatible API with 300+ models)
+async function tryOpenRouter(prompt: string, systemInstruction: string): Promise<string> {
+  const apiKey = process.env.OPENROUTER_API_KEY || process.env.VITE_OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error("OpenRouter API key missing in environment");
+  
+  console.log("[AI Proxy] Attempting OpenRouter with model fallbacks...");
+  const openrouter = new OpenAI({ 
+    apiKey, 
+    baseURL: "https://openrouter.ai/api/v1",
+    defaultHeaders: {
+      "HTTP-Referer": "https://dynamicmike.com",
+      "X-Title": "TM Agenda Builder"
+    }
+  });
+  
+  // OpenRouter free/cheap models that support JSON mode
+  const models = [
+    'google/gemini-flash-1.5',           // Free tier
+    'google/gemini-flash-1.5-8b',        // Free tier
+    'anthropic/claude-3.5-haiku',        // Cheap, fast
+    'openai/gpt-4o-mini',                // Cheap
+    'meta-llama/llama-3.1-8b-instruct',  // Free tier
+    'mistralai/mistral-nemo',            // Free tier
+  ];
+  
+  const response = await tryModels(models, async (model) => {
+    return await retryWithBackoff(async () => {
+      return await openrouter.chat.completions.create({
+        model,
+        messages: [
+          { role: "system", content: systemInstruction },
+          { role: "user", content: prompt }
+        ],
+        response_format: { type: "json_object" }
+      });
+    });
+  });
+  
+  const text = response.choices[0].message.content;
+  if (!text) throw new Error("OpenRouter returned empty response");
+  console.log("[AI Proxy] OpenRouter successful!");
+  return text;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await runMiddleware(req, res, cors);
 
   const { prompt, systemInstruction, provider = 'gemini' } = req.body;
-  const providersToTry = provider === 'openai' ? ['openai', 'gemini'] : ['gemini', 'openai'];
+  // Try: Gemini → OpenAI → OpenRouter (300+ models)
+  const providersToTry = provider === 'openai' ? ['openai', 'gemini', 'openrouter'] : ['gemini', 'openai', 'openrouter'];
   const errors: Record<string, any> = {};
 
   // Model fallbacks per provider (ordered by preference)
@@ -115,7 +160,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (!text) throw new Error("OpenAI returned empty response");
         console.log("[AI Proxy] OpenAI successful!");
         return res.status(200).json({ text });
-      } else {
+      } else if (currentProvider === 'gemini') {
         const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
         if (!apiKey) throw new Error("Gemini API key missing in environment");
 
@@ -132,6 +177,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const text = result.response.text();
         if (!text) throw new Error("Gemini returned empty response");
         console.log("[AI Proxy] Gemini successful!");
+        return res.status(200).json({ text });
+      } else if (currentProvider === 'openrouter') {
+        const text = await tryOpenRouter(prompt, systemInstruction);
         return res.status(200).json({ text });
       }
     } catch (error: any) {
@@ -168,7 +216,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let statusCode: number;
   
   if (isCapacityError) {
-    errorMessage = `AI capacity reached. All providers/models are currently overloaded. Please wait a moment and try again.`;
+    errorMessage = `AI capacity reached. All providers/models (Gemini, OpenAI, OpenRouter) are currently overloaded. Please wait a moment and try again.`;
     statusCode = 503;
   } else if (isNetworkError) {
     errorMessage = `Network error connecting to AI providers. Please check your connection and try again. Errors: ${errorDetails}`;
