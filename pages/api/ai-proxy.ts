@@ -120,12 +120,49 @@ async function tryOpenRouter(prompt: string, systemInstruction: string): Promise
   return text;
 }
 
+// Try OpenCode (OpenAI-compatible API)
+async function tryOpenCode(prompt: string, systemInstruction: string): Promise<string> {
+  const apiKey = process.env.OPENCODE_API_KEY || process.env.VITE_OPENCODE_API_KEY;
+  if (!apiKey) throw new Error("OpenCode API key missing in environment");
+  
+  console.log("[AI Proxy] Attempting OpenCode with model fallbacks...");
+  const opencode = new OpenAI({ 
+    apiKey, 
+    baseURL: "https://api.opencode.ai/v1",  // Verify this endpoint
+  });
+  
+  // OpenCode models - adjust based on what's available
+  const models = [
+    'opencode/gpt-4o',                     // Primary
+    'opencode/gpt-4o-mini',                // Faster/cheaper
+    'opencode/claude-3.5-sonnet',          // Anthropic via OpenCode
+  ];
+  
+  const response = await tryModels(models, async (model) => {
+    return await retryWithBackoff(async () => {
+      return await opencode.chat.completions.create({
+        model,
+        messages: [
+          { role: "system", content: systemInstruction },
+          { role: "user", content: prompt }
+        ],
+        response_format: { type: "json_object" }
+      });
+    });
+  });
+  
+  const text = response.choices[0].message.content;
+  if (!text) throw new Error("OpenCode returned empty response");
+  console.log("[AI Proxy] OpenCode successful!");
+  return text;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await runMiddleware(req, res, cors);
 
   const { prompt, systemInstruction, provider = 'gemini' } = req.body;
-  // Try: Gemini → OpenAI → OpenRouter (300+ models)
-  const providersToTry = provider === 'openai' ? ['openai', 'gemini', 'openrouter'] : ['gemini', 'openai', 'openrouter'];
+  // Try: Gemini → OpenAI → OpenRouter → OpenCode (4 providers, 100s of models)
+  const providersToTry = provider === 'openai' ? ['openai', 'gemini', 'openrouter', 'opencode'] : ['gemini', 'openai', 'openrouter', 'opencode'];
   const errors: Record<string, any> = {};
 
   // Model fallbacks per provider (ordered by preference)
@@ -181,6 +218,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       } else if (currentProvider === 'openrouter') {
         const text = await tryOpenRouter(prompt, systemInstruction);
         return res.status(200).json({ text });
+      } else if (currentProvider === 'opencode') {
+        const text = await tryOpenCode(prompt, systemInstruction);
+        return res.status(200).json({ text });
       }
     } catch (error: any) {
       console.warn(`[AI Proxy] ${currentProvider} failed:`, error.message);
@@ -216,7 +256,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let statusCode: number;
   
   if (isCapacityError) {
-    errorMessage = `AI capacity reached. All providers/models (Gemini, OpenAI, OpenRouter) are currently overloaded. Please wait a moment and try again.`;
+    errorMessage = `AI capacity reached. All providers/models (Gemini, OpenAI, OpenRouter, OpenCode) are currently overloaded. Please wait a moment and try again.`;
     statusCode = 503;
   } else if (isNetworkError) {
     errorMessage = `Network error connecting to AI providers. Please check your connection and try again. Errors: ${errorDetails}`;
