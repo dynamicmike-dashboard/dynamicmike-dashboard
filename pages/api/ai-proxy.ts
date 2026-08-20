@@ -81,7 +81,7 @@ async function tryOpenRouter(prompt: string, systemInstruction: string): Promise
   const apiKey = process.env.OPENROUTER_API_KEY || process.env.VITE_OPENROUTER_API_KEY;
   if (!apiKey) throw new Error("OpenRouter API key missing in environment");
   
-  console.log("[AI Proxy] Attempting OpenRouter with model fallbacks...");
+  console.log(`[AI Proxy] Attempting OpenRouter with key preview: ${apiKey.substring(0, 8)}...${apiKey.substring(apiKey.length - 4)}`);
   const openrouter = new OpenAI({ 
     apiKey, 
     baseURL: "https://openrouter.ai/api/v1",
@@ -125,6 +125,7 @@ async function tryOpenCode(prompt: string, systemInstruction: string): Promise<s
   const apiKey = process.env.OPENCODE_API_KEY || process.env.VITE_OPENCODE_API_KEY;
   if (!apiKey) throw new Error("OpenCode API key missing in environment");
   
+  console.log(`[AI Proxy] Attempting OpenCode with key preview: ${apiKey.substring(0, 8)}...${apiKey.substring(apiKey.length - 4)}`);
   console.log("[AI Proxy] Attempting OpenCode with model fallbacks...");
   const opencode = new OpenAI({ 
     apiKey, 
@@ -231,8 +232,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const geminiKeyToCheck = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || "";
   const keyInfo = geminiKeyToCheck ? `Key preview: ${geminiKeyToCheck.substring(0, 8)}...${geminiKeyToCheck.substring(geminiKeyToCheck.length - 4)}` : "Key missing";
   
-  // Format all accumulated errors
-  const errorDetails = Object.entries(errors).map(([p, err]) => `[${p}]: ${(err as any).message}`).join(' | ');
+  // Format all accumulated errors with full details
+  const errorDetails = Object.entries(errors).map(([p, err]) => {
+    const status = err.status || err.code || 'unknown';
+    const msg = err.message || String(err);
+    return `[${p}]: status=${status} msg="${msg}"`;
+  }).join(' | ');
   
   // Check if it's a capacity/quota error
   const isCapacityError = Object.values(errors).some((err: any) => 
@@ -256,15 +261,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let statusCode: number;
   
   if (isCapacityError) {
-    errorMessage = `AI capacity reached. All providers/models (Gemini, OpenAI, OpenRouter, OpenCode) are currently overloaded. Please wait a moment and try again.`;
+    errorMessage = `AI capacity reached. All providers/models failed. DETAILS: ${errorDetails}`;
     statusCode = 503;
   } else if (isNetworkError) {
-    errorMessage = `Network error connecting to AI providers. Please check your connection and try again. Errors: ${errorDetails}`;
+    errorMessage = `Network error connecting to AI providers. DETAILS: ${errorDetails}`;
     statusCode = 502;
   } else {
-    errorMessage = `All AI providers failed. Gemini ${keyInfo}. Errors: ${errorDetails}`;
+    errorMessage = `All AI providers failed. DETAILS: ${errorDetails}`;
     statusCode = 500;
   }
   
-  return res.status(statusCode).json({ error: errorMessage, isCapacityError, isNetworkError });
+  console.error("[AI Proxy] ALL PROVIDERS FAILED:", errorDetails);
+  return res.status(statusCode).json({ error: errorMessage, isCapacityError, isNetworkError, debug: errorDetails });
 }
