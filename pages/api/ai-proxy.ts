@@ -128,14 +128,14 @@ async function tryOpenCode(prompt: string, systemInstruction: string): Promise<s
   console.log("[AI Proxy] Attempting OpenCode with model fallbacks...");
   const opencode = new OpenAI({ 
     apiKey, 
-    baseURL: "https://api.opencode.ai/v1",  // Verify this endpoint
+    baseURL: "https://opencode.ai/inference/openai/v1",
   });
   
-  // OpenCode models - adjust based on what's available
+  // OpenCode models - adjust based on what's available via their inference API
   const models = [
-    'opencode/gpt-4o',                     // Primary
-    'opencode/gpt-4o-mini',                // Faster/cheaper
-    'opencode/claude-3.5-sonnet',          // Anthropic via OpenCode
+    'gpt-4o',                     // Primary
+    'gpt-4o-mini',                // Faster/cheaper
+    'claude-3.5-sonnet',          // Anthropic via OpenCode
   ];
   
   const response = await tryModels(models, async (model) => {
